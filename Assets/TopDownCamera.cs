@@ -76,14 +76,15 @@ namespace ProcessControl.Control
         {
             if (!Application.isPlaying) return;
 
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(dragOrigin, 0.2f);
-            
-            Gizmos.color = (dragging) ? Color.red : Color.green;
-            Gizmos.DrawLine(dragOrigin, mousePosition);
-            
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(mousePosition, 0.2f);
+            if (dragging)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(dragOrigin, 0.2f);
+                Gizmos.DrawLine(dragOrigin, mousePosition);
+                
+                Gizmos.color = Color.green;
+                Gizmos.DrawSphere(mousePosition, 0.2f);
+            }
         }
     }
 }
