@@ -42,5 +42,5 @@ namespace ProcessControl.Conveyors
         public void PopLastItem() { }
     }
 
-    public class BeltItem { }
+    public class Resource { }
 }

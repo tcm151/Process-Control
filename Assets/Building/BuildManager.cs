@@ -50,6 +50,16 @@ namespace ProcessControl.Building
                 }
             }
 
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                var cell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
+                if (cell is null)  Debug.Log("NO CELL FOUND!");
+                else
+                {
+                    var node = (cell.occupied) ? cell.node : Factory.Spawn(currentBuildItem, cell.center);
+                }
+            }
+            
             if (Input.GetKeyUp(KeyCode.Mouse0))
             {
                 var secondCell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
@@ -59,8 +69,8 @@ namespace ProcessControl.Building
                     secondNode = (secondCell.occupied) ? secondCell.node : Factory.Spawn(currentBuildItem, secondCell.center);
                     secondCell.node = secondNode;
                     
-                    firstNode.next = secondNode;
-                    secondNode.previous = firstNode;
+                    firstNode.AddConnection(secondNode);
+                    secondNode.AddConnection(firstNode);
                 }
             }
 
@@ -72,10 +82,15 @@ namespace ProcessControl.Building
                 if (cell.occupied)
                 {
                     Destroy(cell.node.gameObject);
-                    cell.node = null;
+                    cell.node.Delete();
                 }
             }
 
+        }
+
+        public void BuildItem()
+        {
+            
         }
 
         private void OnSetBuildItem(Node newBuildItem)
