@@ -9,6 +9,14 @@ namespace ProcessControl.Tools
 {
     public static class UnityExtensions
     {
+        //> CAMERA
+        public static Vector3 MouseWorldPosition2D(this Camera camera)
+        {
+            var worldPosition = camera.ScreenToWorldPoint(Input.mousePosition);
+            worldPosition.z = 0f;
+            return worldPosition;
+        }
+        
         //> LAYER MAKS
         public static bool Contains(this LayerMask layerMask, int layer) => (layerMask == (layerMask | (1 << layer)));
         
@@ -30,7 +38,7 @@ namespace ProcessControl.Tools
             var angle = Mathf.Acos(direction.x) * Mathf.Rad2Deg;
             return (direction.y > 0f) ? angle : -angle;
         }
-        
+
         //> IENUMERABLES
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> e)
         {
@@ -65,13 +73,16 @@ namespace ProcessControl.Tools
         public static Vector3 DirectionTo(this Vector3 origin, Vector3 target) => (target - origin).normalized;
 
         //> MATHF
-        public static float Clamp(this ref float value, float min, float max)
+        public static float Clamp(this float value, float min, float max)
+            => Mathf.Clamp(value, min, max);
+        
+        public static float ClampR(this ref float value, float min, float max)
             => value = Mathf.Clamp(value, min, max);
 
         public static float MoveTowards(this ref float value, float target, float maxDelta)
             => value = Mathf.MoveTowards(value, target, maxDelta);
 
-
-
+        public static int FloorToInt(this float value)
+            => Mathf.FloorToInt(value);
     }
 }
