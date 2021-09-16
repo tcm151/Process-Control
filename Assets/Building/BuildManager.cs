@@ -4,13 +4,14 @@ using ProcessControl.Tools;
 using ProcessControl.Terrain;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Grid = ProcessControl.Terrain.Grid;
 
 
 namespace ProcessControl.Building
 {
     public class BuildManager : MonoBehaviour
     {
-        public Node currentBuildItem;
+        public Node selectedNodeType;
 
         private bool buildMode;
         new private Camera camera;
@@ -19,6 +20,7 @@ namespace ProcessControl.Building
         public static Action<Node> SetBuildItem;
 
         private Node firstNode, secondNode;
+        private Node previousNode;
 
         private void Awake()
         {
@@ -37,46 +39,54 @@ namespace ProcessControl.Building
                 OnBuildModeChanged?.Invoke(buildMode);
             }
             
-            if (!buildMode || !currentBuildItem || EventSystem.current.IsPointerOverGameObject()) return;
+            if (!buildMode || !selectedNodeType || EventSystem.current.IsPointerOverGameObject()) return;
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                var firstCell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
+                var firstCell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
                 if (firstCell is null) Debug.Log("NO CELL FOUND!");
                 else
                 {
-                    firstNode = (firstCell.occupied) ? firstCell.node : Factory.Spawn(currentBuildItem, firstCell.center);
+                    firstNode = (firstCell.occupied) ? firstCell.node : BuildNode(firstCell);
                     firstCell.node = firstNode;
                 }
             }
 
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                var cell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
-                if (cell is null)  Debug.Log("NO CELL FOUND!");
-                else
-                {
-                    var node = (cell.occupied) ? cell.node : Factory.Spawn(currentBuildItem, cell.center);
-                }
-            }
+            // if (Input.GetKey(KeyCode.Mouse0))
+            // {
+            //     var cell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
+            //     if (cell is null)  Debug.Log("NO CELL FOUND!");
+            //     else
+            //     {
+            //         var node = (cell.occupied) ? cell.node : Factory.Spawn(selectedNodeType, cell.center);
+            //         if (previousNode is { })
+            //         {
+            //             cell.node = node;
+            //             node.Connect(previousNode);
+            //             previousNode.Connect(node);
+            //         }
+            //         
+            //         previousNode = cell.node;
+            //     }
+            // }
             
             if (Input.GetKeyUp(KeyCode.Mouse0))
             {
-                var secondCell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
+                var secondCell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
                 if (secondCell is null) Debug.Log("NO CELL FOUND!");
                 else
                 {
-                    secondNode = (secondCell.occupied) ? secondCell.node : Factory.Spawn(currentBuildItem, secondCell.center);
+                    secondNode = (secondCell.occupied) ? secondCell.node : BuildNode(secondCell);
                     secondCell.node = secondNode;
                     
-                    firstNode.AddConnection(secondNode);
-                    secondNode.AddConnection(firstNode);
+                    firstNode.ConnectOutput(secondNode);
+                    secondNode.ConnectInput(firstNode);
                 }
             }
 
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
-                var cell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
+                var cell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
                 if (cell is null) Debug.Log("NO CELL FOUND!");
                 else
                 if (cell.occupied)
@@ -88,14 +98,11 @@ namespace ProcessControl.Building
 
         }
 
-        public void BuildItem()
-        {
-            
-        }
+        public Node BuildNode(Grid.Cell cell) => Factory.Spawn(selectedNodeType, cell.center);
 
         private void OnSetBuildItem(Node newBuildItem)
         {
-            currentBuildItem = newBuildItem;
+            selectedNodeType = newBuildItem;
         }
 
         private void OnDrawGizmos()
@@ -103,7 +110,7 @@ namespace ProcessControl.Building
             if (buildMode)
             {
                 Gizmos.color = Color.white;
-                var cell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
+                var cell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
                 if (cell is null) return;
                 Gizmos.DrawWireCube(cell.center, Vector3.one);
             }

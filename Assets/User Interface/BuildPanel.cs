@@ -1,7 +1,5 @@
-﻿using System;
+﻿using UnityEngine;
 using ProcessControl.Building;
-using UnityEngine;
-
 
 namespace ProcessControl.UI
 {

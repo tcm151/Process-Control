@@ -7,6 +7,7 @@ namespace ProcessControl
 {
     public class Machine : Node
     {
-        
+        override public void DepositResource(Resource resource) { }
+        override public Resource WithdrawResource() => null;
     }
 }
