@@ -497,7 +497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a181776ee55d2474ca681ffc54e4d742, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentBuildItem: {fileID: 0}
+  selectedNodeType: {fileID: 0}
 --- !u!4 &678005055
 Transform:
   m_ObjectHideFlags: 0
@@ -718,8 +718,8 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 891281014}
   m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
+  m_Alpha: 0
+  m_Interactable: 0
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!1 &938031505
@@ -1085,7 +1085,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Node
+  m_text: Conveyor
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1377,7 +1377,7 @@ GameObject:
   - component: {fileID: 1721088711}
   - component: {fileID: 1721088715}
   m_Layer: 5
-  m_Name: Button.002
+  m_Name: Extractor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2110,7 +2110,7 @@ GameObject:
   - component: {fileID: 2112861030}
   - component: {fileID: 2112861034}
   m_Layer: 5
-  m_Name: Button.001
+  m_Name: Conveyor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2257,4 +2257,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074bfb77af4d483fb4ec7db1a9b07f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildItem: {fileID: 8048061789666288427, guid: 7a36556df2e1d0445aaac4b314153e4b, type: 3}
+  buildItem: {fileID: 6307726586249523439, guid: 7a36556df2e1d0445aaac4b314153e4b, type: 3}

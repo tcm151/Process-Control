@@ -1,31 +1,28 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using ProcessControl.Conveyors;
+using System.Collections.Generic;
 using ProcessControl.Tools;
-using UnityEngine;
 
 namespace ProcessControl.Terrain
 {
-    public class ProceduralGrid : MonoBehaviour
+    public class Grid : UnityEngine.MonoBehaviour
     {
         [Serializable] public class Cell
         {
+            public Conveyors.Node node;
             public bool occupied => node is { };
-            public Node node;
             
-            public Vector3 center;
-            public Vector2Int coordinates;
+            public UnityEngine.Vector2Int coordinates;
+            public UnityEngine.Vector3 center;
         }
 
-        public Vector2Int dimensions;
+        public UnityEngine.Vector2Int dimensions;
         public List<Cell> cells;
 
-        private RectInt gridRect;
+        private UnityEngine.RectInt gridRect;
 
-        public static Func<Vector2Int, Cell> GetCellCoords;
-        public static Func<Vector3, Cell> GetCellPosition;
+        public static Func<UnityEngine.Vector2Int, Cell> GetCellCoords;
+        public static Func<UnityEngine.Vector3, Cell> GetCellPosition;
         
         private void Awake()
         {
@@ -42,26 +39,26 @@ namespace ProcessControl.Terrain
             for (int y = gridRect.y; y < -gridRect.y; y++) {
                 for (int x = gridRect.x; x < -gridRect.x; x++)
                 {
-                    Debug.Log($"Adding cell ({x},{y})");
+                    // Debug.Log($"Adding cell ({x},{y})");
                     
                     cells.Add(new Cell
                     {
-                        center = new Vector3(x + 0.5f, y + 0.5f),
-                        coordinates = new Vector2Int(x,y),
+                        center = new UnityEngine.Vector3(x + 0.5f, y + 0.5f),
+                        coordinates = new UnityEngine.Vector2Int(x,y),
                     });
                 }
             }
         }
 
-        public Cell OnGetCellCoords(Vector2Int coordinates)
+        public Cell OnGetCellCoords(UnityEngine.Vector2Int coordinates)
         {
             var cell = cells.FirstOrDefault(c => c.coordinates == coordinates);
             return cell;
         }
 
-        public Cell OnGetCellPosition(Vector3 worldPosition)
+        public Cell OnGetCellPosition(UnityEngine.Vector3 worldPosition)
         {
-            var coords = new Vector2Int(worldPosition.x.FloorToInt(), worldPosition.y.FloorToInt());
+            var coords = new UnityEngine.Vector2Int(worldPosition.x.FloorToInt(), worldPosition.y.FloorToInt());
             // Debug.Log(coords);
             return OnGetCellCoords(coords);
         }
