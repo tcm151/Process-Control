@@ -79,8 +79,8 @@ namespace ProcessControl.Building
                     secondNode = (secondCell.occupied) ? secondCell.node : BuildNode(secondCell);
                     secondCell.node = secondNode;
                     
-                    firstNode.ConnectOutput(secondNode);
-                    secondNode.ConnectInput(firstNode);
+                    firstNode.AddConnection(secondNode);
+                    secondNode.AddConnection(firstNode);
                 }
             }
 
@@ -98,7 +98,7 @@ namespace ProcessControl.Building
 
         }
 
-        public Node BuildNode(Grid.Cell cell) => Factory.Spawn(selectedNodeType, cell.center);
+        public Node BuildNode(Grid.Cell cell) => Factory.Spawn("Nodes", selectedNodeType, cell.center);
 
         private void OnSetBuildItem(Node newBuildItem)
         {

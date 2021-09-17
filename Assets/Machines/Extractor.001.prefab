@@ -95,12 +95,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38c4e781df9de0a45ac9252fd27289aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data:
+  nodeData:
     cell:
       node: {fileID: 0}
       coordinates: {x: 0, y: 0}
       center: {x: 0, y: 0, z: 0}
     connections: []
-  inventory: []
-  extractionSpeed: 1
   output: {fileID: 0}
+  extractionSpeed: 1
+  extractionResource: {fileID: 22261911864309029, guid: 914bc23ef0401f646895763d6f11a3b7, type: 3}
+  inventorySize: 8
+  inventory: []
+  ticks: 0
+  sleeping: 0

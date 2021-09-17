@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using ProcessControl.Machines;
 using Grid = ProcessControl.Terrain.Grid;
 
 
 namespace ProcessControl.Conveyors
 {
-    abstract public class Node : MonoBehaviour, IO
+    abstract public class Node : MonoBehaviour
     {
+        public Action<Node> OnAddConnection;
+        
+        virtual public bool Full => false;
         public Vector3 Position => transform.position;
         public Vector2Int Coordinates => nodeData.cell.coordinates;
 
@@ -18,39 +20,30 @@ namespace ProcessControl.Conveyors
             public List<Node> connections;
         }
 
-        [SerializeField] private Data nodeData;
+        [SerializeField] protected Data nodeData;
 
         //> INIALIZATION
-        private void Awake() => nodeData = new Data
+        virtual protected void Awake() => nodeData = new Data
         {
             cell = null,
             connections = new List<Node>(),
         };
 
-        public void Insert(Resource item) { }
         public void Delete() => nodeData.connections.ForEach(node => node.nodeData.connections.Remove(this));
-
         
-        virtual public void ConnectInput(Node newNode)
+        public bool AddConnection(Node newNode)
         {
-            if (newNode == this) return;
+            if (newNode == this) return false;
             nodeData.connections.Add(newNode);
+            return true;
         }
-
-        virtual public void ConnectOutput(Node node)
-        {
-            if (node == this) return;
-            nodeData.connections.Add(node);
-        }
+        
 
         virtual public void RemoveConnection(Node removedNode)
         {
             if (removedNode == this) return;
             nodeData.connections.Remove(removedNode);
         }
-
-        abstract public void DepositResource(Resource resource);
-        abstract public Resource WithdrawResource();
 
         //> DRAW HELPFUL GIZMOS
         private void OnDrawGizmos()

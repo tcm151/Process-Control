@@ -1,85 +1,65 @@
 using System;
 using System.Collections.Generic;
-using ProcessControl.Machines;
+using System.Linq;
+using ProcessControl.Tools;
 using UnityEngine;
 
 
 namespace ProcessControl.Conveyors
 {
-    public class Conveyor : Node, IO
+    public class Conveyor : Machine
     {
         public const int TicksPerSecond = 64;
         public const int ItemsPerSecond = 1;
         
-        [Serializable] new public class Data
+        
+        
+        override public bool Full => (machineData.inventory.Count >= MaxItems);
+        public int MaxItems => nodeData.connections.Sum(n => (int) DistanceBetween(this, n));
+
+        private void Awake()
         {
-            public Node inputNode;
-            public Node outputNode;
-           
-            public int ticks;
-            public List<Resource> resources = new List<Resource>();
+            // other stuff
+            machineData = new Data();
         }
-        
-        [SerializeField] private Data conveyorData;
-        
-        public int NumberOfResources => conveyorData.resources.Count;
-        
-        public int MaxItems
-            => (conveyorData.inputNode && conveyorData.outputNode)
-                ? (int) DistanceBetween(conveyorData.inputNode, conveyorData.outputNode)
-                    : 0;
-
-
-        private void Awake() => conveyorData = new Data
-        {
-            ticks = 0,
-        };
 
         private void FixedUpdate()
         {
-            conveyorData.ticks++;
             
-            if (conveyorData.ticks >= TicksPerSecond / ItemsPerSecond)
+            if (++ticks % (TicksPerSecond / ItemsPerSecond) == 0)
             {
-                conveyorData.ticks = 0;
-                if (conveyorData.outputNode && conveyorData.resources.Count >= 1)
+                if (Full) return;
+                ticks = 0;
+                
+                if (machineData.output && machineData.inventory.Count >= 1)
                 {
-                    conveyorData.outputNode.DepositResource(WithdrawResource());
+                    if (machineData.output.Full) return;
+                    machineData.output.DepositResource(WithdrawResource());
                 }
-                // if (conveyorData.inputNode)
+                
+                // if (conveyorData.input)
                 // {
-                //     var resource = conveyorData.inputNode.WithdrawResource();
-                //     if (resource is { }) conveyorData.resources.Add(resource);
+                //     var resource = conveyorData.input.WithdrawResource();
+                //     if (resource is { }) conveyorData.inventory.Add(resource);
                 // } 
-                // if (conveyorData.inputNode && NumberOfResources < MaxItems) conveyorData.inputNode.WithdrawResource();
+                // if (conveyorData.input && NumberOfResources < MaxItems) conveyorData.input.WithdrawResource();
             }
 
         }
 
-        override public void ConnectInput(Node node)
-        {
-            base.ConnectInput(node);
-            conveyorData.inputNode = node;
-        }
+        // override public void ConnectInput(Machine node)
+        // {
+        //     base.ConnectInput(node);
+        //     machineData.input = node as Machine;
+        // }
+        //
+        // override public void ConnectOutput(Machine node)
+        // {
+        //     base.ConnectInput(node);
+        //     machineData.output = node as Machine;
+        // }
 
-        override public void ConnectOutput(Node node)
-        {
-            base.ConnectInput(node);
-            conveyorData.outputNode = node;
-        }
-
-        override public void DepositResource(Resource resource) => conveyorData.resources.Add(resource);
-        override public Resource WithdrawResource()
-        {
-            if (conveyorData.resources.Count >= 1)
-            {
-                var resource = conveyorData.resources[0];
-                conveyorData.resources.RemoveAt(0);
-                return resource;
-            }
-            else return null;
-        }
+        override public void DepositResource(Resource resource) => machineData.inventory.Add(resource);
+        override public Resource WithdrawResource() => machineData.inventory.TakeFirst();
     }
-
-    [Serializable] public class Resource { }
 }
