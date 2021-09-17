@@ -1,9 +1,8 @@
 using System;
-using ProcessControl.Conveyors;
-using ProcessControl.Tools;
-using ProcessControl.Terrain;
+using ProcessControl.Machines;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using ProcessControl.Tools;
 using Grid = ProcessControl.Terrain.Grid;
 
 
@@ -11,23 +10,34 @@ namespace ProcessControl.Building
 {
     public class BuildManager : MonoBehaviour
     {
-        public Node selectedNodeType;
+        public Entity selectedEntity;
 
-        private bool buildMode;
+        [SerializeField] private bool conveyorMode;
+        [SerializeField] private bool buildMode;
         new private Camera camera;
         
-        public static Action<bool> OnBuildModeChanged;
-        public static Action<Node> SetBuildItem;
+        //> EVENT TRIGGERS
+        public static Action<Entity> SetBuildItem;
+        public static Action<bool> SetConveyorMode;
 
-        private Node firstNode, secondNode;
-        private Node previousNode;
+        //> EVENT SUBSCRIPTIONS
+        public static Action<bool> OnBuildModeChanged;
+        
+        private Entity firstEntity, secondEntity;
+        private Machine previousMachine;
+        
+        private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
+        private void OnSetBuildItem(Entity newSelection) => selectedEntity = newSelection;
+        public Entity BuildEntity(Grid.Cell cell) => Factory.Spawn("Entities", selectedEntity, cell.center);
 
         private void Awake()
         {
             camera = Camera.main;
 
             SetBuildItem += OnSetBuildItem;
+            SetConveyorMode += OnSetConveyorMode;
         }
+
 
         private void Update()
         {
@@ -39,71 +49,66 @@ namespace ProcessControl.Building
                 OnBuildModeChanged?.Invoke(buildMode);
             }
             
-            if (!buildMode || !selectedNodeType || EventSystem.current.IsPointerOverGameObject()) return;
+            if (!buildMode || !selectedEntity || EventSystem.current.IsPointerOverGameObject()) return;
+            
 
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (conveyorMode)
+            {
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    var firstCell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
+                    if (firstCell is null) Debug.Log("NO CELL FOUND!");
+                    else
+                    {
+                        firstEntity = (firstCell.occupied) ? firstCell.entity : BuildEntity(firstCell);
+                        firstCell.entity = firstEntity;
+                        firstEntity.cell = firstCell;
+                    }
+                }
+
+                if (Input.GetKeyUp(KeyCode.Mouse0))
+                {
+                    var secondCell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
+                    if (secondCell is null) Debug.Log("NO CELL FOUND!");
+                    else
+                    {
+                        secondEntity = (secondCell.occupied) ? secondCell.entity : BuildEntity(secondCell);
+                        secondCell.entity = secondEntity;
+                        secondEntity.cell = secondCell;
+
+                        var firstMachine = firstEntity.GetComponent<Machine>();
+                        var secondMachine = secondEntity.GetComponent<Machine>();
+                        
+                        firstMachine.ConnectOutput(secondMachine.machine.input);
+                        secondMachine.ConnectInput(firstMachine.machine.output);
+                    }
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 var firstCell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
                 if (firstCell is null) Debug.Log("NO CELL FOUND!");
                 else
                 {
-                    firstNode = (firstCell.occupied) ? firstCell.node : BuildNode(firstCell);
-                    firstCell.node = firstNode;
-                }
-            }
-
-            // if (Input.GetKey(KeyCode.Mouse0))
-            // {
-            //     var cell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
-            //     if (cell is null)  Debug.Log("NO CELL FOUND!");
-            //     else
-            //     {
-            //         var node = (cell.occupied) ? cell.node : Factory.Spawn(selectedNodeType, cell.center);
-            //         if (previousNode is { })
-            //         {
-            //             cell.node = node;
-            //             node.Connect(previousNode);
-            //             previousNode.Connect(node);
-            //         }
-            //         
-            //         previousNode = cell.node;
-            //     }
-            // }
-            
-            if (Input.GetKeyUp(KeyCode.Mouse0))
-            {
-                var secondCell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
-                if (secondCell is null) Debug.Log("NO CELL FOUND!");
-                else
-                {
-                    secondNode = (secondCell.occupied) ? secondCell.node : BuildNode(secondCell);
-                    secondCell.node = secondNode;
-                    
-                    firstNode.AddConnection(secondNode);
-                    secondNode.AddConnection(firstNode);
+                    firstEntity = (firstCell.occupied) ? firstCell.entity.gameObject.GetComponent<Machine>() : BuildEntity(firstCell);
+                    firstCell.entity = firstEntity;
+                    firstEntity.cell = firstCell;
                 }
             }
 
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
-                var cell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
+                var cell = Grid.GetCellUnderMouse();
                 if (cell is null) Debug.Log("NO CELL FOUND!");
                 else
                 if (cell.occupied)
                 {
-                    Destroy(cell.node.gameObject);
-                    cell.node.Delete();
+                    cell.entity.Delete();
                 }
             }
 
         }
 
-        public Node BuildNode(Grid.Cell cell) => Factory.Spawn("Nodes", selectedNodeType, cell.center);
-
-        private void OnSetBuildItem(Node newBuildItem)
-        {
-            selectedNodeType = newBuildItem;
-        }
 
         private void OnDrawGizmos()
         {

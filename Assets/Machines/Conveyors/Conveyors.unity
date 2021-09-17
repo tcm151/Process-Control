@@ -497,7 +497,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a181776ee55d2474ca681ffc54e4d742, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedNodeType: {fileID: 0}
+  selectedEntity: {fileID: 0}
+  conveyorMode: 0
+  buildMode: 0
 --- !u!4 &678005055
 Transform:
   m_ObjectHideFlags: 0

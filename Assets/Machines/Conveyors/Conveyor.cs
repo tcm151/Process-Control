@@ -1,65 +1,28 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using ProcessControl.Tools;
-using UnityEngine;
+using ProcessControl.Machines;
 
 
-namespace ProcessControl.Conveyors
+namespace ProcessControl.Machines
 {
-    public class Conveyor : Machine
+    public class Conveyor : Edge
     {
         public const int TicksPerSecond = 64;
-        public const int ItemsPerSecond = 1;
-        
-        
-        
-        override public bool Full => (machineData.inventory.Count >= MaxItems);
-        public int MaxItems => nodeData.connections.Sum(n => (int) DistanceBetween(this, n));
+        public const int ItemsPerSecond = 8;
 
-        private void Awake()
-        {
-            // other stuff
-            machineData = new Data();
-        }
-
-        private void FixedUpdate()
+        protected void FixedUpdate()
         {
             
-            if (++ticks % (TicksPerSecond / ItemsPerSecond) == 0)
+            if (++edge.ticks % (TicksPerSecond / ItemsPerSecond) == 0)
             {
                 if (Full) return;
-                ticks = 0;
                 
-                if (machineData.output && machineData.inventory.Count >= 1)
+                edge.ticks = 0;
+                if (edge.output && edge.inventory.Count >= 1)
                 {
-                    if (machineData.output.Full) return;
-                    machineData.output.DepositResource(WithdrawResource());
+                    if (edge.output.Full) return;
+                    edge.output.Deposit(Withdraw());
                 }
-                
-                // if (conveyorData.input)
-                // {
-                //     var resource = conveyorData.input.WithdrawResource();
-                //     if (resource is { }) conveyorData.inventory.Add(resource);
-                // } 
-                // if (conveyorData.input && NumberOfResources < MaxItems) conveyorData.input.WithdrawResource();
             }
-
         }
-
-        // override public void ConnectInput(Machine node)
-        // {
-        //     base.ConnectInput(node);
-        //     machineData.input = node as Machine;
-        // }
-        //
-        // override public void ConnectOutput(Machine node)
-        // {
-        //     base.ConnectInput(node);
-        //     machineData.output = node as Machine;
-        // }
-
-        override public void DepositResource(Resource resource) => machineData.inventory.Add(resource);
-        override public Resource WithdrawResource() => machineData.inventory.TakeFirst();
     }
 }

@@ -1,52 +1,57 @@
 using System;
 using System.Collections.Generic;
-using ProcessControl.Conveyors;
 using UnityEngine;
+using ProcessControl.Tools;
 
-namespace ProcessControl
+
+namespace ProcessControl.Machines
 {
-    abstract public class Machine : Node
+    abstract public class Machine : Node, IO
     {
+        public const int TicksPerSecond = 64;
+        public const int ItemsPerSecond = 1;
+        
         [Serializable] new public class Data
         {
-            public Machine input;
-            public Machine output;
+            public int ticks;
+            public bool sleeping;
+            
+            public Edge input;
+            public Edge output;
            
             public List<Resource> inventory = new List<Resource>();
         }
 
+        virtual public int InventorySize => 0;
+        
+        [SerializeField] public Data machine;
+
         override protected void Awake()
         {
             base.Awake();
-
-            OnAddConnection += UpdateConnections;
+            // do other stuff
+            machine = new Data();
         }
 
-        [SerializeField] protected Data machineData;
-        
-        protected int ticks;
-        protected bool sleeping;
-
-        private void UpdateConnections(Node node)
+        virtual protected void FixedUpdate()
         {
-            var machine = node.gameObject.GetComponent<Machine>();
-            
-            // if (machine.machineData.input)
+            if (machine.sleeping) return;
+            if (machine.ticks >= 512) machine.sleeping = true;
         }
         
-        virtual public void ConnectInput(Machine machine)
+        public void ConnectInput(Edge input)
         {
-            if (!AddConnection(machine)) return;
-            machineData.input = machine;
+            if (!ConnectEdge(input)) return;
+            machine.input = input;
         }
 
-        virtual public void ConnectOutput(Machine machine)
+        public void ConnectOutput(Edge output)
         {
-            if (!AddConnection(machine)) return;
-            machineData.output = machine;
+            if (!ConnectEdge(output)) return;
+            machine.output = output;
         }
         
-        abstract public void DepositResource(Resource resource);
-        abstract public Resource WithdrawResource();
+        override public void Deposit(Resource resource) => machine.inventory.Add(resource);
+        override public Resource Withdraw() => machine.inventory.TakeFirst();
     }
 }

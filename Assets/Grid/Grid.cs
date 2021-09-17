@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using ProcessControl.Machines;
 using ProcessControl.Tools;
+
 
 namespace ProcessControl.Terrain
 {
@@ -9,8 +11,8 @@ namespace ProcessControl.Terrain
     {
         [Serializable] public class Cell
         {
-            public Conveyors.Node node;
-            public bool occupied => node is { };
+            public Entity entity;
+            public bool occupied => entity is { };
             
             public UnityEngine.Vector2Int coordinates;
             public UnityEngine.Vector3 center;
@@ -21,13 +23,19 @@ namespace ProcessControl.Terrain
 
         private UnityEngine.RectInt gridRect;
 
+        new private UnityEngine.Camera camera;
+
+        public static Func<Cell> GetCellUnderMouse;
         public static Func<UnityEngine.Vector2Int, Cell> GetCellCoords;
         public static Func<UnityEngine.Vector3, Cell> GetCellPosition;
         
         private void Awake()
         {
+            camera = UnityEngine.Camera.main;
+            
             GetCellCoords += OnGetCellCoords;
             GetCellPosition += OnGetCellPosition;
+            GetCellUnderMouse += OnGetCellUnderMouse;
             
             gridRect.height = dimensions.y;
             gridRect.width = dimensions.x;
@@ -50,13 +58,19 @@ namespace ProcessControl.Terrain
             }
         }
 
-        public Cell OnGetCellCoords(UnityEngine.Vector2Int coordinates)
+        private Cell OnGetCellUnderMouse()
+        {
+            var mousePosition = camera.MouseWorldPosition2D();
+            return OnGetCellPosition(mousePosition);
+        }
+
+        private Cell OnGetCellCoords(UnityEngine.Vector2Int coordinates)
         {
             var cell = cells.FirstOrDefault(c => c.coordinates == coordinates);
             return cell;
         }
 
-        public Cell OnGetCellPosition(UnityEngine.Vector3 worldPosition)
+        private Cell OnGetCellPosition(UnityEngine.Vector3 worldPosition)
         {
             var coords = new UnityEngine.Vector2Int(worldPosition.x.FloorToInt(), worldPosition.y.FloorToInt());
             // Debug.Log(coords);

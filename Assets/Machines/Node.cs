@@ -1,60 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
+using ProcessControl.Machines;
 using UnityEngine;
 using Grid = ProcessControl.Terrain.Grid;
 
 
-namespace ProcessControl.Conveyors
+namespace ProcessControl.Machines
 {
-    abstract public class Node : MonoBehaviour
+    abstract public class Node : Entity
     {
-        public Action<Node> OnAddConnection;
-        
-        virtual public bool Full => false;
-        public Vector3 Position => transform.position;
-        public Vector2Int Coordinates => nodeData.cell.coordinates;
-
+        //> NODE DATA CONTAINER
         [Serializable] public class Data
         {
-            public Grid.Cell cell;
-            public List<Node> connections;
+            // public Grid.Cell cell;
+            public List<Edge> edges;
         }
 
-        [SerializeField] protected Data nodeData;
-
-        //> INIALIZATION
-        virtual protected void Awake() => nodeData = new Data
+        [SerializeField] public Data node;
+        
+        //> PROPERTIES
+        virtual public bool Full => false;
+        public Vector3 Position => transform.position;
+        // public Vector2Int Coordinates => node.cell.coordinates;
+        
+        //> DISTANCE BETWEEN NODES
+        public float DistanceTo(Node otherNode) => Vector3.Distance(this.Position, otherNode.Position);
+        public static float DistanceBetween(Node one, Node two) => Vector3.Distance(one.Position, two.Position);
+        
+        //> INITIALIZATION
+        virtual protected void Awake() => node = new Data
         {
-            cell = null,
-            connections = new List<Node>(),
+            // cell = null,
+            edges = new List<Edge>(),
         };
 
-        public void Delete() => nodeData.connections.ForEach(node => node.nodeData.connections.Remove(this));
-        
-        public bool AddConnection(Node newNode)
+        //> DELETE THIS NODE AND REMOVE ALL CONNECTIONS
+        override public void Delete()
         {
-            if (newNode == this) return false;
-            nodeData.connections.Add(newNode);
+            node.edges.ForEach(Destroy);
+            Destroy(this.gameObject);
+            node = null;
+        }
+
+        //> ADD A NEW NODE CONNECTION
+        virtual public bool ConnectEdge(Edge newEdge)
+        {
+            if (node.edges.Contains(newEdge)) return false;
+            node.edges.Add(newEdge);
             return true;
         }
         
-
-        virtual public void RemoveConnection(Node removedNode)
+        //> REMOVE A NODE CONNECTION
+        virtual public bool RemoveConnection(Edge oldEdge)
         {
-            if (removedNode == this) return;
-            nodeData.connections.Remove(removedNode);
+            if (!node.edges.Contains(oldEdge)) return false;
+            node.edges.Remove(oldEdge);
+            return true;
         }
 
-        //> DRAW HELPFUL GIZMOS
-        private void OnDrawGizmos()
-        {
-            if (nodeData.connections is { } && nodeData.connections.Count >= 1)
-            {
-                nodeData.connections.ForEach(node => Gizmos.DrawLine(Position, node.Position));
-            }
-        }
-
-        public float DistanceTo(Node otherNode) => Vector3.Distance(this.Position, otherNode.Position);
-        public static float DistanceBetween(Node one, Node two) => Vector3.Distance(one.Position, two.Position);
+        abstract public void Deposit(Resource resource);
+        abstract public Resource Withdraw();
     }
 }

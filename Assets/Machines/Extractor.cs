@@ -1,67 +1,43 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using ProcessControl.Conveyors;
 using ProcessControl.Tools;
 
 
-namespace ProcessControl
+namespace ProcessControl.Machines
 {
     public class Extractor : Machine
     {
-        [SerializeField] public Machine output;
+        [SerializeField] public Resource extractionResource;
         
         [Range(0, 64)] public float extractionSpeed;
-        [SerializeField] public Resource extractionResource;
         [SerializeField] public int inventorySize = 64;
-        [SerializeField] private List<Resource> inventory = new List<Resource>();
 
 
-        override public bool Full => (inventory.Count >= inventorySize);
+        override public int InventorySize => inventorySize;
+        override public bool Full => (machine.inventory.Count >= InventorySize);
         
-        public int ticks;
-        public bool sleeping;
-        
-        private void FixedUpdate()
+        override protected void FixedUpdate()
         {
-            if (sleeping) return;
+            base.FixedUpdate();
             
-            if (++ticks % (64 / extractionSpeed) == 0)
+            if (++machine.ticks % (TicksPerSecond / extractionSpeed) == 0)
             {
                 if (Full) return;
                 
-                ticks = 0;
-                if (!output || output.Full) inventory.Add(ExtractResource());
-                else if (!output.Full) output.DepositResource(ExtractResource());
+                machine.ticks = 0;
+                if ((!machine.output || machine.output.Full) && !Full) Deposit(Extract());
+                else if (!machine.output.Full)
+                {
+                    if (machine.inventory.Count >= 0) machine.output.Deposit(Withdraw());
+                    else machine.output.Deposit(Extract());
+                }
             }
         }
 
-        protected Resource ExtractResource()
+        protected Resource Extract()
         {
             var resource = Factory.Spawn("Resources", extractionResource, Position);
             // do more stuff
             return resource;
         }
-
-        override public void ConnectOutput(Machine node)
-        {
-            if (node == this) return;
-            base.ConnectOutput(node);
-            output = node;
-        }
-
-        override public void DepositResource(Resource resource) { }
-
-        override public Resource WithdrawResource()
-        {
-            if (inventory.Count >= 1)
-            {
-                return inventory.TakeFirst();
-            }
-            else return null;
-        }
-        
-        
     }
 }
