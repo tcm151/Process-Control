@@ -9,6 +9,23 @@ namespace ProcessControl.Tools
 {
     public static class UnityExtensions
     {
+        //> LISTS
+        public static T Take<T>(this List<T> list, int index)
+        {
+            var item = list[index];
+            list.RemoveAt(index);
+            return item;
+        }
+        
+        public static T TakeFirst<T>(this List<T> list)
+        {
+            if (list.Count == 0) return default;
+            var item = list[0];
+            list.RemoveAt(0);
+            return item;
+        }
+        
+        
         //> CAMERA
         public static Vector3 MouseWorldPosition2D(this Camera camera)
         {
