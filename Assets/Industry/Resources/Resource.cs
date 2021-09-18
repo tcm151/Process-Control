@@ -8,10 +8,10 @@ namespace ProcessControl.Machines
     {
         [Serializable] public class Data
         {
+            public int ticks;
             public Color color = Color.grey;
             
             public Vector3 position;
-            public Vector2Int coordinates;
         }
 
         public Data data;
@@ -21,11 +21,11 @@ namespace ProcessControl.Machines
             data.position = transform.position;
         }
 
-        public void SetCoordinates(Vector2Int newCoordinates)
+        private void FixedUpdate()
         {
-            data.coordinates = newCoordinates;
+            transform.position = data.position;
         }
-
+        
         public void OnDrawGizmos()
         {
             Gizmos.color = data.color;

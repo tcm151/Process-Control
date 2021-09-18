@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace ProcessControl.Tools.Editor
+namespace ProcessControl.Tools
 {
     #if UNITY_EDITOR
     

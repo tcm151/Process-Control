@@ -19,7 +19,7 @@ namespace ProcessControl.Tools
         
         public static T TakeFirst<T>(this List<T> list)
         {
-            if (list.Count == 0) return default;
+            if (list.Count == 0) return default(T);
             var item = list[0];
             list.RemoveAt(0);
             return item;
@@ -86,6 +86,10 @@ namespace ProcessControl.Tools
             var angle = Mathf.Acos(direction.x) * Mathf.Rad2Deg;
             return (direction.y > 0f) ? angle : -angle;
         }
+        
+        public static void MoveTowards(this ref Vector3 current, Vector3 target, float maxDelta)
+            => current = Vector3.MoveTowards(current, target, maxDelta);
+        
 
         public static Vector3 DirectionTo(this Vector3 origin, Vector3 target) => (target - origin).normalized;
 

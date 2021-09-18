@@ -1,8 +1,9 @@
 using System;
-using ProcessControl.Machines;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using ProcessControl.Tools;
+using ProcessControl.Graphs;
+using ProcessControl.Machines;
 using Grid = ProcessControl.Terrain.Grid;
 
 
@@ -10,31 +11,36 @@ namespace ProcessControl.Building
 {
     public class BuildManager : MonoBehaviour
     {
-        public Entity selectedEntity;
+        public Machine selectedMachine;
+        public Conveyor selectedConveyor;
 
-        [SerializeField] private bool conveyorMode;
         [SerializeField] private bool buildMode;
+        [SerializeField] private bool conveyorMode;
+        
         new private Camera camera;
         
         //> EVENT TRIGGERS
-        public static Action<Entity> SetBuildItem;
+        public static Action<Machine> SetMachine;
+        public static Action<Conveyor> SetConveyor;
         public static Action<bool> SetConveyorMode;
 
         //> EVENT SUBSCRIPTIONS
         public static Action<bool> OnBuildModeChanged;
         
-        private Entity firstEntity, secondEntity;
+        private Machine firstMachine, secondMachine;
         private Machine previousMachine;
         
         private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
-        private void OnSetBuildItem(Entity newSelection) => selectedEntity = newSelection;
-        public Entity BuildEntity(Grid.Cell cell) => Factory.Spawn("Entities", selectedEntity, cell.center);
+        private void OnSetNode(Machine newSelection) => selectedMachine = newSelection;
+        private void OnSetEdge(Conveyor newSelection) => selectedConveyor = newSelection;
+        public Machine BuildMachine(Grid.Cell cell) => Factory.Spawn("Machines", selectedMachine, cell.center);
 
         private void Awake()
         {
             camera = Camera.main;
 
-            SetBuildItem += OnSetBuildItem;
+            SetMachine += OnSetNode;
+            SetConveyor += OnSetEdge;
             SetConveyorMode += OnSetConveyorMode;
         }
 
@@ -49,7 +55,7 @@ namespace ProcessControl.Building
                 OnBuildModeChanged?.Invoke(buildMode);
             }
             
-            if (!buildMode || !selectedEntity || EventSystem.current.IsPointerOverGameObject()) return;
+            if (!buildMode || selectedMachine is null || EventSystem.current.IsPointerOverGameObject()) return;
             
 
             if (conveyorMode)
@@ -60,9 +66,9 @@ namespace ProcessControl.Building
                     if (firstCell is null) Debug.Log("NO CELL FOUND!");
                     else
                     {
-                        firstEntity = (firstCell.occupied) ? firstCell.entity : BuildEntity(firstCell);
-                        firstCell.entity = firstEntity;
-                        firstEntity.cell = firstCell;
+                        firstMachine = (firstCell.occupied) ? firstCell.machine : BuildMachine(firstCell);
+                        firstCell.machine = firstMachine;
+                        firstMachine.cell = firstCell;
                     }
                 }
 
@@ -72,27 +78,40 @@ namespace ProcessControl.Building
                     if (secondCell is null) Debug.Log("NO CELL FOUND!");
                     else
                     {
-                        secondEntity = (secondCell.occupied) ? secondCell.entity : BuildEntity(secondCell);
-                        secondCell.entity = secondEntity;
-                        secondEntity.cell = secondCell;
-
-                        var firstMachine = firstEntity.GetComponent<Machine>();
-                        var secondMachine = secondEntity.GetComponent<Machine>();
+                        secondMachine = (secondCell.occupied) ? secondCell.machine : BuildMachine(secondCell);
+                        secondCell.machine = secondMachine;
+                        secondMachine.cell = secondCell;
                         
-                        firstMachine.ConnectOutput(secondMachine.machine.input);
-                        secondMachine.ConnectInput(firstMachine.machine.output);
+                        if (firstMachine.Output) firstMachine.Output.Delete();
+                        if (secondMachine.Input) secondMachine.Input.Delete();
+                        
+                        var conveyor = Factory.Spawn("Edges", selectedConveyor, Node.Center(firstMachine, secondMachine));
+
+                        firstMachine.ConnectOutput(conveyor);
+                        conveyor.ConnectInput(firstMachine);
+                        conveyor.ConnectOutput(secondMachine);
+                        secondMachine.ConnectInput(conveyor);
                     }
                 }
             }
             else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                var firstCell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
+                var firstCell = Grid.GetCellUnderMouse();
                 if (firstCell is null) Debug.Log("NO CELL FOUND!");
                 else
                 {
-                    firstEntity = (firstCell.occupied) ? firstCell.entity.gameObject.GetComponent<Machine>() : BuildEntity(firstCell);
-                    firstCell.entity = firstEntity;
-                    firstEntity.cell = firstCell;
+                    firstMachine = (firstCell.occupied) ? firstCell.machine: BuildMachine(firstCell);
+                    firstCell.machine = firstMachine;
+                    firstMachine.cell = firstCell;
+
+                    if (firstMachine is TransportNode)
+                    {
+                        var newMachine = BuildMachine(firstCell);
+                        newMachine.ConnectOutput(firstMachine.Output);
+                        firstMachine.Output.ConnectInput(newMachine);
+                        Destroy(firstMachine);
+                        
+                    }
                 }
             }
 
@@ -103,7 +122,7 @@ namespace ProcessControl.Building
                 else
                 if (cell.occupied)
                 {
-                    cell.entity.Delete();
+                    cell.machine.Delete();
                 }
             }
 

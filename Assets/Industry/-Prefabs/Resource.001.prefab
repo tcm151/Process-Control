@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data:
-    color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    ticks: 0
+    color: {r: 0.9150943, g: 0.744072, b: 0.11654504, a: 1}
     position: {x: 0, y: 0, z: 0}
-    coordinates: {x: 0, y: 0}

@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace ProcessControl.Tools.Editor
+namespace ProcessControl.Tools
 {
     public class RequireInterfaceAttribute : PropertyAttribute
     {
