@@ -8,7 +8,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 654775231712836660}
+  - component: {fileID: 309216862600787050}
   - component: {fileID: 654775231712836663}
   - component: {fileID: 3544268022991761394}
   m_Layer: 0
@@ -18,7 +18,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &654775231712836660
+--- !u!4 &309216862600787050
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -39,7 +39,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 654775231712836657}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -71,13 +71,13 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
-  m_Color: {r: 0.18609823, g: 0.71794635, b: 0.7735849, a: 1}
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 6588283335923157485, guid: f2a2a85cbb73e2941ad9eb4b11f97f0f, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 0.2, y: 0.2}
+  m_DrawMode: 2
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -95,10 +95,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 104160210eb62dd4b88a0b5099234f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cell:
-    machine: {fileID: 0}
-    coordinates: {x: 0, y: 0}
-    center: {x: 0, y: 0, z: 0}
   edgeData:
     input: {fileID: 0}
     output: {fileID: 0}
@@ -106,7 +102,7 @@ MonoBehaviour:
     sleeping: 0
     ticks: 0
     sleepThreshold: 256
-    itemsPerSecond: 4
+    itemsPerSecond: 2
     input: {fileID: 0}
     output: {fileID: 0}
     distanceBetweenIO: 0

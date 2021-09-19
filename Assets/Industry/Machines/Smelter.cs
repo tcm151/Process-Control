@@ -11,20 +11,26 @@ namespace ProcessControl.Machines
         override protected void FixedUpdate()
         {
             base.FixedUpdate();
-
+            
             if (++machine.ticks % (TicksPerSecond *  smeltingSpeed) == 0)
             {
+                if (Empty) return;
+                
                 machine.ticks = 0;
                 var newResource = Smelt(machine.inventory.TakeFirst());
 
-                Destroy(newResource.gameObject);
+                newResource.SetVisible(true);
+                machine.currentOutput.Deposit(newResource);
                 Debug.Log("SMELTED RESOURCE!");
             }
         }
 
         private Resource Smelt(Resource resource)
         {
+            resource.SetColor(Color.red);
             return resource;
         }
+
+        override public Resource Withdraw() => null;
     }
 }

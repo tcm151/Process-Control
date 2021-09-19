@@ -30,7 +30,9 @@ namespace ProcessControl.Machines
             public int inventorySize = 8;
             public List<Resource> inventory = new List<Resource>();
         }
-        [SerializeField] private Data conveyor;
+        [SerializeField] internal Data conveyor;
+
+        new private SpriteRenderer renderer;
 
         //> IO INTERFACE
         public Machine Input => conveyor.input;
@@ -44,7 +46,7 @@ namespace ProcessControl.Machines
         public int InventorySize { get
         {
             if (conveyor.input is null || conveyor.output is null) return 0;
-            return (int) Node.DistanceBetween(conveyor.input, conveyor.output);
+            return Mathf.CeilToInt(conveyor.distanceBetweenIO) * 2;
         }}
 
         //> ADD AND REMOVE RESOURCES
@@ -68,8 +70,18 @@ namespace ProcessControl.Machines
         //> EVENTS
         public event Action onConnection;
 
+        public void SetLength(float size)
+        {
+            renderer.size = new Vector2(size, 1);
+        }
+        
         //> EVENT REGISTRATION
-        private void Awake() => onConnection += ManageConnection;
+        private void Awake()
+        {
+            renderer = GetComponent<SpriteRenderer>();
+            onConnection += ManageConnection;
+        }
+
         private void ManageConnection()
         {
             if (conveyor.input is null || conveyor.output is null) conveyor.distanceBetweenIO = 0;
@@ -78,8 +90,8 @@ namespace ProcessControl.Machines
 
         override public void Delete()
         {
-            conveyor.input.machine.output = null;
-            conveyor.output.machine.input = null;
+            conveyor.input.DisconnectOutput(this);
+            conveyor.output.DisconnectInput(this);
             conveyor.inventory.ForEach(Destroy);
             Destroy(this.gameObject);
         }
@@ -91,12 +103,17 @@ namespace ProcessControl.Machines
             // if (conveyor.ticks >= conveyor.sleepThreshold) conveyor.sleeping = true;
             
             //> EVERY INTERVAL PULL FROM INPUT IF CAPABLE
-            if (++conveyor.ticks % (TicksPerSecond / conveyor.itemsPerSecond) == 0)
+            if (++conveyor.ticks > (TicksPerSecond / (conveyor.itemsPerSecond * 2)))
             {
                 if (!Full && !conveyor.input.Empty)
                 {
-                    conveyor.ticks = 0;
-                    Deposit(conveyor.input.Withdraw());
+                    // if (conveyor.input is Merger) return;
+                    if (!conveyor.input.Empty)
+                    {
+                        conveyor.ticks = 0;
+                        var resource = conveyor.input.Withdraw();
+                        if (resource is { }) Deposit(resource);
+                    }
                 }
             }
 
@@ -115,22 +132,23 @@ namespace ProcessControl.Machines
 
 
             if (Empty) return;
-            if (conveyor.inventory[0].data.ticks > (int)conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerSecond)
+            if (conveyor.inventory[0].data.ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerSecond)
             {
                 if (conveyor.output && !conveyor.output.Full && conveyor.inventory.Count >= 1)
                 {
+                    if (conveyor.output.machine.currentInput != this) return;
                     conveyor.inventory[0].data.ticks = 0;
                     conveyor.output.Deposit(Withdraw());
                 }
             }
         }
 
-        private void OnDrawGizmos()
-        {
-            if (!conveyor.input || !conveyor.output) return;
-            
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(conveyor.input.Position, conveyor.output.Position);
-        }
+        // private void OnDrawGizmos()
+        // {
+        //     if (!conveyor.input || !conveyor.output) return;
+        //     
+        //     Gizmos.color = Color.green;
+        //     Gizmos.DrawLine(conveyor.input.Position, conveyor.output.Position);
+        // }
     }
 }

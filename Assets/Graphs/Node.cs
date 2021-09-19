@@ -15,7 +15,7 @@ namespace ProcessControl.Graphs
             public Grid.Cell cell;
             public List<Edge> edges = new List<Edge>();
         }
-        [SerializeField] private Data node;
+        [SerializeField] internal Data node;
 
         //> EVENTS
         virtual public event Action onConnectEdge;
@@ -42,7 +42,7 @@ namespace ProcessControl.Graphs
         override public void Delete()
         {
             node.edges.ForEach(e => e.Delete());
-            // node.cell.machine = null;
+            node.cell.machine = null;
             Destroy(this.gameObject);
         }
 

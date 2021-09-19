@@ -109,12 +109,15 @@ MonoBehaviour:
     sleeping: 0
     ticks: 0
     sleepThreshold: 256
-    itemsPerSecond: 8
     inputEnabled: 0
-    input: {fileID: 0}
+    maxInputs: 0
+    currentInput: {fileID: 0}
+    inputs: []
+    maxOutputs: 1
+    currentOutput: {fileID: 0}
+    outputs: []
     outputEnabled: 1
-    output: {fileID: 0}
     inventorySize: 8
     inventory: []
   extractionResource: {fileID: 22261911864309029, guid: 914bc23ef0401f646895763d6f11a3b7, type: 3}
-  extractionSpeed: 1
+  extractionSpeed: 0.5

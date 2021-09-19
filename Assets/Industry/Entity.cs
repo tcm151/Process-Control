@@ -6,7 +6,7 @@ namespace ProcessControl.Machines
 {
     abstract public class Entity : MonoBehaviour
     {
-        public Grid.Cell cell;
+        // public Grid.Cell cell;
 
         abstract public void Delete();
     }

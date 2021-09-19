@@ -27,7 +27,7 @@ namespace ProcessControl.Building
         //> EVENT SUBSCRIPTIONS
         public static Action<bool> OnBuildModeChanged;
         
-        private Machine firstMachine, secondMachine;
+        public Machine firstMachine, secondMachine;
         private Machine previousMachine;
         
         private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
@@ -60,16 +60,24 @@ namespace ProcessControl.Building
 
             if (conveyorMode)
             {
+                
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
+                    firstMachine = secondMachine = null;
+                    
                     var firstCell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
-                    if (firstCell is null) Debug.Log("NO CELL FOUND!");
-                    else
+                    if (firstCell is null)
                     {
-                        firstMachine = (firstCell.occupied) ? firstCell.machine : BuildMachine(firstCell);
-                        firstCell.machine = firstMachine;
-                        firstMachine.cell = firstCell;
+                        Debug.Log("NO CELL FOUND!");
+                        return;
                     }
+                    
+                    if (!firstCell.occupied)
+                    {
+                        firstMachine = firstCell.machine = BuildMachine(firstCell);
+                        firstMachine.node.cell = firstCell;
+                    }
+                    else firstMachine = firstCell.machine;
                 }
 
                 if (Input.GetKeyUp(KeyCode.Mouse0))
@@ -78,12 +86,15 @@ namespace ProcessControl.Building
                     if (secondCell is null) Debug.Log("NO CELL FOUND!");
                     else
                     {
-                        secondMachine = (secondCell.occupied) ? secondCell.machine : BuildMachine(secondCell);
-                        secondCell.machine = secondMachine;
-                        secondMachine.cell = secondCell;
+                        if (!secondCell.occupied)
+                        {
+                            secondMachine = secondCell.machine = BuildMachine(secondCell);
+                            secondMachine.node.cell = secondCell;
+                        }
+                        else secondMachine = secondCell.machine;
                         
-                        if (firstMachine.Output) firstMachine.Output.Delete();
-                        if (secondMachine.Input) secondMachine.Input.Delete();
+                        if (!firstMachine.AvailableOutput) return;
+                        if (!secondMachine.AvailableInput) return;
                         
                         var conveyor = Factory.Spawn("Edges", selectedConveyor, Node.Center(firstMachine, secondMachine));
 
@@ -91,6 +102,11 @@ namespace ProcessControl.Building
                         conveyor.ConnectInput(firstMachine);
                         conveyor.ConnectOutput(secondMachine);
                         secondMachine.ConnectInput(conveyor);
+                        
+                        conveyor.SetLength(conveyor.conveyor.distanceBetweenIO);
+                        var direction = conveyor.conveyor.input.DirectionTo(conveyor.conveyor.output);
+                        var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                        conveyor.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
                     }
                 }
             }
@@ -102,9 +118,9 @@ namespace ProcessControl.Building
                 {
                     firstMachine = (firstCell.occupied) ? firstCell.machine: BuildMachine(firstCell);
                     firstCell.machine = firstMachine;
-                    firstMachine.cell = firstCell;
+                    firstMachine.node.cell = firstCell;
 
-                    if (firstMachine is TransportNode)
+                    if (firstMachine is Merger || firstMachine is Splitter)
                     {
                         var newMachine = BuildMachine(firstCell);
                         newMachine.ConnectOutput(firstMachine.Output);
@@ -123,9 +139,9 @@ namespace ProcessControl.Building
                 if (cell.occupied)
                 {
                     cell.machine.Delete();
+                    cell.machine = null;
                 }
             }
-
         }
 
 

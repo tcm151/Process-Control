@@ -27,8 +27,8 @@
 //         virtual public Conveyor Input => transportNode.inputs[0];
 //         virtual public Conveyor Output => transportNode.outputs[0];
 //
-//         virtual public void ConnectInput(Conveyor input) => transportNode.inputs[0] = input;
-//         virtual public void ConnectOutput(Conveyor output) => transportNode.outputs[0] = output;
+//         virtual public void ConnectInput(Conveyor inputs) => transportNode.inputs[0] = inputs;
+//         virtual public void ConnectOutput(Conveyor outputs) => transportNode.outputs[0] = outputs;
 //
 //         virtual public void Deposit(Resource resource) => transportNode.outputs[0].Deposit(resource);
 //         virtual public Resource Withdraw() => transportNode.inputs[0].Withdraw();

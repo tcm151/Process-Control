@@ -4,10 +4,10 @@
 //     {
 //         override public Conveyor Output => nextOutput;
 //
-//         override public void ConnectOutput(Conveyor output)
+//         override public void ConnectOutput(Conveyor outputs)
 //         {
-//             if (transportNode.outputs.Contains(output)) return;
-//             transportNode.outputs.Add(output);
+//             if (transportNode.outputs.Contains(outputs)) return;
+//             transportNode.outputs.Add(outputs);
 //         }
 //
 //         override public void Deposit(Resource resource)

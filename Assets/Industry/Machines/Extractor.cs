@@ -19,10 +19,10 @@ namespace ProcessControl.Machines
                 
                 machine.ticks = 0;
                 if (!Full) Deposit(Extract());
-                // else if (!machine.output.Full)
+                // else if (!machine.outputs.Full)
                 {
-                    // if (machine.inventory.Count >= 0) machine.output.Deposit(Withdraw());
-                    // machine.output.Deposit(Extract());
+                    // if (machine.inventory.Count >= 0) machine.outputs.Deposit(Withdraw());
+                    // machine.outputs.Deposit(Extract());
                 }
             }
         }
