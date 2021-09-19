@@ -7,7 +7,7 @@ using Grid = ProcessControl.Terrain.Grid;
 
 namespace ProcessControl.Graphs
 {
-    abstract public class Node : Entity
+    abstract public class Node : MonoBehaviour
     {
         //> NODE DATA CONTAINER
         [Serializable] public class Data
@@ -18,16 +18,11 @@ namespace ProcessControl.Graphs
         [SerializeField] internal Data node;
 
         //> EVENTS
-        virtual public event Action onConnectEdge;
-        virtual public event Action onDisconnectEdge;
+        public event Action onConnectEdge;
+        public event Action onDisconnectEdge;
         
-        //> PROPERTIES
-        // abstract public bool Full {get;}
-        // abstract public bool Empty {get;}
-        // abstract public int InventorySize {get;}
-        
-        virtual public Vector3 Position => transform.position;
-        virtual public Vector2Int Coordinates => node.cell.coordinates;
+        public Vector3 Position => transform.position;
+        public Vector2Int Coordinates => node.cell.coordinates;
         
         //> DISTANCE BETWEEN NODES
         public float DistanceTo(Node otherNode) => Vector3.Distance(this.Position, otherNode.Position);
@@ -39,11 +34,12 @@ namespace ProcessControl.Graphs
         public static float DistanceBetween(Node first, Node second) => Vector3.Distance(first.Position, second.Position);
 
         //> DELETE THIS NODE AND REMOVE ALL CONNECTIONS
-        override public void Delete()
+        virtual public void Delete()
         {
             node.edges.ForEach(e => e.Delete());
+            // node.edges.ForEach(e => Destroy(e.gameObject));
             node.cell.machine = null;
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
 
         //> ADD A NEW NODE CONNECTION

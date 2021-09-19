@@ -72,8 +72,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  m_Color: {r: 0.2924528, g: 0.25701568, b: 0.24141152, a: 1}
+  m_Sprite: {fileID: -2808570897712881798, guid: e1b96e2e605b4e74c874ce85887f49bb, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -109,10 +109,10 @@ MonoBehaviour:
     maxInputs: 0
     currentInput: {fileID: 0}
     inputs: []
+    outputEnabled: 1
     maxOutputs: 1
     currentOutput: {fileID: 0}
     outputs: []
-    outputEnabled: 1
     inventorySize: 8
     inventory: []
   extractionResource: {fileID: 22261911864309029, guid: 914bc23ef0401f646895763d6f11a3b7, type: 3}

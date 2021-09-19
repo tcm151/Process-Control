@@ -1,10 +1,11 @@
 ﻿using System;
 using ProcessControl.Machines;
+using UnityEngine;
 
 
 namespace ProcessControl.Graphs
 {
-    abstract public class Edge : Entity
+    abstract public class Edge : MonoBehaviour
     {
         [Serializable]
         public class Data
@@ -12,15 +13,14 @@ namespace ProcessControl.Graphs
             public Node input;
             public Node output;
         }
-        public Data edgeData;
-        
-        // abstract public bool Full {get;}
-        // abstract public bool Empty {get;}
-        // abstract public int InventorySize {get;}
+        [SerializeField] internal Data edgeData;
 
-        override public void Delete()
+        abstract public void Delete();
+
+        virtual public float Length { get
         {
-            
-        }
+            if (!edgeData.input || !edgeData.output) return 0;
+            return Node.DistanceBetween(edgeData.input, edgeData.output);
+        }}
     }
 }

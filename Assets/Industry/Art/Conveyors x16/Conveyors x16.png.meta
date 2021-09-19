@@ -11,6 +11,27 @@ TextureImporter:
   - first:
       213: -2533361773689413135
     second: Conveyors x16_1
+  - first:
+      213: -6919413584853850436
+    second: Conveyors x16_2
+  - first:
+      213: -4442196067550351069
+    second: Conveyors x16_3
+  - first:
+      213: -2808570897712881798
+    second: Conveyors x16_4
+  - first:
+      213: -5904540239442260017
+    second: Conveyors x16_5
+  - first:
+      213: 768385212980806013
+    second: Conveyors x16_6
+  - first:
+      213: -4146445779694950509
+    second: Conveyors x16_7
+  - first:
+      213: 895073385530684001
+    second: Conveyors x16_8
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -137,6 +158,153 @@ TextureImporter:
       bones: []
       spriteID: 1f160bf93e0b7dcd0800000000000000
       internalID: -2533361773689413135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Conveyors x16_2
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 33
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb626c4510e49ff90800000000000000
+      internalID: -6919413584853850436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Conveyors x16_3
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 17
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 321360b56362a52c0800000000000000
+      internalID: -4442196067550351069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Conveyors x16_4
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 17
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7fd25326a3f509d0800000000000000
+      internalID: -2808570897712881798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Conveyors x16_5
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 17
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fcf4b029febde0ea0800000000000000
+      internalID: -5904540239442260017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Conveyors x16_6
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d714266b74ad9aa00800000000000000
+      internalID: 768385212980806013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Conveyors x16_7
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 1
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3976ddc388dd476c0800000000000000
+      internalID: -4146445779694950509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Conveyors x16_8
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 1
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16276787080fb6c00800000000000000
+      internalID: 895073385530684001
       vertices: []
       indices: 
       edges: []

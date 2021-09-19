@@ -23,17 +23,22 @@ namespace ProcessControl.Machines
             public int maxInputs = 1;
             public Conveyor currentInput;
             public List<Conveyor> inputs = new List<Conveyor>();
+            // public int inputInventorySize = 8;
+            // public List<Resource> inputInventory = new List<Resource>();
             
             [Header("Output")]
+            public bool outputEnabled = true;
             public int maxOutputs = 1;
             public Conveyor currentOutput;
             public List<Conveyor> outputs = new List<Conveyor>();
-            public bool outputEnabled = true;
+            // public int outputInventorySize = 8;
+            // public List<Resource> outputInventory = new List<Resource>();
            
+            [Header("Inventory")]
             public int inventorySize = 8;
             public List<Resource> inventory = new List<Resource>();
         }
-        [SerializeField] public Data machine;
+        [SerializeField] internal Data machine;
 
         public bool AvailableInput => machine.inputs is { } && machine.inputs.Count < machine.maxInputs;
         public bool AvailableOutput => machine.outputs is { } && machine.outputs.Count < machine.maxOutputs;
@@ -47,10 +52,14 @@ namespace ProcessControl.Machines
         virtual public bool Empty => machine.inventory.Count == 0;
         virtual public int InventorySize => machine.inventorySize;
 
+        //> DESTORY AND CLEANUP MACHINE
         override public void Delete()
         {
-            machine.inventory.ForEach(Destroy);
-            base.Delete();
+            machine.inventory.ForEach(r => Destroy(r.gameObject));
+            machine.inputs.ForEach(i => i.Delete());
+            machine.outputs.ForEach(o => o.Delete());
+            Destroy(gameObject);
+            // base.Delete();
         }
 
         //> CONNECT INPUT
@@ -73,7 +82,6 @@ namespace ProcessControl.Machines
         {
             if (!DisconnectEdge(input)) return;
             machine.inputs.Remove(input);
-            machine.currentInput = machine.inputs[0];
             machine.currentInput = (machine.inputs.Count >= 1) ? machine.inputs[0] : null;
         }
 

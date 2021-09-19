@@ -11,7 +11,6 @@ namespace ProcessControl.Machines
     {
         private const int TicksPerSecond = 64;
         
-
         //> CONVEYOR DATA CONTAINER
         [Serializable] new public class Data
         {
@@ -33,6 +32,7 @@ namespace ProcessControl.Machines
         [SerializeField] internal Data conveyor;
 
         new private SpriteRenderer renderer;
+        public void SetLength(float size) => renderer.size = new Vector2(size, 1);
 
         //> IO INTERFACE
         public Machine Input => conveyor.input;
@@ -52,6 +52,9 @@ namespace ProcessControl.Machines
         //> ADD AND REMOVE RESOURCES
         public void Deposit(Resource resource) => conveyor.inventory.Add(resource);
         public Resource Withdraw() => conveyor.inventory.TakeFirst();
+        
+        //> EVENTS
+        public event Action onConnection;
 
         //> CONNECT INPUT
         public void ConnectInput(Machine input)
@@ -66,34 +69,29 @@ namespace ProcessControl.Machines
             conveyor.output = output;
             onConnection?.Invoke();
         }
-        
-        //> EVENTS
-        public event Action onConnection;
 
-        public void SetLength(float size)
-        {
-            renderer.size = new Vector2(size, 1);
-        }
-        
-        //> EVENT REGISTRATION
+
+        //> INITIALIZATION
         private void Awake()
         {
             renderer = GetComponent<SpriteRenderer>();
             onConnection += ManageConnection;
         }
 
+        //> MODIFY PROPERTIES ON CONNECTION
         private void ManageConnection()
         {
             if (conveyor.input is null || conveyor.output is null) conveyor.distanceBetweenIO = 0;
             else conveyor.distanceBetweenIO = Node.DistanceBetween(conveyor.input, conveyor.output);
         }
 
+        //> DELETE CONVEYOR AND CLEAN UP
         override public void Delete()
         {
             conveyor.input.DisconnectOutput(this);
             conveyor.output.DisconnectInput(this);
-            conveyor.inventory.ForEach(Destroy);
-            Destroy(this.gameObject);
+            conveyor.inventory.ForEach(r => Destroy(r.gameObject));
+            // Destroy(this.gameObject);
         }
 
         //> FIXED CALCULATION INTERVAL
@@ -107,13 +105,9 @@ namespace ProcessControl.Machines
             {
                 if (!Full && !conveyor.input.Empty)
                 {
-                    // if (conveyor.input is Merger) return;
-                    if (!conveyor.input.Empty)
-                    {
-                        conveyor.ticks = 0;
-                        var resource = conveyor.input.Withdraw();
-                        if (resource is { }) Deposit(resource);
-                    }
+                    conveyor.ticks = 0;
+                    var resource = conveyor.input.Withdraw();
+                    if (resource is { }) Deposit(resource);
                 }
             }
 
@@ -122,15 +116,14 @@ namespace ProcessControl.Machines
             {
                 var resource = conveyor.inventory[i];
                 resource.data.ticks++;
-
-                // float percentage = resource.data.ticks / (conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerSecond);
                 
-                float indexPercentage = (InventorySize - i) / (float) InventorySize;
-                var indexPosition = conveyor.input.Position + conveyor.input.DirectionTo(conveyor.output) * (conveyor.distanceBetweenIO * indexPercentage);
+                var indexPercentage = conveyor.distanceBetweenIO * ((InventorySize - i) / (float) InventorySize);
+                var indexPosition = conveyor.input.Position + conveyor.input.DirectionTo(conveyor.output) * indexPercentage;
                 resource.data.position.MoveTowards(indexPosition, (float) conveyor.itemsPerSecond / TicksPerSecond);
             }
 
 
+            //> DEPOSIT FIRST ITEM IN INVENTORY
             if (Empty) return;
             if (conveyor.inventory[0].data.ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerSecond)
             {
@@ -142,13 +135,5 @@ namespace ProcessControl.Machines
                 }
             }
         }
-
-        // private void OnDrawGizmos()
-        // {
-        //     if (!conveyor.input || !conveyor.output) return;
-        //     
-        //     Gizmos.color = Color.green;
-        //     Gizmos.DrawLine(conveyor.input.Position, conveyor.output.Position);
-        // }
     }
 }
