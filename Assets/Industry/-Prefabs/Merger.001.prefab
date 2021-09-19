@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8048061789666288426}
   - component: {fileID: 7381412377905023814}
   m_Layer: 0
-  m_Name: Merger
+  m_Name: Merger.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,7 +71,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 0.18609823, g: 0.71794635, b: 0.7735849, a: 1}
   m_FlipX: 0
@@ -95,10 +95,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff702c06bf554795870096df8b2f10c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cell:
-    machine: {fileID: 0}
-    coordinates: {x: 0, y: 0}
-    center: {x: 0, y: 0, z: 0}
   node:
     cell:
       machine: {fileID: 0}
@@ -113,7 +109,9 @@ MonoBehaviour:
     maxInputs: 3
     currentInput: {fileID: 0}
     inputs: []
-    output: {fileID: 0}
+    maxOutputs: 1
+    currentOutput: {fileID: 0}
+    outputs: []
     outputEnabled: 1
     inventorySize: 2
     inventory: []
