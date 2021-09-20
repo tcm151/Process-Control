@@ -138,7 +138,7 @@ namespace ProcessControl.Building
                 else
                 if (cell.occupied)
                 {
-                    cell.machine.Delete();
+                    Destroy(cell.machine);
                     cell.machine = null;
                 }
             }

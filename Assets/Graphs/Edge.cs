@@ -15,8 +15,8 @@ namespace ProcessControl.Graphs
         }
         [SerializeField] internal Data edgeData;
 
-        abstract public void Delete();
-
+        abstract public void OnDestroy();
+        
         virtual public float Length { get
         {
             if (!edgeData.input || !edgeData.output) return 0;

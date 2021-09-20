@@ -34,10 +34,10 @@ namespace ProcessControl.Graphs
         public static float DistanceBetween(Node first, Node second) => Vector3.Distance(first.Position, second.Position);
 
         //> DELETE THIS NODE AND REMOVE ALL CONNECTIONS
-        virtual public void Delete()
+        virtual public void OnDestroy()
         {
-            node.edges.ForEach(e => e.Delete());
-            // node.edges.ForEach(e => Destroy(e.gameObject));
+            node.edges.ForEach(Destroy);
+            node.edges.Clear();
             node.cell.machine = null;
             Destroy(gameObject);
         }

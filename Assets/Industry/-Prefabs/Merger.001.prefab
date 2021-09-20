@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8048061789666288425}
   - component: {fileID: 8048061789666288426}
-  - component: {fileID: 7381412377905023814}
+  - component: {fileID: 308910016581926823}
   m_Layer: 0
   m_Name: Merger.001
   m_TagString: Untagged
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7381412377905023814
+--- !u!114 &308910016581926823
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8048061789666288428}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff702c06bf554795870096df8b2f10c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 05bd1899a6084a6b82f5d5aea70c3986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   node:
@@ -109,9 +109,9 @@ MonoBehaviour:
     maxInputs: 3
     currentInput: {fileID: 0}
     inputs: []
+    outputEnabled: 1
     maxOutputs: 1
     currentOutput: {fileID: 0}
     outputs: []
-    outputEnabled: 1
-    inventorySize: 2
+    inventorySize: 8
     inventory: []

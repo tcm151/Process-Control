@@ -11,10 +11,8 @@ namespace ProcessControl.Machines
         override public void Deposit(Resource resource)
         {
             resource.data.position = Position;
-            // if (machine.outputs is {} && !machine.outputs.Full) machine.outputs.Deposit(resource);
             machine.inventory.Add(resource);
             NextInput();
-            // machine.outputs.Deposit(Withdraw());
         }
 
         override public Resource Withdraw() => machine.inventory.TakeFirst();

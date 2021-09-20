@@ -86,12 +86,12 @@ namespace ProcessControl.Machines
         }
 
         //> DELETE CONVEYOR AND CLEAN UP
-        override public void Delete()
+        override public void OnDestroy()
         {
             conveyor.input.DisconnectOutput(this);
             conveyor.output.DisconnectInput(this);
-            conveyor.inventory.ForEach(r => Destroy(r.gameObject));
-            // Destroy(this.gameObject);
+            conveyor.inventory.ForEach(Destroy);
+            Destroy(gameObject);
         }
 
         //> FIXED CALCULATION INTERVAL

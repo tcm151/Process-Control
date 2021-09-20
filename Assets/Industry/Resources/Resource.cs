@@ -30,10 +30,9 @@ namespace ProcessControl.Machines
 
         private void FixedUpdate() => transform.position = data.position;
 
-        // public void OnDrawGizmos()
-        // {
-        //     Gizmos.color = data.color;
-        //     Gizmos.DrawCube(data.position, 0.25f * Vector3.one);
-        // }
+        public void OnDestroy()
+        {
+            Destroy(gameObject);
+        }
     }
 }

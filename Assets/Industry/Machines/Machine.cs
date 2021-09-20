@@ -53,11 +53,11 @@ namespace ProcessControl.Machines
         virtual public int InventorySize => machine.inventorySize;
 
         //> DESTORY AND CLEANUP MACHINE
-        override public void Delete()
+        override public void OnDestroy()
         {
-            machine.inventory.ForEach(r => Destroy(r.gameObject));
-            machine.inputs.ForEach(i => i.Delete());
-            machine.outputs.ForEach(o => o.Delete());
+            machine.inputs.ForEach(Destroy);
+            machine.outputs.ForEach(Destroy);
+            machine.inventory.ForEach(Destroy);
             Destroy(gameObject);
             // base.Delete();
         }
@@ -82,14 +82,14 @@ namespace ProcessControl.Machines
         {
             if (!DisconnectEdge(input)) return;
             machine.inputs.Remove(input);
-            machine.currentInput = (machine.inputs.Count >= 1) ? machine.inputs[0] : null;
+            // machine.currentInput = (machine.inputs.Count >= 1) ? machine.inputs[0] : null;
         }
 
         virtual public void DisconnectOutput(Conveyor output)
         {
             if (!DisconnectEdge(output)) return;
             machine.outputs.Remove(output);
-            machine.currentOutput = (machine.inputs.Count >= 1) ? machine.outputs[0] : null;
+            // machine.currentOutput = (machine.inputs.Count >= 1) ? machine.outputs[0] : null;
         }
         
         //> DEPOSIT RESOURCE

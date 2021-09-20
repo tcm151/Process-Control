@@ -866,7 +866,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Conveyor
+  m_text: Splitter
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2588,7 +2588,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074bfb77af4d483fb4ec7db1a9b07f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machine: {fileID: 7381412377905023814, guid: 7a36556df2e1d0445aaac4b314153e4b, type: 3}
+  machine: {fileID: 308910016581926823, guid: 7a36556df2e1d0445aaac4b314153e4b, type: 3}
   conveyor: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
   isConveyor: 1
 --- !u!1 &2131971712
