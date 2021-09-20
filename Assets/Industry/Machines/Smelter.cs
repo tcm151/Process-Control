@@ -17,16 +17,24 @@ namespace ProcessControl.Machines
                 if (Empty) return;
                 
                 machine.ticks = 0;
-                var newResource = Smelt(machine.inventory.TakeFirst());
+                var newResource = Smelt(machine.inputInventory.TakeFirst());
 
-                newResource.SetVisible(true);
-                machine.currentOutput.Deposit(newResource);
-                Debug.Log("SMELTED RESOURCE!");
+
+                if (!machine.currentOutput || machine.currentOutput.Full)
+                {
+                    machine.outputInventory.Add(newResource);
+                }
+                else
+                {
+                    newResource.SetVisible(true);
+                    machine.currentOutput.Deposit(newResource);
+                }
             }
         }
 
         private Resource Smelt(Resource resource)
         {
+            // Debug.Log("SMELTED RESOURCE!");
             resource.SetColor(Color.red);
             return resource;
         }

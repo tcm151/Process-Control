@@ -22,5 +22,10 @@ namespace ProcessControl.Graphs
             if (!edgeData.input || !edgeData.output) return 0;
             return Node.DistanceBetween(edgeData.input, edgeData.output);
         }}
+
+        public void ConnectNode(Node newNode)
+        {
+            
+        }
     }
 }

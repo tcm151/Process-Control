@@ -7,7 +7,8 @@ using UnityEngine;
 
 namespace ProcessControl.Machines
 {
-    public class Conveyor : Edge, IO<Machine>
+    [SelectionBase]
+    public class Conveyor : Edge, IInput, IOutput
     {
         private const int TicksPerSecond = 64;
         
@@ -35,8 +36,8 @@ namespace ProcessControl.Machines
         public void SetLength(float size) => renderer.size = new Vector2(size, 1);
 
         //> IO INTERFACE
-        public Machine Input => conveyor.input;
-        public Machine Output => conveyor.output;
+        public IInput Input => conveyor.input;
+        public IOutput Output => conveyor.output;
         
         //> PROPERTIES
         public bool Full => conveyor.inventory.Count >= InventorySize;
@@ -57,16 +58,16 @@ namespace ProcessControl.Machines
         public event Action onConnection;
 
         //> CONNECT INPUT
-        public void ConnectInput(Machine input)
+        public void ConnectInput(IInput input)
         {
-            conveyor.input = input;
+            conveyor.input = input as Machine;
             onConnection?.Invoke();
         }
 
         //> CONNECT OUTPUT
-        public void ConnectOutput(Machine output)
+        public void ConnectOutput(IOutput output)
         {
-            conveyor.output = output;
+            conveyor.output = output as Machine;
             onConnection?.Invoke();
         }
 
@@ -83,15 +84,6 @@ namespace ProcessControl.Machines
         {
             if (conveyor.input is null || conveyor.output is null) conveyor.distanceBetweenIO = 0;
             else conveyor.distanceBetweenIO = Node.DistanceBetween(conveyor.input, conveyor.output);
-        }
-
-        //> DELETE CONVEYOR AND CLEAN UP
-        override public void OnDestroy()
-        {
-            conveyor.input.DisconnectOutput(this);
-            conveyor.output.DisconnectInput(this);
-            conveyor.inventory.ForEach(Destroy);
-            Destroy(gameObject);
         }
 
         //> FIXED CALCULATION INTERVAL
@@ -134,6 +126,15 @@ namespace ProcessControl.Machines
                     conveyor.output.Deposit(Withdraw());
                 }
             }
+        }
+        
+        //> DELETE CONVEYOR AND CLEAN UP
+        override public void OnDestroy()
+        {
+            conveyor.input.DisconnectOutput(this);
+            conveyor.output.DisconnectInput(this);
+            conveyor.inventory.ForEach(Destroy);
+            Destroy(gameObject);
         }
     }
 }

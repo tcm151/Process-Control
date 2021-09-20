@@ -105,13 +105,14 @@ MonoBehaviour:
     sleeping: 0
     ticks: 0
     sleepThreshold: 256
+    inventorySize: 1
     inputEnabled: 1
     maxInputs: 3
     currentInput: {fileID: 0}
     inputs: []
+    inputInventory: []
     outputEnabled: 1
     maxOutputs: 1
     currentOutput: {fileID: 0}
     outputs: []
-    inventorySize: 8
-    inventory: []
+    outputInventory: []

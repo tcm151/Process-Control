@@ -14,12 +14,11 @@ namespace ProcessControl.Machines
             public Vector3 position;
         }
 
-        new private SpriteRenderer renderer;
-
         public Data data;
 
+        new private SpriteRenderer renderer;
+
         public void SetColor(Color newColor) => renderer.color = newColor;
-        
         public void SetVisible(bool visible) => renderer.enabled = visible;
 
         private void Awake()
@@ -30,9 +29,6 @@ namespace ProcessControl.Machines
 
         private void FixedUpdate() => transform.position = data.position;
 
-        public void OnDestroy()
-        {
-            Destroy(gameObject);
-        }
+        public void OnDestroy() => Destroy(gameObject);
     }
 }
