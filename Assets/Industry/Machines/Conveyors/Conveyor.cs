@@ -1,29 +1,32 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
-using UnityEngine;
+using ProcessControl.Industry.Machines;
+using ProcessControl.Industry.Resources;
 
 
-namespace ProcessControl.Machines
+namespace ProcessControl.Industry.Conveyors
 {
     [SelectionBase]
-    public class Conveyor : Edge, IInput, IOutput
+    public class Conveyor : Edge
     {
         private const int TicksPerSecond = 64;
         
         //> CONVEYOR DATA CONTAINER
-        [Serializable] new public class Data
+        [Serializable] public class Data
         {
             public bool sleeping;
             public int ticks;
             public int sleepThreshold = 256;
-            [Space(8)]
+            
+            [Header("Conveyor Speed")]
             public int itemsPerSecond = 8;
 
             [Header("IO")]
-            public Machine input;
-            public Machine output;
+            public Node input;
+            public Node output;
             public float distanceBetweenIO;
 
             [Header("Inventory")]
@@ -35,40 +38,40 @@ namespace ProcessControl.Machines
         new private SpriteRenderer renderer;
         public void SetLength(float size) => renderer.size = new Vector2(size, 1);
 
-        //> IO INTERFACE
-        public IInput Input => conveyor.input;
-        public IOutput Output => conveyor.output;
-        
-        //> PROPERTIES
-        public bool Full => conveyor.inventory.Count >= InventorySize;
-        public bool Empty => conveyor.inventory.Count == 0;
-
-        //> MAXIMUM INVENTORY ALLOWED
-        public int InventorySize { get
+        override public float Length { get
         {
             if (conveyor.input is null || conveyor.output is null) return 0;
-            return Mathf.CeilToInt(conveyor.distanceBetweenIO) * 2;
+            return Node.DistanceBetween(conveyor.input, conveyor.output);
         }}
 
         //> ADD AND REMOVE RESOURCES
-        public void Deposit(Resource resource) => conveyor.inventory.Add(resource);
-        public Resource Withdraw() => conveyor.inventory.TakeFirst();
+        override public bool CanDeposit => conveyor.inventory.Count < conveyor.inventorySize;
+        override public void Deposit(Resource resource) => conveyor.inventory.Add(resource);
+        override public bool CanWithdraw => conveyor.inventory.Count >= 1 && conveyor.inventory[0].data.ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerSecond;
+        override public Resource Withdraw() => conveyor.inventory.TakeFirst();
         
         //> EVENTS
         public event Action onConnection;
 
+        override public IO Input => conveyor.input;
+        override public IO Output => conveyor.output;
+
         //> CONNECT INPUT
-        public void ConnectInput(IInput input)
+        override public bool ConnectInput(IO input)
         {
-            conveyor.input = input as Machine;
+            if (conveyor.input == input as Node) return false;
+            conveyor.input = input as Node;
             onConnection?.Invoke();
+            return true;
         }
 
         //> CONNECT OUTPUT
-        public void ConnectOutput(IOutput output)
+        override public bool ConnectOutput(IO output)
         {
-            conveyor.output = output as Machine;
+            if (conveyor.output == output as Node) return false;
+            conveyor.output = output as Node;
             onConnection?.Invoke();
+            return true;
         }
 
 
@@ -84,6 +87,17 @@ namespace ProcessControl.Machines
         {
             if (conveyor.input is null || conveyor.output is null) conveyor.distanceBetweenIO = 0;
             else conveyor.distanceBetweenIO = Node.DistanceBetween(conveyor.input, conveyor.output);
+            
+            SetLength(conveyor.distanceBetweenIO);
+
+            if (conveyor.input is { } && conveyor.output is { })
+            {
+                var direction = conveyor.input.DirectionTo(conveyor.output);
+                var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            }
+            
+            conveyor.inventorySize = Mathf.CeilToInt(conveyor.distanceBetweenIO) * 2;
         }
 
         //> FIXED CALCULATION INTERVAL
@@ -95,7 +109,7 @@ namespace ProcessControl.Machines
             //> EVERY INTERVAL PULL FROM INPUT IF CAPABLE
             if (++conveyor.ticks > (TicksPerSecond / (conveyor.itemsPerSecond * 2)))
             {
-                if (!Full && !conveyor.input.Empty)
+                if (CanDeposit && conveyor.input.CanWithdraw && conveyor.input.Output as Conveyor == this)
                 {
                     conveyor.ticks = 0;
                     var resource = conveyor.input.Withdraw();
@@ -109,30 +123,26 @@ namespace ProcessControl.Machines
                 var resource = conveyor.inventory[i];
                 resource.data.ticks++;
                 
-                var indexPercentage = conveyor.distanceBetweenIO * ((InventorySize - i) / (float) InventorySize);
+                var indexPercentage = conveyor.distanceBetweenIO * ((conveyor.inventorySize - i) / (float) conveyor.inventorySize);
                 var indexPosition = conveyor.input.Position + conveyor.input.DirectionTo(conveyor.output) * indexPercentage;
                 resource.data.position.MoveTowards(indexPosition, (float) conveyor.itemsPerSecond / TicksPerSecond);
             }
 
 
-            //> DEPOSIT FIRST ITEM IN INVENTORY
-            if (Empty) return;
-            if (conveyor.inventory[0].data.ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerSecond)
+            //> DEPOSIT FIRST ITEM IN OUTPUT
+            if (!CanWithdraw || !conveyor.output.CanDeposit || !(conveyor.output.Input as Conveyor == this)) return;
             {
-                if (conveyor.output && !conveyor.output.Full && conveyor.inventory.Count >= 1)
-                {
-                    if (conveyor.output.machine.currentInput != this) return;
-                    conveyor.inventory[0].data.ticks = 0;
-                    conveyor.output.Deposit(Withdraw());
-                }
+                // if (conveyor.output.node.currentInput != this) return;
+                conveyor.inventory[0].data.ticks = 0;
+                conveyor.output.Deposit(Withdraw());
             }
         }
         
         //> DELETE CONVEYOR AND CLEAN UP
         override public void OnDestroy()
         {
-            conveyor.input.DisconnectOutput(this);
-            conveyor.output.DisconnectInput(this);
+            // conveyor.input.DisconnectOutput(this);
+            // conveyor.output.DisconnectInput(this);
             conveyor.inventory.ForEach(Destroy);
             Destroy(gameObject);
         }

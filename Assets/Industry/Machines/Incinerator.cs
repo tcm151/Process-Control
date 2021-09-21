@@ -1,4 +1,7 @@
-﻿namespace ProcessControl.Machines
+﻿using ProcessControl.Industry.Resources;
+
+
+namespace ProcessControl.Industry.Machines
 {
     class Incinerator : Machine
     {

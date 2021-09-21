@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace ProcessControl.Machines
+namespace ProcessControl.Industry.Resources
 {
     public class Resource : MonoBehaviour
     {

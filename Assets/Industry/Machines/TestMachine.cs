@@ -3,7 +3,8 @@
 // using UnityEngine;
 // using ProcessControl.Tools;
 // using ProcessControl.Graphs;
-// using ProcessControl.Machines;
+// using ProcessControl.Industry.Machines;
+// using ProcessControl.Industry.Resources;
 //
 // [SelectionBase]
 // public class TestMachine : Node, IInput, IOutput
@@ -37,32 +38,32 @@
 //         // public int outputInventorySize = 8;
 //         public List<Resource> outputInventory = new List<Resource>();
 //     }
-//     [SerializeField] internal Data machine;
+//     [SerializeField] internal Data node;
 //
-//     public bool AvailableInput => machine.inputs is { } && machine.inputs.Count < machine.maxInputs;
-//     public bool AvailableOutput => machine.outputs is { } && machine.outputs.Count < machine.maxOutputs;
+//     public bool AvailableInput => node.inputs is { } && node.inputs.Count < node.maxInputs;
+//     public bool AvailableOutput => node.outputs is { } && node.outputs.Count < node.maxOutputs;
 //     
 //     //> IO INTERFACE
-//     public IInput Input => machine.currentInput;
-//     public IOutput Output => machine.currentOutput;
+//     public IInput Input => node.currentInput;
+//     public IOutput Output => node.currentOutput;
 //     
 //     //> PROPERTIES
-//     virtual public bool InputFull => machine.inputInventory.Count >= machine.inventorySize;
-//     virtual public bool OutputFull => machine.outputInventory.Count >= machine.inventorySize;
-//     virtual public bool Full => machine.inputInventory.Count >= machine.inventorySize;
-//     virtual public bool InputEmpty => machine.inputInventory.Count == 0;
-//     virtual public bool OutputEmpty => machine.outputInventory.Count == 0;
-//     virtual public bool Empty => machine.outputInventory.Count == 0;
-//     virtual public int InventorySize => machine.inventorySize;
+//     virtual public bool InputFull => node.inputInventory.Count >= node.inventorySize;
+//     virtual public bool OutputFull => node.outputInventory.Count >= node.inventorySize;
+//     virtual public bool Full => node.inputInventory.Count >= node.inventorySize;
+//     virtual public bool InputEmpty => node.inputInventory.Count == 0;
+//     virtual public bool OutputEmpty => node.outputInventory.Count == 0;
+//     virtual public bool Empty => node.outputInventory.Count == 0;
+//     virtual public int InventorySize => node.inventorySize;
 //
 //     //> DESTORY AND CLEANUP MACHINE
 //     override public void OnDestroy()
 //     {
-//         // machine.inputs.ForEach(Destroy);
-//         // machine.outputs.ForEach(Destroy);
-//         // machine.inventory.ForEach(Destroy);
-//         machine.inputInventory.ForEach(Destroy);
-//         machine.outputInventory.ForEach(Destroy);
+//         // node.inputs.ForEach(Destroy);
+//         // node.outputs.ForEach(Destroy);
+//         // node.inventory.ForEach(Destroy);
+//         node.inputInventory.ForEach(Destroy);
+//         node.outputInventory.ForEach(Destroy);
 //         Destroy(gameObject);
 //     }
 //
@@ -70,38 +71,38 @@
 //     virtual public void ConnectInput(IInput input)
 //     {
 //         if (!ConnectEdge(input as Edge)) return;
-//         machine.inputs.Add(input);
-//         machine.currentInput = machine.inputs[0];
+//         node.inputs.Add(input);
+//         node.currentInput = node.inputs[0];
 //     }
 //
 //     //> CONNECT OUTPUT
 //     virtual public void ConnectOutput(IOutput output)
 //     {
 //         if (!ConnectEdge(output as Edge)) return;
-//         machine.outputs.Add(output);
-//         machine.currentOutput = machine.outputs[0];
+//         node.outputs.Add(output);
+//         node.currentOutput = node.outputs[0];
 //     }
 //     
 //     virtual public void DisconnectInput(IInput input)
 //     {
 //         if (!DisconnectEdge(input as Edge)) return;
-//         machine.inputs.Remove(input);
-//         // machine.currentInput = (machine.inputs.Count >= 1) ? machine.inputs[0] : null;
+//         node.inputs.Remove(input);
+//         // node.currentInput = (node.inputs.Count >= 1) ? node.inputs[0] : null;
 //     }
 //
 //     virtual public void DisconnectOutput(IOutput output)
 //     {
 //         if (!DisconnectEdge(output as Edge)) return;
-//         machine.outputs.Remove(output);
-//         // machine.currentOutput = (machine.inputs.Count >= 1) ? machine.outputs[0] : null;
+//         node.outputs.Remove(output);
+//         // node.currentOutput = (node.inputs.Count >= 1) ? node.outputs[0] : null;
 //     }
 //     
 //     //> DEPOSIT RESOURCE
 //     virtual public void Deposit(Resource resource)
 //     {
 //         resource.data.position = Position;
-//         // machine.inventory.Add(resource);
-//         machine.inputInventory.Add(resource);
+//         // node.inventory.Add(resource);
+//         node.inputInventory.Add(resource);
 //         resource.SetVisible(false);
 //         NextInput();
 //     }
@@ -110,8 +111,8 @@
 //     //> WITHDRAW RESOURCE
 //     virtual public Resource Withdraw()
 //     {
-//         var resource = machine.outputInventory.TakeFirst();
-//         // var resource = machine.inventory.TakeFirst();
+//         var resource = node.outputInventory.TakeFirst();
+//         // var resource = node.inventory.TakeFirst();
 //         resource.SetVisible(true);
 //         NextOutput();
 //         return resource;
@@ -119,24 +120,24 @@
 //
 //     protected void NextInput()
 //     {
-//         if (!machine.inputEnabled || machine.currentInput is null || machine.maxInputs == 1) return;
-//         var index = machine.inputs.IndexOf(machine.currentInput);
-//         machine.currentInput = (index < machine.inputs.Count - 1) ? machine.inputs[++index] : machine.inputs[0];
+//         if (!node.inputEnabled || node.currentInput is null || node.maxInputs == 1) return;
+//         var index = node.inputs.IndexOf(node.currentInput);
+//         node.currentInput = (index < node.inputs.Count - 1) ? node.inputs[++index] : node.inputs[0];
 //     }
 //
 //     protected void NextOutput()
 //     {
-//         if (!machine.outputEnabled || machine.currentOutput is null || machine.maxOutputs == 1) return;
-//         var index = machine.outputs.IndexOf(machine.currentOutput);
-//         machine.currentOutput = (index < machine.outputs.Count - 1) ? machine.outputs[++index] : machine.outputs[0];
+//         if (!node.outputEnabled || node.currentOutput is null || node.maxOutputs == 1) return;
+//         var index = node.outputs.IndexOf(node.currentOutput);
+//         node.currentOutput = (index < node.outputs.Count - 1) ? node.outputs[++index] : node.outputs[0];
 //     }
 //
 //     
 //     //> FIXED CALCULATION INTERVAL
 //     virtual protected void FixedUpdate()
 //     {
-//         if (machine.sleeping) return;
-//         if (machine.ticks >= machine.sleepThreshold) machine.sleeping = true;
+//         if (node.sleeping) return;
+//         if (node.ticks >= node.sleepThreshold) node.sleeping = true;
 //         
 //         
 //     }
@@ -170,15 +171,15 @@
 //
 //     public void TestBuild()
 //     {
-//         var firstMachine = Factory.Spawn("Testing", currentMachine, Vector3.zero);
-//         var secondMachine = Factory.Spawn("Testing", currentMachine, Vector3.one * 2);
+//         var firstNode = Factory.Spawn("Testing", currentMachine, Vector3.zero);
+//         var secondNode = Factory.Spawn("Testing", currentMachine, Vector3.one * 2);
 //
 //         var conveyor = Factory.Spawn("Testing", currentConveyor, Vector3.one);
 //         
-//         firstMachine.ConnectOutput(conveyor);
-//         conveyor.ConnectInput(firstMachine);
-//         conveyor.ConnectOutput(secondMachine);
-//         secondMachine.ConnectInput(conveyor);
+//         firstNode.ConnectOutput(conveyor);
+//         conveyor.ConnectInput(firstNode);
+//         conveyor.ConnectOutput(secondNode);
+//         secondNode.ConnectInput(conveyor);
 //
 //     }
 // }

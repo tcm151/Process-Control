@@ -1,17 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using ProcessControl.Construction;
 using ProcessControl.Graphs;
-using ProcessControl.Building;
-using ProcessControl.Machines;
+using ProcessControl.Industry.Machines;
+using ProcessControl.Industry.Conveyors;
 
 
 namespace ProcessControl.UI
 {
     public class BuildToolbarItem : MonoBehaviour
     {
-        public Machine machine;
-        public Conveyor conveyor;
-        public bool isConveyor;
+        public Node node;
+        public Edge edge;
+        public bool isEdge;
         
         private Button button;
 
@@ -21,9 +22,9 @@ namespace ProcessControl.UI
             
             button.onClick.AddListener(() =>
             {
-                BuildManager.SetMachine(machine);
-                BuildManager.SetConveyor(conveyor);
-                BuildManager.SetConveyorMode(isConveyor);
+                BuildManager.SetNode(node);
+                BuildManager.SetEdge(edge);
+                BuildManager.SetEdgeMode(isEdge);
             });
         }
     }

@@ -1,15 +1,16 @@
+using ProcessControl.Industry.Resources;
 using UnityEngine;
 using ProcessControl.Tools;
 
 
-namespace ProcessControl.Machines
+namespace ProcessControl.Industry.Machines
 {
     public class Extractor : Machine
     {
         [SerializeField] public Resource extractionResource;
         [Range(0, 64)] public float extractionSpeed;
 
-        override public bool Full => machine.outputInventory.Count >= machine.inventorySize;
+        // override public bool Full => node.outputInventory.Count >= node.inventorySize;
         
         override protected void FixedUpdate()
         {
@@ -17,22 +18,17 @@ namespace ProcessControl.Machines
             
             if (++machine.ticks % (TicksPerSecond / extractionSpeed) == 0)
             {
-                if (Full) return;
+                if (machine.outputInventory.Count >= machine.inventorySize) return;
                 
                 machine.ticks = 0;
-                if (!Full) Deposit(Extract());
-                // else if (!machine.outputs.Full)
-                {
-                    // if (machine.inventory.Count >= 0) machine.outputs.Deposit(Withdraw());
-                    // machine.outputs.Deposit(Extract());
-                }
+                Deposit(ExtractResource());
             }
         }
 
         override public void Deposit(Resource resource)
         {
             resource.data.position = Position;
-            // machine.inventory.Add(resource);
+            // node.inventory.Add(resource);
             machine.outputInventory.Add(resource);
             resource.SetVisible(false);
             NextInput();
@@ -40,7 +36,7 @@ namespace ProcessControl.Machines
 
         private int i;
 
-        protected Resource Extract()
+        protected Resource ExtractResource()
         {
             var resource = Factory.Spawn("Resources", extractionResource, Position);
             resource.name = $"Resource.{i++:D3}";

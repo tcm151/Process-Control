@@ -1,6 +1,4 @@
-﻿using System;
-using Unity.Mathematics;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
@@ -15,7 +13,7 @@ namespace ProcessControl.Tools
             var scene = SceneManager.GetSceneByName(sceneName);
             if (!scene.isLoaded) scene = SceneManager.CreateScene(sceneName);
 
-            T instance = Instantiate(prefab, position, quaternion.identity);
+            T instance = Instantiate(prefab, position, Quaternion.identity);
             instance.name = prefab.name;
             SceneManager.MoveGameObjectToScene(instance.gameObject, scene);
             return instance;
@@ -24,8 +22,8 @@ namespace ProcessControl.Tools
         public static T Spawn<T>(T prefab, Vector3 position, Quaternion rotation) where T : MonoBehaviour
             => Instantiate(prefab, position, rotation);
 
-        // public static T Spawn<T>(T prefab, Vector3 position) where T : MonoBehaviour
-        //     => Spawn(prefab, position, Quaternion.identity);
+        public static T Spawn<T>(T prefab, Vector3 position) where T : MonoBehaviour
+            => Spawn(prefab, position, Quaternion.identity);
         
         public static T Spawn<T>(T prefab) where T : MonoBehaviour
             => Spawn(prefab, Vector3.zero, Quaternion.identity);

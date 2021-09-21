@@ -1,31 +1,28 @@
 ﻿using System;
-using ProcessControl.Machines;
 using UnityEngine;
+using ProcessControl.Industry.Machines;
+using ProcessControl.Industry.Resources;
 
 
 namespace ProcessControl.Graphs
 {
-    abstract public class Edge : MonoBehaviour
+    abstract public class Edge : MonoBehaviour, IO
     {
-        [Serializable]
-        public class Data
-        {
-            public Node input;
-            public Node output;
-        }
-        [SerializeField] internal Data edgeData;
 
-        abstract public void OnDestroy();
+        abstract public float Length {get;}
+
+        abstract public IO Input {get;}
+        abstract public IO Output {get;}
         
-        virtual public float Length { get
-        {
-            if (!edgeData.input || !edgeData.output) return 0;
-            return Node.DistanceBetween(edgeData.input, edgeData.output);
-        }}
+        abstract public bool ConnectInput(IO input);
+        abstract public bool ConnectOutput(IO output);
 
-        public void ConnectNode(Node newNode)
-        {
-            
-        }
+        abstract public bool CanDeposit {get;}
+        abstract public void Deposit(Resource resource);
+        
+        abstract public bool CanWithdraw {get;}
+        abstract public Resource Withdraw();
+        
+        virtual public void OnDestroy() => Destroy(gameObject);
     }
 }

@@ -3,7 +3,7 @@ using ProcessControl.Tools;
 using UnityEngine;
 
 
-namespace ProcessControl.Control
+namespace ProcessControl.Controls
 {
     public class TopDownCamera : MonoBehaviour
     {

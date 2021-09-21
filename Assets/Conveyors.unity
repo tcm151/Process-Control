@@ -579,12 +579,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a181776ee55d2474ca681ffc54e4d742, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedMachine: {fileID: 0}
-  selectedConveyor: {fileID: 0}
+  selectedNode: {fileID: 0}
+  selectedEdge: {fileID: 0}
   buildMode: 0
   conveyorMode: 0
-  firstMachine: {fileID: 0}
-  secondMachine: {fileID: 0}
+  firstNode: {fileID: 0}
+  secondNode: {fileID: 0}
 --- !u!4 &678005055
 Transform:
   m_ObjectHideFlags: 0
@@ -1105,9 +1105,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074bfb77af4d483fb4ec7db1a9b07f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machine: {fileID: 8361632907144066225, guid: 8382f4a74ab778640b8e7fd535307a85, type: 3}
-  conveyor: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
-  isConveyor: 0
+  node: {fileID: 8361632907144066225, guid: 8382f4a74ab778640b8e7fd535307a85, type: 3}
+  edge: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
+  isEdge: 0
 --- !u!1 &1025024355
 GameObject:
   m_ObjectHideFlags: 0
@@ -1761,9 +1761,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074bfb77af4d483fb4ec7db1a9b07f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machine: {fileID: 4533327719062287313, guid: 87ecd7ab5b9e7164b9702cdcf7e60e73, type: 3}
-  conveyor: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
-  isConveyor: 0
+  node: {fileID: 4533327719062287313, guid: 87ecd7ab5b9e7164b9702cdcf7e60e73, type: 3}
+  edge: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
+  isEdge: 0
 --- !u!1 &1800741893
 GameObject:
   m_ObjectHideFlags: 0
@@ -2196,9 +2196,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074bfb77af4d483fb4ec7db1a9b07f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machine: {fileID: 2145074843609341928, guid: 8562c3572e812664b9706e4aa3e9df28, type: 3}
-  conveyor: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
-  isConveyor: 0
+  node: {fileID: 2145074843609341928, guid: 8562c3572e812664b9706e4aa3e9df28, type: 3}
+  edge: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
+  isEdge: 0
 --- !u!114 &2007409668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2603,9 +2603,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074bfb77af4d483fb4ec7db1a9b07f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machine: {fileID: 308910016581926823, guid: 7a36556df2e1d0445aaac4b314153e4b, type: 3}
-  conveyor: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
-  isConveyor: 1
+  node: {fileID: 308910016581926823, guid: 7a36556df2e1d0445aaac4b314153e4b, type: 3}
+  edge: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
+  isEdge: 1
 --- !u!1 &2131971712
 GameObject:
   m_ObjectHideFlags: 0
@@ -2660,9 +2660,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074bfb77af4d483fb4ec7db1a9b07f68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machine: {fileID: 8606701852718631066, guid: 17d7d72e94b6bff43a29ee3057bd6891, type: 3}
-  conveyor: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
-  isConveyor: 1
+  node: {fileID: 8606701852718631066, guid: 17d7d72e94b6bff43a29ee3057bd6891, type: 3}
+  edge: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
+  isEdge: 1
 --- !u!114 &2131971715
 MonoBehaviour:
   m_ObjectHideFlags: 0

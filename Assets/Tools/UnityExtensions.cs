@@ -19,10 +19,17 @@ namespace ProcessControl.Tools
         
         public static T TakeFirst<T>(this List<T> list)
         {
-            if (list.Count == 0) return default(T);
+            if (list.Count == 0) return default;
             var item = list[0];
             list.RemoveAt(0);
             return item;
+        }
+
+        public static T ItemAfter<T>(this List<T> list, T item)
+        {
+            var index = list.IndexOf(item);
+            index = (index >= list.Count - 1) ? 0 : ++index;
+            return list[index];
         }
         
         

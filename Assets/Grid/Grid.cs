@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using ProcessControl.Tools;
 using ProcessControl.Graphs;
-using ProcessControl.Machines;
+using ProcessControl.Tools;
+using ProcessControl.Industry.Machines;
 
 
 namespace ProcessControl.Terrain
@@ -12,8 +12,8 @@ namespace ProcessControl.Terrain
     {
         [Serializable] public class Cell
         {
-            public Machine machine;
-            public bool occupied => machine is { };
+            public Node node;
+            public bool occupied => node is { };
             
             public UnityEngine.Vector2Int coordinates;
             public UnityEngine.Vector3 center;

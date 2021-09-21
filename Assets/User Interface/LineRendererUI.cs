@@ -2,38 +2,42 @@
 using UnityEngine.UI;
 
 
-public class LineRendererUI : Graphic
+namespace ProcessControl.UI
 {
-    public float width;
-    public float length;
-    public Vector3 start, end;
-
-    override protected void OnValidate()
+    public class LineRendererUI : Graphic
     {
-        rectTransform.rect.Set(0, 0, width, length);
-    }
+        public float width;
+        public float length;
+        public Vector3 start, end;
 
-    override protected void OnPopulateMesh(VertexHelper vh)
-    {
-        vh.Clear();
+        override protected void OnValidate()
+        {
+            rectTransform.rect.Set(0, 0, width, length);
+        }
 
-        var rect = rectTransform.rect;
-        
-        UIVertex vertex = UIVertex.simpleVert;
+        override protected void OnPopulateMesh(VertexHelper vh)
+        {
+            vh.Clear();
 
-        vertex.position = new Vector3(rect.x, rect.y);
-        vh.AddVert(vertex);
-        
-        vertex.position = new Vector3(rect.x, rect.height/2);
-        vh.AddVert(vertex);
-        
-        vertex.position = new Vector3(width, rect.height/2);
-        vh.AddVert(vertex);
-        
-        vertex.position = new Vector3(width, rect.y);
-        vh.AddVert(vertex);
-        
-        vh.AddTriangle(0, 1, 2);   
-        vh.AddTriangle(2, 3, 0);   
+            var rect = rectTransform.rect;
+            
+            UIVertex vertex = UIVertex.simpleVert;
+
+            vertex.position = new Vector3(rect.x, rect.y);
+            vh.AddVert(vertex);
+            
+            vertex.position = new Vector3(rect.x, rect.height/2);
+            vh.AddVert(vertex);
+            
+            vertex.position = new Vector3(width, rect.height/2);
+            vh.AddVert(vertex);
+            
+            vertex.position = new Vector3(width, rect.y);
+            vh.AddVert(vertex);
+            
+            vh.AddTriangle(0, 1, 2);   
+            vh.AddTriangle(2, 3, 0);   
+        }
     }
 }
+

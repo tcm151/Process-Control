@@ -95,24 +95,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05bd1899a6084a6b82f5d5aea70c3986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  node:
-    cell:
-      machine: {fileID: 0}
-      coordinates: {x: 0, y: 0}
-      center: {x: 0, y: 0, z: 0}
-    edges: []
-  machine:
-    sleeping: 0
-    ticks: 0
-    sleepThreshold: 256
-    inventorySize: 1
+  junction:
     inputEnabled: 1
     maxInputs: 3
-    currentInput: {fileID: 0}
-    inputs: []
-    inputInventory: []
     outputEnabled: 1
     maxOutputs: 1
-    currentOutput: {fileID: 0}
-    outputs: []
-    outputInventory: []

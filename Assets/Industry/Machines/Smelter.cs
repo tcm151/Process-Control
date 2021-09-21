@@ -1,8 +1,9 @@
-﻿using ProcessControl.Tools;
+﻿using ProcessControl.Industry.Resources;
+using ProcessControl.Tools;
 using UnityEngine;
 
 
-namespace ProcessControl.Machines
+namespace ProcessControl.Industry.Machines
 {
     public class Smelter : Machine
     {
@@ -14,13 +15,14 @@ namespace ProcessControl.Machines
             
             if (++machine.ticks % (TicksPerSecond *  smeltingSpeed) == 0)
             {
-                if (Empty) return;
+                if (machine.inputInventory.Count == 0) return;
                 
                 machine.ticks = 0;
+                
+
                 var newResource = Smelt(machine.inputInventory.TakeFirst());
 
-
-                if (!machine.currentOutput || machine.currentOutput.Full)
+                if (!machine.currentOutput || !machine.currentOutput.CanDeposit)
                 {
                     machine.outputInventory.Add(newResource);
                 }
