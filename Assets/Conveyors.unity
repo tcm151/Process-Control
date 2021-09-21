@@ -438,9 +438,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minZoom: 0
   maxZoom: 100
-  panSpeed: 1
+  panSpeed: 100
   dragSpeed: 0.05
-  acceleration: 0.05
+  acceleration: 1
   scrollSensitivity: 5
   dragging: 0
 --- !u!114 &482934021

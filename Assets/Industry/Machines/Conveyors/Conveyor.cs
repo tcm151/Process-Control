@@ -65,6 +65,14 @@ namespace ProcessControl.Industry.Conveyors
             return true;
         }
 
+        override public bool DisconnectInput(IO input)
+        {
+            if (conveyor.input != input as Node) return false;
+            conveyor.input = null;
+            onConnection?.Invoke();
+            return true;
+        }
+
         //> CONNECT OUTPUT
         override public bool ConnectOutput(IO output)
         {
@@ -73,7 +81,14 @@ namespace ProcessControl.Industry.Conveyors
             onConnection?.Invoke();
             return true;
         }
-
+        
+        override public bool DisconnectOutput(IO output)
+        {
+            if (conveyor.output != output as Node) return false;
+            conveyor.output = null;
+            onConnection?.Invoke();
+            return true;
+        }
 
         //> INITIALIZATION
         private void Awake()
@@ -141,8 +156,8 @@ namespace ProcessControl.Industry.Conveyors
         //> DELETE CONVEYOR AND CLEAN UP
         override public void OnDestroy()
         {
-            // conveyor.input.DisconnectOutput(this);
-            // conveyor.output.DisconnectInput(this);
+            conveyor.input.DisconnectOutput(this);
+            conveyor.output.DisconnectInput(this);
             conveyor.inventory.ForEach(Destroy);
             Destroy(gameObject);
         }

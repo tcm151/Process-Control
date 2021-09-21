@@ -11,7 +11,9 @@ namespace ProcessControl.Industry.Machines
         public IO Output {get;}
 
         public bool ConnectInput(IO newInput);
+        public bool DisconnectInput(IO newInput);
         public bool ConnectOutput(IO newOutput);
+        public bool DisconnectOutput(IO newOutput);
         
         public bool CanWithdraw {get;}
         public Resource Withdraw();

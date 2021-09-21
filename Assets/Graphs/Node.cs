@@ -9,6 +9,8 @@ namespace ProcessControl.Graphs
 {
     abstract public class Node : MonoBehaviour, IO
     {
+        protected const int TicksPerSecond = 64;
+        
         //> PROPERTIES
         public Grid.Cell Cell {get; set;}
         public Vector3 Position => transform.position;
@@ -26,7 +28,9 @@ namespace ProcessControl.Graphs
         abstract public IO Output {get;}
         
         abstract public bool ConnectInput(IO input);
+        abstract public bool DisconnectInput(IO input);
         abstract public bool ConnectOutput(IO output);
+        abstract public bool DisconnectOutput(IO output);
         
         abstract public bool CanDeposit {get;}
         abstract public void Deposit(Resource resource);

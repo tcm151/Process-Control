@@ -15,7 +15,9 @@ namespace ProcessControl.Graphs
         abstract public IO Output {get;}
         
         abstract public bool ConnectInput(IO input);
+        abstract public bool DisconnectInput(IO input);
         abstract public bool ConnectOutput(IO output);
+        abstract public bool DisconnectOutput(IO output);
 
         abstract public bool CanDeposit {get;}
         abstract public void Deposit(Resource resource);

@@ -10,7 +10,6 @@ namespace ProcessControl.Industry.Machines
         [SerializeField] public Resource extractionResource;
         [Range(0, 64)] public float extractionSpeed;
 
-        // override public bool Full => node.outputInventory.Count >= node.inventorySize;
         
         override protected void FixedUpdate()
         {

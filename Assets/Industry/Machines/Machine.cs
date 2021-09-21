@@ -13,8 +13,6 @@ namespace ProcessControl.Industry.Machines
     [SelectionBase]
     public class Machine : Node
     {
-        protected const int TicksPerSecond = 64;
-        
         //> MACHINE DATA CONTAINER
         [Serializable] public class Data
         {
@@ -61,6 +59,14 @@ namespace ProcessControl.Industry.Machines
             machine.currentInput = machine.inputs[0];
             return true;
         }
+        
+        override public bool DisconnectInput(IO input)
+        {
+            if (!machine.inputs.Contains(input as Edge)) return false;
+            machine.inputs.Remove(input as Edge);
+            machine.currentInput = (machine.inputs.Count >= 1) ? machine.inputs[0] : null;
+            return true;
+        }
 
         protected void NextInput()
         {
@@ -74,6 +80,14 @@ namespace ProcessControl.Industry.Machines
             if (machine.outputs.Contains(output as Edge)) return false;
             machine.outputs.Add(output as Edge);
             machine.currentOutput = machine.outputs[0];
+            return true;
+        }
+        
+        override public bool DisconnectOutput(IO output)
+        {
+            if (!machine.outputs.Contains(output as Edge)) return false;
+            machine.outputs.Remove(output as Edge);
+            machine.currentOutput = (machine.outputs.Count >= 1) ? machine.outputs[0] : null;
             return true;
         }
 

@@ -73,7 +73,7 @@ namespace ProcessControl.Controls
             }
             else
             {
-                var desiredPosition = cameraPosition + movementInput * panSpeed;
+                var desiredPosition = cameraPosition + movementInput * (panSpeed * camera.orthographicSize);
                 transform.position = Vector3.MoveTowards(cameraPosition, desiredPosition, acceleration);
             }
         }

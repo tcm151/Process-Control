@@ -13,6 +13,10 @@ namespace ProcessControl.Industry.Conveyors
     {
         [Serializable] public class Data
         {
+            public bool sleeping;
+            public int ticks;
+            public int sleepThreshold = 256;
+            
             [Header("Input")]
             public bool inputEnabled = true;
             public int maxInputs = 1;
@@ -41,6 +45,15 @@ namespace ProcessControl.Industry.Conveyors
             junction.currentInput = junction.inputs[0];
             return true;
         }
+
+        override public bool DisconnectInput(IO input)
+        {
+            if (!junction.inputs.Contains(input as Edge)) return false;
+            junction.inputs.Remove(input as Edge);
+            junction.currentInput = (junction.inputs.Count >= 1) ? junction.inputs[0] : null;
+            return true;
+        }
+        
         protected void NextInput()
         {
             if (!junction.inputEnabled || junction.currentInput is null || junction.maxInputs == 1) return;
@@ -53,6 +66,14 @@ namespace ProcessControl.Industry.Conveyors
             if (junction.outputs.Contains(output as Edge)) return false;
             junction.outputs.Add(output as Edge);
             junction.currentOutput = junction.outputs[0];
+            return true;
+        }
+        
+        override public bool DisconnectOutput(IO output)
+        {
+            if (!junction.outputs.Contains(output as Edge)) return false;
+            junction.outputs.Remove(output as Edge);
+            junction.currentOutput = (junction.outputs.Count >= 1) ? junction.outputs[0] : null;
             return true;
         }
         
@@ -83,13 +104,18 @@ namespace ProcessControl.Industry.Conveyors
 
         private void FixedUpdate()
         {
-            
+            if (++junction.ticks % (TicksPerSecond / 16) == 0)
+            {
+                if (Input is {CanWithdraw: false}) NextInput();
+                if (Output is {CanDeposit: false}) NextOutput();
+            }
         }
 
         override public void OnDestroy()
         {
             junction.inputs.ForEach(Destroy);
             junction.outputs.ForEach(Destroy);
+            Destroy(junction.inventory);
             Destroy(gameObject);
         }
     }
