@@ -1,37 +1,10 @@
 fileFormatVersion: 2
-guid: e1b96e2e605b4e74c874ce85887f49bb
+guid: f3c9a8b8f1dd5f9418e0481e4e6742d1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2712567335300499734
-    second: Conveyors x160
-  - first:
-      213: 3025842769644799469
-    second: Conveyors x16_0
-  - first:
-      213: -2533361773689413135
-    second: Conveyors x16_1
-  - first:
-      213: -6919413584853850436
-    second: Conveyors x16_2
-  - first:
-      213: -4442196067550351069
-    second: Conveyors x16_3
-  - first:
-      213: -2808570897712881798
-    second: Conveyors x16_4
-  - first:
-      213: -5904540239442260017
-    second: Conveyors x16_5
-  - first:
-      213: 768385212980806013
-    second: Conveyors x16_6
-  - first:
-      213: -4146445779694950509
-    second: Conveyors x16_7
-  - first:
-      213: 895073385530684001
-    second: Conveyors x16_8
+      213: 7789286953958122146
+    second: Prototyping0
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -121,7 +94,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Conveyors x16_0
+      name: Conveyor_1
       rect:
         serializedVersion: 2
         x: 1
@@ -135,14 +108,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: de5ccd6a7f3fdf920800000000000000
-      internalID: 3025842769644799469
+      spriteID: 1cc695e297aef9100800000000000000
+      internalID: 117069921524477121
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Conveyors x16_1
+      name: Conveyor_0
       rect:
         serializedVersion: 2
         x: 17
@@ -156,35 +129,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1f160bf93e0b7dcd0800000000000000
-      internalID: -2533361773689413135
+      spriteID: bf36fa2f12da63450800000000000000
+      internalID: 6068227909245428731
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Conveyors x16_2
-      rect:
-        serializedVersion: 2
-        x: 33
-        y: 33
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: cb626c4510e49ff90800000000000000
-      internalID: -6919413584853850436
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Conveyors x16_3
+      name: Conveyor_2
       rect:
         serializedVersion: 2
         x: 1
@@ -198,14 +150,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 321360b56362a52c0800000000000000
-      internalID: -4442196067550351069
+      spriteID: 34880febbc3208f90800000000000000
+      internalID: -6953518466671278013
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Conveyors x16_4
+      name: Machine_0
       rect:
         serializedVersion: 2
         x: 17
@@ -219,35 +171,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a7fd25326a3f509d0800000000000000
-      internalID: -2808570897712881798
+      spriteID: a7fc1330688affd80800000000000000
+      internalID: -8214661901767815302
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Conveyors x16_5
-      rect:
-        serializedVersion: 2
-        x: 33
-        y: 17
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fcf4b029febde0ea0800000000000000
-      internalID: -5904540239442260017
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Conveyors x16_6
+      name: Conveyor_3
       rect:
         serializedVersion: 2
         x: 1
@@ -261,20 +192,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d714266b74ad9aa00800000000000000
-      internalID: 768385212980806013
+      spriteID: 91e0a58f3aed14430800000000000000
+      internalID: 3765535559286132249
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Conveyors x16_7
+      name: Copper
       rect:
         serializedVersion: 2
-        x: 17
-        y: 1
-        width: 16
-        height: 16
+        x: 34
+        y: 42
+        width: 6
+        height: 6
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -282,20 +213,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3976ddc388dd476c0800000000000000
-      internalID: -4146445779694950509
+      spriteID: 187a4c42739997c40800000000000000
+      internalID: 5510604081183631233
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Conveyors x16_8
+      name: Iron
       rect:
         serializedVersion: 2
-        x: 33
-        y: 1
-        width: 16
-        height: 16
+        x: 42
+        y: 42
+        width: 6
+        height: 6
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -303,8 +234,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 16276787080fb6c00800000000000000
-      internalID: 895073385530684001
+      spriteID: 69337470b2b754230800000000000000
+      internalID: 3622436900025349014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platinum
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 34
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c29a54bfe34480c10800000000000000
+      internalID: 2019939470169975084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gold
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 34
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2022a8cdb9c2bc8a0800000000000000
+      internalID: -6283879807133801982
       vertices: []
       indices: 
       edges: []

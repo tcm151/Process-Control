@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: -2808570897712881798, guid: e1b96e2e605b4e74c874ce85887f49bb, type: 3}
+  m_Sprite: {fileID: 6641563997647711585, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -97,7 +97,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   machine:
     cell:
-      machine: {fileID: 0}
+      node: {fileID: 0}
       coordinates: {x: 0, y: 0}
       center: {x: 0, y: 0, z: 0}
     sleeping: 0

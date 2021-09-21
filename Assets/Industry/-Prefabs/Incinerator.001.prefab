@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
+  m_Sprite: {fileID: 6641563997647711585, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
   m_Color: {r: 0.3624207, g: 0.1003916, b: 0.4528302, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -95,23 +95,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aa262bfb5344ab68c502d80c3076b22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  node:
+  machine:
     cell:
-      machine: {fileID: 0}
+      node: {fileID: 0}
       coordinates: {x: 0, y: 0}
       center: {x: 0, y: 0, z: 0}
-    edges: []
-  machine:
     sleeping: 0
     ticks: 0
     sleepThreshold: 256
+    inventorySize: 16
     inputEnabled: 1
     maxInputs: 1
     currentInput: {fileID: 0}
     inputs: []
+    inputInventory: []
+    outputEnabled: 0
     maxOutputs: 0
     currentOutput: {fileID: 0}
     outputs: []
-    outputEnabled: 0
-    inventorySize: 16
-    inventory: []
+    outputInventory: []
