@@ -6,7 +6,7 @@ using ProcessControl.Industry.Resources;
 
 namespace ProcessControl.Industry.Conveyors
 {
-    public class Merger : Junction
+    public class Merger : MultiJunction
     {
         override public void Deposit(Resource resource)
         {

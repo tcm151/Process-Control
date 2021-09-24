@@ -37,7 +37,6 @@ namespace ProcessControl.Industry.Machines
         private Resource Smelt(Resource resource)
         {
             // Debug.Log("SMELTED RESOURCE!");
-            resource.SetColor(Color.red);
             return resource;
         }
 

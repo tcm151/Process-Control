@@ -6,19 +6,20 @@ namespace ProcessControl.Industry.Resources
 {
     public class Resource : MonoBehaviour
     {
+        public enum Type { Iron, Copper, Gold, Platinum }
+        
         [Serializable] public class Data
         {
             public int ticks;
-            public Color color = Color.grey;
+            public bool sleeping;
+            public int sleepThreshold = 512;
             
             public Vector3 position;
         }
-
-        public Data data;
+        [SerializeField] internal Data data;
 
         new private SpriteRenderer renderer;
 
-        public void SetColor(Color newColor) => renderer.color = newColor;
         public void SetVisible(bool visible) => renderer.enabled = visible;
 
         private void Awake()
@@ -27,7 +28,10 @@ namespace ProcessControl.Industry.Resources
             renderer = GetComponent<SpriteRenderer>();
         }
 
-        private void FixedUpdate() => transform.position = data.position;
+        private void FixedUpdate()
+        {
+            transform.position = data.position;
+        }
 
         public void OnDestroy() => Destroy(gameObject);
     }

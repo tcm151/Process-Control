@@ -147,7 +147,7 @@ namespace ProcessControl.Industry.Conveyors
             //> DEPOSIT FIRST ITEM IN OUTPUT
             if (!CanWithdraw || !conveyor.output.CanDeposit || !(conveyor.output.Input as Conveyor == this)) return;
             {
-                // if (conveyor.output.node.currentInput != this) return;
+                // if (conveyor.output.node.input != this) return;
                 conveyor.inventory[0].data.ticks = 0;
                 conveyor.output.Deposit(Withdraw());
             }

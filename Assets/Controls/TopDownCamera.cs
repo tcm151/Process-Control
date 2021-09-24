@@ -1,6 +1,6 @@
-using System;
-using ProcessControl.Tools;
 using UnityEngine;
+using ProcessControl.Tools;
+#pragma warning disable 108,114
 
 
 namespace ProcessControl.Controls
@@ -24,7 +24,7 @@ namespace ProcessControl.Controls
         private Vector3 cameraPosition;
         private readonly Vector3 cameraOffset = new Vector3(0, 0, -10);
 
-        new private Camera camera;
+        private Camera camera;
 
         //> INITIALIZATION 
         private void Awake()

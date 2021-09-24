@@ -115,4 +115,4 @@ MonoBehaviour:
     outputs: []
     outputInventory: []
   extractionResource: {fileID: 22261911864309029, guid: 914bc23ef0401f646895763d6f11a3b7, type: 3}
-  extractionSpeed: 0.5
+  extractionSpeed: 1

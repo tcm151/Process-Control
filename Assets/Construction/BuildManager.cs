@@ -6,7 +6,7 @@ using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Industry.Conveyors;
-using Grid = ProcessControl.Terrain.Grid;
+using ProcessControl.Procedural;
 
 
 namespace ProcessControl.Construction
@@ -34,8 +34,8 @@ namespace ProcessControl.Construction
         private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
         private void OnSetNode(Node newSelection) => selectedNode = newSelection;
         private void OnSetEdge(Edge newSelection) => selectedEdge = newSelection;
-        public Node BuildNode(Grid.Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.center);
-        // public Edge BuildEdge(Grid.Cell cell) => Factory.Spawn("Edges", selectedEdge, c)
+        public Node BuildNode(ProceduralGrid.Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.center);
+        // public Edge BuildEdge(ProceduralGrid.Cell cell) => Factory.Spawn("Edges", selectedEdge, c)
         
         private void Awake()
         {
@@ -67,7 +67,7 @@ namespace ProcessControl.Construction
                 {
                     firstNode = secondNode = null;
                     
-                    var firstCell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
+                    var firstCell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
                     if (firstCell is null)
                     {
                         Debug.Log("NO CELL FOUND!");
@@ -84,7 +84,7 @@ namespace ProcessControl.Construction
 
                 if (Input.GetKeyUp(KeyCode.Mouse0))
                 {
-                    var secondCell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
+                    var secondCell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
                     if (secondCell is null) Debug.Log("NO CELL FOUND!");
                     else
                     {
@@ -109,7 +109,7 @@ namespace ProcessControl.Construction
             }
             else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                var firstCell = Grid.GetCellUnderMouse();
+                var firstCell = ProceduralGrid.GetCellUnderMouse();
                 if (firstCell is null) Debug.Log("NO CELL FOUND!");
                 else
                 {
@@ -121,7 +121,7 @@ namespace ProcessControl.Construction
                     {
                         // var newMachine = BuildNode(firstCell);
                         // newMachine.ConnectOutput(firstNode.machine.currentOutput);
-                        // firstNode.machine.currentInput.ConnectInput(newMachine);
+                        // firstNode.machine.input.ConnectInput(newMachine);
                         // Destroy(firstNode);
                     }
                 }
@@ -129,7 +129,7 @@ namespace ProcessControl.Construction
 
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
-                var cell = Grid.GetCellUnderMouse();
+                var cell = ProceduralGrid.GetCellUnderMouse();
                 if (cell is null) Debug.Log("NO CELL FOUND!");
                 else
                 if (cell.occupied)
@@ -146,7 +146,7 @@ namespace ProcessControl.Construction
             if (buildMode)
             {
                 Gizmos.color = Color.white;
-                var cell = Grid.GetCellPosition(camera.MouseWorldPosition2D());
+                var cell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
                 if (cell is null) return;
                 Gizmos.DrawWireCube(cell.center, Vector3.one);
             }

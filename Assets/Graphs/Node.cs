@@ -1,8 +1,7 @@
 ﻿using ProcessControl.Industry.Machines;
 using UnityEngine;
-using ProcessControl.Industry;
+using ProcessControl.Procedural;
 using ProcessControl.Industry.Resources;
-using Grid = ProcessControl.Terrain.Grid;
 
 
 namespace ProcessControl.Graphs
@@ -12,7 +11,7 @@ namespace ProcessControl.Graphs
         protected const int TicksPerSecond = 64;
         
         //> PROPERTIES
-        public Grid.Cell Cell {get; set;}
+        public ProceduralGrid.Cell Cell {get; set;}
         public Vector3 Position => transform.position;
         
         //> INSTANCE HELPERS

@@ -5,7 +5,7 @@ using ProcessControl.Industry.Resources;
 
 namespace ProcessControl.Industry.Conveyors
 {
-    public class Splitter : Junction
+    public class Splitter : MultiJunction
     {
         override public Resource Withdraw()
         {

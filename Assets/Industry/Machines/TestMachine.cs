@@ -25,7 +25,7 @@
 //         [Header("Input")]
 //         public bool inputEnabled = true;
 //         public int maxInputs = 1;
-//         public IInput currentInput;
+//         public IInput input;
 //         public List<IInput> inputs = new List<IInput>();
 //         // public int inputInventorySize = 8;
 //         public List<Resource> inputInventory = new List<Resource>();
@@ -44,7 +44,7 @@
 //     public bool AvailableOutput => node.outputs is { } && node.outputs.Count < node.maxOutputs;
 //     
 //     //> IO INTERFACE
-//     public IInput Input => node.currentInput;
+//     public IInput Input => node.input;
 //     public IOutput Output => node.currentOutput;
 //     
 //     //> PROPERTIES
@@ -72,7 +72,7 @@
 //     {
 //         if (!ConnectEdge(input as Edge)) return;
 //         node.inputs.Add(input);
-//         node.currentInput = node.inputs[0];
+//         node.input = node.inputs[0];
 //     }
 //
 //     //> CONNECT OUTPUT
@@ -87,7 +87,7 @@
 //     {
 //         if (!DisconnectEdge(input as Edge)) return;
 //         node.inputs.Remove(input);
-//         // node.currentInput = (node.inputs.Count >= 1) ? node.inputs[0] : null;
+//         // node.input = (node.inputs.Count >= 1) ? node.inputs[0] : null;
 //     }
 //
 //     virtual public void DisconnectOutput(IOutput output)
@@ -120,9 +120,9 @@
 //
 //     protected void NextInput()
 //     {
-//         if (!node.inputEnabled || node.currentInput is null || node.maxInputs == 1) return;
-//         var index = node.inputs.IndexOf(node.currentInput);
-//         node.currentInput = (index < node.inputs.Count - 1) ? node.inputs[++index] : node.inputs[0];
+//         if (!node.inputEnabled || node.input is null || node.maxInputs == 1) return;
+//         var index = node.inputs.IndexOf(node.input);
+//         node.input = (index < node.inputs.Count - 1) ? node.inputs[++index] : node.inputs[0];
 //     }
 //
 //     protected void NextOutput()

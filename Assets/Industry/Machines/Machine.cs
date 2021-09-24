@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
-using ProcessControl.Industry.Conveyors;
+using ProcessControl.Procedural;
 using ProcessControl.Industry.Resources;
-using Grid = ProcessControl.Terrain.Grid;
 
 
 namespace ProcessControl.Industry.Machines
@@ -16,7 +15,7 @@ namespace ProcessControl.Industry.Machines
         //> MACHINE DATA CONTAINER
         [Serializable] public class Data
         {
-            public Grid.Cell cell;
+            public ProceduralGrid.Cell cell;
             
             public bool sleeping;
             public int ticks;

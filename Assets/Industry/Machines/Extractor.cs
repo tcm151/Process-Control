@@ -14,9 +14,11 @@ namespace ProcessControl.Industry.Machines
         override protected void FixedUpdate()
         {
             base.FixedUpdate();
-            
-            if (++machine.ticks % (TicksPerSecond / extractionSpeed) == 0)
+
+            // Debug.Log("FIXED UPDATE!");
+            if ((++machine.ticks % (TicksPerSecond / extractionSpeed)) == 0)
             {
+                // Debug.Log("PRE CHECK!");
                 if (machine.outputInventory.Count >= machine.inventorySize) return;
                 
                 machine.ticks = 0;
