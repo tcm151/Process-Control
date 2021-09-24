@@ -31,8 +31,7 @@ namespace ProcessControl.Tools
             index = (index >= list.Count - 1) ? 0 : ++index;
             return list[index];
         }
-        
-        
+
         //> CAMERA
         public static Vector3 MouseWorldPosition2D(this Camera camera)
         {

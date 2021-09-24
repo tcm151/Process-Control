@@ -1,7 +1,10 @@
 ﻿#if UNITY_EDITOR
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+using UnityEngine.SceneManagement;
 
 
 namespace ProcessControl.Tools.Editor
@@ -9,7 +12,6 @@ namespace ProcessControl.Tools.Editor
     public class BuildWindow : EditorWindow
     {
         private static string version;
-        
         private static BuildWindow window;
         
         [MenuItem("Build/Build Window")]
@@ -18,14 +20,9 @@ namespace ProcessControl.Tools.Editor
             window = GetWindow<BuildWindow>();
             window.titleContent = new GUIContent("Build Window");
             window.Show();
-
-            
         }
 
-        private void OnEnable()
-        {
-            version = PlayerSettings.bundleVersion;
-        }
+        private void OnEnable() => version = PlayerSettings.bundleVersion;
 
         private void OnGUI()
         {
@@ -34,41 +31,63 @@ namespace ProcessControl.Tools.Editor
             version = EditorGUILayout.TextField("Version", version);
             GUILayout.Space(4);
             
-            if (GUILayout.Button("Build Game"))
-            {
-                BuildGame();
-            }
+            if (GUILayout.Button("Dev Build")) BuildGame(0);
+            if (GUILayout.Button("Beta Build")) BuildGame(1);
+            if (GUILayout.Button("Release Build")) BuildGame(2);
+
         }
 
-        private void BuildGame()
+        private void BuildGame(int buildType)
         {
-            var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+            var buildReport = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
-                scenes = new [] {"Assets/Scenes/The Cave.unity"},
-                locationPathName = $"Builds/{version}/Disjointed.exe",
+                scenes = new [] {"Assets/Conveyors.unity"},
+                locationPathName = $"Builds/{version}/{PlayerSettings.productName}.exe",
                 target = BuildTarget.StandaloneWindows64,
                 options = BuildOptions.None,
             });
 
-            if (report.summary.result == BuildResult.Succeeded)
+            if (buildReport.summary.result == BuildResult.Succeeded)
             {
-                Debug.Log($"Build succeeded: {report.summary.totalSize/1e6} MB");
-
-                UpdateVersionNumber();
+                Debug.Log($"Build succeeded: {buildReport.summary.totalSize/1e6} MB");
+                UpdateVersionNumber(buildType);
             }
 
-            if (report.summary.result == BuildResult.Failed)
+            if (buildReport.summary.result == BuildResult.Failed)
             {
                 Debug.Log("Build failed!");
             }
         }
 
-        private static void UpdateVersionNumber()
+        private void UpdateVersionNumber(int buildType)
         {
             var number = version.Split('.');
-            number[2] = (int.Parse(number[2]) + 1).ToString();
-            version = $"{number[0]}.{number[1]}.{number[2]}";
+            switch (buildType)
+            {
+                case 0:
+                {
+                    number[2] = (int.Parse(number[2]) + 1).ToString();
+                    break;
+                }
+                
+                case 1:
+                {
+                    number[1] = (int.Parse(number[1]) + 1).ToString();
+                    number[2] = "0";
+                    break;
+                }
+                
+                case 2:
+                {
+                    number[0] = (int.Parse(number[2]) + 1).ToString();
+                    number[1] = number[2] = "0";
+                    break;
+                }
+                
+                default: Debug.Log("WRONG BUILD TYPE."); return;
+            }
             
+            version = $"{number[0]}.{number[1]}.{number[2]}";
             PlayerSettings.bundleVersion = version;
         }
     }
