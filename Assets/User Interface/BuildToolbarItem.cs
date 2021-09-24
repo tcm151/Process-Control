@@ -2,8 +2,6 @@
 using UnityEngine.UI;
 using ProcessControl.Construction;
 using ProcessControl.Graphs;
-using ProcessControl.Industry.Machines;
-using ProcessControl.Industry.Conveyors;
 
 
 namespace ProcessControl.UI

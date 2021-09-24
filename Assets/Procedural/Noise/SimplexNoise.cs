@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace TCM.NoiseGeneration
+namespace ProcessControl.Procedural
 {
     public class SimplexNoise
     {

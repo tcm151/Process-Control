@@ -4,7 +4,6 @@ using UnityEngine.EventSystems;
 using Input = UnityEngine.Input;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
-using ProcessControl.Industry.Machines;
 using ProcessControl.Industry.Conveyors;
 using ProcessControl.Procedural;
 
@@ -34,7 +33,7 @@ namespace ProcessControl.Construction
         private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
         private void OnSetNode(Node newSelection) => selectedNode = newSelection;
         private void OnSetEdge(Edge newSelection) => selectedEdge = newSelection;
-        public Node BuildNode(ProceduralGrid.Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.center);
+        public Node BuildNode(Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.center);
         // public Edge BuildEdge(ProceduralGrid.Cell cell) => Factory.Spawn("Edges", selectedEdge, c)
         
         private void Awake()

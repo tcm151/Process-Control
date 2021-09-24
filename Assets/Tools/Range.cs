@@ -1,12 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 
 namespace ProcessControl.Tools
 {
-    public class Range
+    [Serializable] public class Range
     {
-        public float min {get; private set;}
-        public float max {get; private set;}
+        private float min;
+        private float max;
 
         //> EMPTY CONSTRUCTOR
         public Range()

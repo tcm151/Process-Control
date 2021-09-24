@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Industry.Resources;
 

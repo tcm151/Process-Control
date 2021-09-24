@@ -1,13 +1,9 @@
 using System;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using ProcessControl.Tools;
-using ProcessControl.Graphs;
-using ProcessControl.Industry.Resources;
-using TCM.NoiseGeneration;
-using System.Threading.Tasks;
 
 #pragma warning disable 108, 114
 
@@ -20,33 +16,21 @@ namespace ProcessControl.Procedural
         [Serializable]
         public class Data
         {
-            public Vector2Int dimensions;
+            [Header("Resolution")]
+            public Vector2Int gridDimensions;
+            public Vector2Int chunkDimensions;
+            
             public Tilemap tilemap;
             public List<TileBase> tiles;
-            // [HideInInspector] public List<Cell> cells;
-            [HideInInspector] public List<Chunk> chunks;
-
+            
             public List<Noise.Layer> noiseLayers;
             public Range noiseRange;
+            
+            // public List<Cell> cells = new List<Cell>();
+            public List<Chunk> chunks = new List<Chunk>();
+
         }
         [SerializeField] internal Data grid;
-
-
-        [Serializable]
-        public class Cell
-        {
-            public void ResetNode() => node = null;
-
-            public Node node;
-            public bool occupied => node is { };
-
-            public float value;
-
-            public Vector3 center;
-            public Vector2Int coordinates;
-
-            public List<(int, Resource.Type)> resourceDeposit = new List<(int, Resource.Type)>();
-        }
 
         // private RectInt gridRect;
         private Camera camera;
@@ -66,55 +50,67 @@ namespace ProcessControl.Procedural
             GetCellPosition += OnGetCellPosition;
             GetCellUnderMouse += OnGetCellUnderMouse;
 
-            //! temp
-            // gridRect.height = grid.dimensions.y;
-            // gridRect.width = grid.dimensions.x;
-            // gridRect.x = -grid.dimensions.x / 2;
-            // gridRect.y = -grid.dimensions.y / 2;
-
-            // grid.cells = new List<Cell>();
             // grid.cells.Clear();
-
-            grid.chunks = new List<Chunk>();
             grid.chunks.Clear();
-            grid.chunks.Add(new Chunk(ref grid));
 
-            grid.noiseRange = new Range();
+            // var chunk = new Chunk();
+            // grid.chunks.Add(chunk);
+            
             grid.tilemap = GetComponentInChildren<Tilemap>();
 
-            for (int y = -grid.dimensions.y / 2; y < grid.dimensions.y / 2; y++)
-            {
-                for (int x = -grid.dimensions.x / 2; x < grid.dimensions.x / 2; x++)
+            for (int y = -grid.gridDimensions.y / 2; y <= grid.gridDimensions.y / 2; y++) {
+                for (int x = -grid.gridDimensions.x / 2; x <= grid.gridDimensions.x / 2; x++)
                 {
-                    grid.cells.Add(new Cell
+                    grid.chunks.Add(new Chunk
                     {
-                        center = new Vector3(x + 0.5f, y + 0.5f),
-                        coordinates = new Vector2Int(x, y),
+                        chunkOffset = new Vector2Int(x * grid.chunkDimensions.x, y * grid.chunkDimensions.y)
                     });
                 }
             }
-
-
-            // Generate();
+            
+            grid.chunks.ForEach(c =>
+            {
+                for (int y = -grid.chunkDimensions.y / 2; y < grid.chunkDimensions.y / 2; y++) {
+                    for (int x = -grid.chunkDimensions.x / 2; x < grid.chunkDimensions.x / 2; x++)
+                    {
+                        c.cells.Add(new Cell
+                        {
+                            center = new Vector3(x + c.chunkOffset.x+ 0.5f, y + c.chunkOffset.y + 0.5f),
+                            coordinates = new Vector2Int(x + c.chunkOffset.x, y + c.chunkOffset.y),
+                        });
+                    }
+                }
+            });
+            
+            // chunk.SetCells(ref grid.cells);
         }
 
-        public void GenerateAllChunks()
-        {
-            GenerateChunks(grid.chunks);
-        }
+        public void GenerateAllChunks() => GenerateChunks(grid.chunks);
 
-        private static void GenerateChunks(List<Chunk> chunks)
+        private void GenerateChunks(List<Chunk> chunks)
         {
             Task[] triangulations = new Task[chunks.Count];
             for (int i = 0; i < chunks.Count; i++)
             {
                 int j = i;
-                triangulations[j] = Task.Factory.StartNew(() => chunks[j].Generate());
+                triangulations[j] = Task.Factory.StartNew(() => GenerateCells(ref chunks[j].cells));
             }
             Task.WaitAll(triangulations, 5000);
 
             // apply triangulations on main thread
-            chunks.ForEach(c => c.Apply());
+            chunks.ForEach(c => SetTiles(c.cells));
+        }
+        
+        public void GenerateCells(ref List<Cell> cells)
+        {
+            cells.ForEach(c =>
+            {
+                var noiseValue = GenerateNoise(grid, c);
+                grid.noiseRange.Add(noiseValue);
+                c.value = noiseValue;
+            });
+
+            // Debug.Log($"Noise Range: {noiseRange.min}-{noiseRange.max}");
         }
 
         // public void Generate()
@@ -130,31 +126,40 @@ namespace ProcessControl.Procedural
 
         //     // Debug.Log($"Noise Range: {noiseRange.min}-{noiseRange.max}");
         // }
+        
+        public void SetTiles(List<Cell> cells)
+        {
+            cells.ForEach(c =>
+            {
+                var tile = (c.value >= grid.noiseLayers[0].localZero) ? grid.tiles[0] : grid.tiles[1];
+                grid.tilemap.SetTile(new Vector3Int(c.coordinates.x, c.coordinates.y, 0), tile);
+            });
+        }
 
         //> GET THE ELEVATION AT ANY GIVEN POINT
-        // public float GenerateNoise(Cell cell)
-        // {
-        //     float noiseValue = 0f;
-        //     float firstLayerElevation = 0f;
+         public static float GenerateNoise(Data grid, Cell cell)
+         {
+             float noiseValue = 0f;
+             float firstLayerElevation = 0f;
 
-        //     if (grid.noiseLayers.Count > 0)
-        //     {
-        //         firstLayerElevation = Noise.GenerateValue(grid.noiseLayers[0], cell.center);
-        //         if (grid.noiseLayers[0].enabled) noiseValue = firstLayerElevation;
-        //     }
+             if (grid.noiseLayers.Count > 0)
+             {
+                 firstLayerElevation = Noise.GenerateValue(grid.noiseLayers[0], cell.center);
+                 if (grid.noiseLayers[0].enabled) noiseValue = firstLayerElevation;
+             }
 
-        //     for (int i = 1; i < grid.noiseLayers.Count; i++)
-        //     {
-        //         // ignore if not enabled
-        //         if (!grid.noiseLayers[i].enabled) continue;
+             for (int i = 1; i < grid.noiseLayers.Count; i++)
+             {
+                 // ignore if not enabled
+                 if (!grid.noiseLayers[i].enabled) continue;
 
-        //         float firstLayerMask = (grid.noiseLayers[i].useMask) ? firstLayerElevation : 1;
-        //         noiseValue += Noise.GenerateValue(grid.noiseLayers[i], cell.center) * firstLayerMask;
-        //     }
+                 float firstLayerMask = (grid.noiseLayers[i].useMask) ? firstLayerElevation : 1;
+                 noiseValue += Noise.GenerateValue(grid.noiseLayers[i], cell.center) * firstLayerMask;
+             }
 
-        //     grid.noiseRange.Add(noiseValue);
-        //     return noiseValue;
-        // }
+             grid.noiseRange.Add(noiseValue);
+             return noiseValue;
+         }
 
         public void ClearGrid()
         {
@@ -162,18 +167,21 @@ namespace ProcessControl.Procedural
         }
 
         //> GET CELLS 
-        private Cell OnGetCellUnderMouse()
-        {
-            return OnGetCellPosition(camera.MouseWorldPosition2D());
-        }
+        private Cell OnGetCellUnderMouse() => OnGetCellPosition(camera.MouseWorldPosition2D());
+        private Cell OnGetCellPosition(Vector3 worldPosition) => OnGetCellCoords(new Vector2Int(worldPosition.x.FloorToInt(), worldPosition.y.FloorToInt()));
         private Cell OnGetCellCoords(Vector2Int coordinates)
         {
             // return grid.cells.FirstOrDefault(c => c.coordinates == coordinates);
             return null;
         }
-        private Cell OnGetCellPosition(Vector3 worldPosition)
-        {
-            return OnGetCellCoords(new Vector2Int(worldPosition.x.FloorToInt(), worldPosition.y.FloorToInt()));
-        }
+
+        // private void OnDrawGizmos()
+        // {
+        //     Gizmos.color = Color.red;
+        //     grid.chunks.ForEach(chunk => chunk.cells.ForEach(cell =>
+        //     {
+        //                Gizmos.DrawCube(cell.center, Vector3.one * 0.2f);                 
+        //     }));
+        // }
     }
 }

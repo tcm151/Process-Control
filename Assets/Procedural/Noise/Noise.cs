@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-namespace TCM.NoiseGeneration
+namespace ProcessControl.Procedural
 {
     public static class Noise
     {
@@ -17,12 +17,12 @@ namespace TCM.NoiseGeneration
             public Type noiseType;
             public SimplexNoise generator = new SimplexNoise();
 
-            [Range(01, 004)] public int octaves = 1;
-            [Range(00, 001)] public float strength = 1f;
-            [Range(00, .1f)] public float baseRoughness = 1f;
-            [Range(00, 010)] public float roughness = 2f;
+            [Range(01, 004)] public int octaves = 3;
+            [Range(00, 001)] public float strength = 0.25f;
+            [Range(00, .1f)] public float baseRoughness = 0.001f;
+            [Range(00, 010)] public float roughness = 4f;
             [Range(00, 002)] public float persistence = 0.5f;
-            [Range(00, 005)] public float localZero = 0f;
+            [Range(00, 1)] public float localZero = 0f;
             public Vector3 offset = Vector3.zero;
         }
 
