@@ -88,43 +88,22 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Panels_0
+      name: Panels0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 67
-        width: 28
-        height: 28
+        x: 1
+        y: 1
+        width: 96
+        height: 96
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 3, y: 3, z: 3, w: 3}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: c5f90c3ceae914740800000000000000
-      internalID: 5134559523624755036
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Panels_1
-      rect:
-        serializedVersion: 2
-        x: 35
-        y: 67
-        width: 28
-        height: 28
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 3, y: 3, z: 3, w: 3}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6872cd38106092fb0800000000000000
-      internalID: -4672196534843201658
+      spriteID: 0bb0fc156b9839d20800000000000000
+      internalID: 3284119969432800176
       vertices: []
       indices: 
       edges: []

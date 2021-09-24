@@ -36,7 +36,8 @@ namespace ProcessControl.Procedural
         public List<TileBase> tiles;
         public List<Cell> cells;
 
-        private Noise.Layer noiseSettings;
+        public Noise.Layer noiseSettings;
+        public Range noiseRange;
 
         private RectInt gridRect;
 
@@ -46,7 +47,9 @@ namespace ProcessControl.Procedural
         public static Func<Vector2Int, Cell> GetCellCoords;
         public static Func<Vector3, Cell> GetCellPosition;
         
-        private void Awake()
+        private void Awake() => Initialize();
+        
+        private void Initialize()
         {
             camera = Camera.main;
             
@@ -62,6 +65,7 @@ namespace ProcessControl.Procedural
             gridRect.y = -dimensions.y / 2;
 
             cells = new List<Cell>();
+            noiseRange = new Range();
             tilemap = GetComponentInChildren<Tilemap>();
             
             for (int y = gridRect.y; y < -gridRect.y; y++) {
@@ -78,14 +82,23 @@ namespace ProcessControl.Procedural
             }
 
             
+            GenerateOre();
+        }
+
+        public void GenerateOre()
+        {
             cells.ForEach(c =>
             {
-                var noise = Noise.GenerateValue(noiseSettings, new Vector3(c.coordinates.x, c.coordinates.y, 0f));
-                c.value = noise;
-                tilemap.SetTile(new Vector3Int(c.coordinates.x, c.coordinates.y, 0), tiles[0]);
+                var noiseValue = Noise.GenerateValue(noiseSettings, new Vector3(c.coordinates.x, c.coordinates.y, 0f));
+                noiseRange.Add(noiseValue);
+                c.value = noiseValue;
+                var tile = (noiseValue >= 0.5) ? tiles[0] : tiles[1];
+                tilemap.SetTile(new Vector3Int(c.coordinates.x, c.coordinates.y, 0), tile);
             });
+
+            Debug.Log($"Noise Range: {noiseRange.min}-{noiseRange.max}");
         }
-        
+
         //> GET CELLS 
         private Cell OnGetCellUnderMouse()
         {
