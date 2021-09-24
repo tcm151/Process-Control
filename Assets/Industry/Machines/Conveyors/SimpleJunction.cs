@@ -1,11 +1,4 @@
-﻿using System;
-using UnityEngine;
-using ProcessControl.Graphs;
-using ProcessControl.Industry.Machines;
-using ProcessControl.Industry.Resources;
-
-
-namespace ProcessControl.Industry.Conveyors
+﻿namespace ProcessControl.Industry.Conveyors
 {
     // public class SimpleJunction : Junction
     // {

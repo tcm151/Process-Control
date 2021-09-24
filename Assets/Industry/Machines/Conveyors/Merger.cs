@@ -1,7 +1,4 @@
-﻿using System;
-using ProcessControl.Tools;
-using ProcessControl.Industry.Machines;
-using ProcessControl.Industry.Resources;
+﻿using ProcessControl.Industry.Resources;
 
 
 namespace ProcessControl.Industry.Conveyors

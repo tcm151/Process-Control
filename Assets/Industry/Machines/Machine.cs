@@ -15,7 +15,7 @@ namespace ProcessControl.Industry.Machines
         //> MACHINE DATA CONTAINER
         [Serializable] public class Data
         {
-            public ProceduralGrid.Cell cell;
+            public Cell cell;
             
             public bool sleeping;
             public int ticks;

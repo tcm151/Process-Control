@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using ProcessControl.Tools;
-using ProcessControl.Graphs;
+﻿using ProcessControl.Graphs;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Industry.Resources;
 

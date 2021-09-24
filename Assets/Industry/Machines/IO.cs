@@ -1,6 +1,4 @@
-﻿
-using System.Collections.Generic;
-using ProcessControl.Industry.Resources;
+﻿using ProcessControl.Industry.Resources;
 
 
 namespace ProcessControl.Industry.Machines
