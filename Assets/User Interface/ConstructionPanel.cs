@@ -2,7 +2,7 @@
 
 namespace ProcessControl.UI
 {
-    public class BuildPanel : UI_Panel
+    public class ConstructionPanel : UI_Panel
     {
         override protected void Awake()
         {
