@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using UnityEngine;
 using ProcessControl.Graphs;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Industry.Resources;
-using ProcessControl.Tools;
-using UnityEngine;
 
 
 namespace ProcessControl.Industry.Conveyors

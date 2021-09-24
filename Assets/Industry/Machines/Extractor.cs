@@ -32,7 +32,7 @@ namespace ProcessControl.Industry.Machines
             // node.inventory.Add(resource);
             machine.outputInventory.Add(resource);
             resource.SetVisible(false);
-            NextInput();
+            // NextInput();
         }
 
         private int i;

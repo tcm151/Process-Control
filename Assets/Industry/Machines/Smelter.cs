@@ -21,16 +21,17 @@ namespace ProcessControl.Industry.Machines
                 
 
                 var newResource = Smelt(machine.inputInventory.TakeFirst());
-
-                if (!machine.currentOutput || !machine.currentOutput.CanDeposit)
-                {
-                    machine.outputInventory.Add(newResource);
-                }
-                else
-                {
-                    newResource.SetVisible(true);
-                    machine.currentOutput.Deposit(newResource);
-                }
+                Deposit(newResource);
+                
+                // if (!machine.currentOutput || !machine.currentOutput.CanDeposit)
+                // {
+                //     machine.outputInventory.Add(newResource);
+                // }
+                // else
+                // {
+                //     newResource.SetVisible(true);
+                //     machine.currentOutput.Deposit(newResource);
+                // }
             }
         }
 
