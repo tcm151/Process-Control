@@ -17,12 +17,12 @@ namespace TCM.NoiseGeneration
             public Type noiseType;
             public SimplexNoise generator = new SimplexNoise();
 
-            [Range(01, 04)] public int octaves = 1;
-            [Range(00, 01)] public float strength = 1f;
-            [Range(00, 01)] public float baseRoughness = 1f;
-            [Range(00, 04)] public float roughness = 2f;
-            [Range(00, 04)] public float persistence = 0.5f;
-            [Range(00, 05)] public float localZero = 0f;
+            [Range(01, 004)] public int octaves = 1;
+            [Range(00, 001)] public float strength = 1f;
+            [Range(00, .1f)] public float baseRoughness = 1f;
+            [Range(00, 010)] public float roughness = 2f;
+            [Range(00, 002)] public float persistence = 0.5f;
+            [Range(00, 005)] public float localZero = 0f;
             public Vector3 offset = Vector3.zero;
         }
 

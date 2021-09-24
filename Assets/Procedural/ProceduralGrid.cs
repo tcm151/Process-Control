@@ -16,6 +16,22 @@ namespace ProcessControl.Procedural
     [RequireComponent(typeof(Grid))]
     public class ProceduralGrid : MonoBehaviour
     {
+        [Serializable]
+        public class Data
+        {
+            public Vector2Int dimensions;
+            public Tilemap tilemap;
+            public List<TileBase> tiles;
+            [HideInInspector] public List<Cell> cells;
+            [HideInInspector] public List<Chunk> chunks;
+
+            public List<Noise.Layer> noiseLayers;
+            public Range noiseRange;
+        }
+
+        [SerializeField] internal Data grid;
+        
+        
         [Serializable] public class Cell
         {
             public void ResetNode() => node = null;
@@ -30,14 +46,6 @@ namespace ProcessControl.Procedural
 
             public List<(int, Resource.Type)> resourceDeposit = new List<(int, Resource.Type)>();
         }
-
-        public Vector2Int dimensions;
-        public Tilemap tilemap;
-        public List<TileBase> tiles;
-        private List<Cell> cells;
-
-        public List<Noise.Layer> noiseLayers;
-        public Range noiseRange;
 
         private RectInt gridRect;
 
@@ -59,21 +67,21 @@ namespace ProcessControl.Procedural
             GetCellUnderMouse += OnGetCellUnderMouse;
             
             //! temp
-            gridRect.height = dimensions.y;
-            gridRect.width = dimensions.x;
-            gridRect.x = -dimensions.x / 2;
-            gridRect.y = -dimensions.y / 2;
+            gridRect.height = grid.dimensions.y;
+            gridRect.width = grid.dimensions.x;
+            gridRect.x = -grid.dimensions.x / 2;
+            gridRect.y = -grid.dimensions.y / 2;
 
-            cells = new List<Cell>();
-            noiseRange = new Range();
-            tilemap = GetComponentInChildren<Tilemap>();
+            grid.cells = new List<Cell>();
+            grid.noiseRange = new Range();
+            grid.tilemap = GetComponentInChildren<Tilemap>();
             
             for (int y = gridRect.y; y < -gridRect.y; y++) {
                 for (int x = gridRect.x; x < -gridRect.x; x++)
                 {
                     // Debug.Log($"Adding cell ({x},{y})");
                     
-                    cells.Add(new Cell
+                    grid.cells.Add(new Cell
                     {
                         center = new Vector3(x + 0.5f, y + 0.5f),
                         coordinates = new Vector2Int(x, y),
@@ -87,13 +95,13 @@ namespace ProcessControl.Procedural
 
         public void GenerateOre()
         {
-            cells.ForEach(c =>
+            grid.cells.ForEach(c =>
             {
                 var noiseValue = GenerateNoise(c);
-                noiseRange.Add(noiseValue);
+                grid.noiseRange.Add(noiseValue);
                 c.value = noiseValue;
-                var tile = (noiseValue >= noiseLayers[0].localZero) ? tiles[0] : tiles[1];
-                tilemap.SetTile(new Vector3Int(c.coordinates.x, c.coordinates.y, 0), tile);
+                var tile = (noiseValue >= grid.noiseLayers[0].localZero) ? grid.tiles[0] : grid.tiles[1];
+                grid.tilemap.SetTile(new Vector3Int(c.coordinates.x, c.coordinates.y, 0), tile);
             });
 
             // Debug.Log($"Noise Range: {noiseRange.min}-{noiseRange.max}");
@@ -105,28 +113,28 @@ namespace ProcessControl.Procedural
             float noiseValue = 0f;
             float firstLayerElevation = 0f;
 
-            if (noiseLayers.Count > 0)
+            if (grid.noiseLayers.Count > 0)
             {
-                firstLayerElevation = Noise.GenerateValue(noiseLayers[0], cell.center);
-                if (noiseLayers[0].enabled) noiseValue = firstLayerElevation;
+                firstLayerElevation = Noise.GenerateValue(grid.noiseLayers[0], cell.center);
+                if (grid.noiseLayers[0].enabled) noiseValue = firstLayerElevation;
             }
 
-            for (int i = 1; i < noiseLayers.Count; i++)
+            for (int i = 1; i < grid.noiseLayers.Count; i++)
             {
                 // ignore if not enabled
-                if (!noiseLayers[i].enabled) continue;
+                if (!grid.noiseLayers[i].enabled) continue;
 
-                float firstLayerMask = (noiseLayers[i].useMask) ? firstLayerElevation : 1;
-                noiseValue += Noise.GenerateValue(noiseLayers[i], cell.center) * firstLayerMask;
+                float firstLayerMask = (grid.noiseLayers[i].useMask) ? firstLayerElevation : 1;
+                noiseValue += Noise.GenerateValue(grid.noiseLayers[i], cell.center) * firstLayerMask;
             }
 
-            noiseRange.Add(noiseValue);
+            grid.noiseRange.Add(noiseValue);
             return noiseValue;
         }
 
         public void ClearGrid()
         {
-            tilemap.ClearAllTiles();
+            grid.tilemap.ClearAllTiles();
         }
 
         //> GET CELLS 
@@ -137,7 +145,7 @@ namespace ProcessControl.Procedural
         }
         private Cell OnGetCellCoords(Vector2Int coordinates)
         {
-            var cell = cells.FirstOrDefault(c => c.coordinates == coordinates);
+            var cell = grid.cells.FirstOrDefault(c => c.coordinates == coordinates);
             return cell;
         }
         private Cell OnGetCellPosition(Vector3 worldPosition)
