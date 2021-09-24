@@ -34,9 +34,9 @@ namespace ProcessControl.Procedural
         public Vector2Int dimensions;
         public Tilemap tilemap;
         public List<TileBase> tiles;
-        public List<Cell> cells;
+        private List<Cell> cells;
 
-        public Noise.Layer noiseSettings;
+        public List<Noise.Layer> noiseLayers;
         public Range noiseRange;
 
         private RectInt gridRect;
@@ -49,7 +49,7 @@ namespace ProcessControl.Procedural
         
         private void Awake() => Initialize();
         
-        private void Initialize()
+        public void Initialize()
         {
             camera = Camera.main;
             
@@ -89,14 +89,44 @@ namespace ProcessControl.Procedural
         {
             cells.ForEach(c =>
             {
-                var noiseValue = Noise.GenerateValue(noiseSettings, new Vector3(c.coordinates.x, c.coordinates.y, 0f));
+                var noiseValue = GenerateNoise(c);
                 noiseRange.Add(noiseValue);
                 c.value = noiseValue;
-                var tile = (noiseValue >= 0.5) ? tiles[0] : tiles[1];
+                var tile = (noiseValue >= noiseLayers[0].localZero) ? tiles[0] : tiles[1];
                 tilemap.SetTile(new Vector3Int(c.coordinates.x, c.coordinates.y, 0), tile);
             });
 
-            Debug.Log($"Noise Range: {noiseRange.min}-{noiseRange.max}");
+            // Debug.Log($"Noise Range: {noiseRange.min}-{noiseRange.max}");
+        }
+        
+        //> GET THE ELEVATION AT ANY GIVEN POINT
+        public float GenerateNoise(Cell cell)
+        {
+            float noiseValue = 0f;
+            float firstLayerElevation = 0f;
+
+            if (noiseLayers.Count > 0)
+            {
+                firstLayerElevation = Noise.GenerateValue(noiseLayers[0], cell.center);
+                if (noiseLayers[0].enabled) noiseValue = firstLayerElevation;
+            }
+
+            for (int i = 1; i < noiseLayers.Count; i++)
+            {
+                // ignore if not enabled
+                if (!noiseLayers[i].enabled) continue;
+
+                float firstLayerMask = (noiseLayers[i].useMask) ? firstLayerElevation : 1;
+                noiseValue += Noise.GenerateValue(noiseLayers[i], cell.center) * firstLayerMask;
+            }
+
+            noiseRange.Add(noiseValue);
+            return noiseValue;
+        }
+
+        public void ClearGrid()
+        {
+            tilemap.ClearAllTiles();
         }
 
         //> GET CELLS 

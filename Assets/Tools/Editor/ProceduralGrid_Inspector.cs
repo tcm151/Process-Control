@@ -30,8 +30,11 @@ namespace ProcessControl.Tools.Editor
 
             if (GUILayout.Button("Generate"))
             {
+                grid.Initialize();
                 grid.GenerateOre();
             }
+            
+            if (GUILayout.Button("Clear Grid")) grid.ClearGrid();
         }
     }
 }
