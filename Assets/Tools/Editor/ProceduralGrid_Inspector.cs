@@ -13,7 +13,7 @@ namespace ProcessControl.Tools.Editor
     {
         private ProceduralGrid grid;
         private bool autoUpdate;
-        
+
         private void OnEnable()
         {
             grid = target as ProceduralGrid;
@@ -24,16 +24,16 @@ namespace ProcessControl.Tools.Editor
             using var check = new EditorGUI.ChangeCheckScope();
 
             base.OnInspectorGUI();
-            
-            autoUpdate = EditorGUILayout.Toggle("Auto Update", autoUpdate);
-            if (check.changed && autoUpdate) grid.GenerateOre();
 
-            if (GUILayout.Button("Generate"))
+            autoUpdate = EditorGUILayout.Toggle("Auto Update", autoUpdate);
+            if (check.changed && autoUpdate) grid.GenerateAllChunks();
+
+            if (GUILayout.Button("Initialize & Generate"))
             {
                 grid.Initialize();
-                grid.GenerateOre();
+                grid.GenerateAllChunks();
             }
-            
+
             if (GUILayout.Button("Clear Grid")) grid.ClearGrid();
         }
     }
