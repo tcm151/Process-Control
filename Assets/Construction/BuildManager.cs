@@ -67,9 +67,9 @@ namespace ProcessControl.Construction
                     firstNode = secondNode = null;
                     
                     var firstCell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
-                    if (firstCell is null)
+                    if (firstCell is null || !firstCell.buildable)
                     {
-                        Debug.Log("NO CELL FOUND!");
+                        Debug.Log("Invalid Cell!");
                         return;
                     }
                     
@@ -83,8 +83,12 @@ namespace ProcessControl.Construction
 
                 if (Input.GetKeyUp(KeyCode.Mouse0))
                 {
-                    var secondCell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
-                    if (secondCell is null) Debug.Log("NO CELL FOUND!");
+                    var secondCell = ProceduralGrid.GetCellUnderMouse();
+                    if (secondCell is null || !secondCell.buildable)
+                    {
+                        Debug.Log("Invalid Cell!");
+                        return;
+                    }
                     else
                     {
                         if (!secondCell.occupied)
@@ -109,7 +113,15 @@ namespace ProcessControl.Construction
             else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 var firstCell = ProceduralGrid.GetCellUnderMouse();
-                if (firstCell is null) Debug.Log("NO CELL FOUND!");
+                // Debug.Log(firstCell.coordinates);
+                // Debug.Log(firstCell.buildable);
+                // Debug.Log(firstCell.value);
+                
+                if (firstCell is null || !firstCell.buildable)
+                {
+                    Debug.Log("Invalid Cell!");
+                    return;
+                }
                 else
                 {
                     firstNode = (firstCell.occupied) ? firstCell.node: BuildNode(firstCell);
@@ -129,7 +141,11 @@ namespace ProcessControl.Construction
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 var cell = ProceduralGrid.GetCellUnderMouse();
-                if (cell is null) Debug.Log("NO CELL FOUND!");
+                if (cell is null || !cell.buildable)
+                {
+                    Debug.Log("NO CELL FOUND!");
+                    return;
+                }
                 else
                 if (cell.occupied)
                 {
@@ -142,13 +158,13 @@ namespace ProcessControl.Construction
 
         private void OnDrawGizmos()
         {
-            if (buildMode)
-            {
-                Gizmos.color = Color.white;
-                var cell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
-                if (cell is null) return;
-                Gizmos.DrawWireCube(cell.center, Vector3.one);
-            }
+            // if (buildMode)
+            // {
+            //     Gizmos.color = Color.white;
+            //     var cell = ProceduralGrid.GetCellUnderMouse();
+            //     if (cell is null) return;
+            //     Gizmos.DrawWireCube(cell.center, Vector3.one);
+            // }
         }
     }
 }

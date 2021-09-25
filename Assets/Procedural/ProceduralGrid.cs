@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using ProcessControl.Tools;
@@ -28,6 +29,7 @@ namespace ProcessControl.Procedural
             
             // public List<Cell> cells = new List<Cell>();
             public List<Chunk> chunks = new List<Chunk>();
+            // [HideInInspector] public List<Chunk> chunks = new List<Chunk>();
 
         }
         [SerializeField] internal Data grid;
@@ -39,7 +41,11 @@ namespace ProcessControl.Procedural
         public static Func<Vector3, Cell> GetCellPosition;
         public static Func<Vector2Int, Cell> GetCellCoords;
 
-        private void Awake() => Initialize();
+        private void Awake()
+        {
+            Initialize();
+            GenerateAllChunks();
+        }
 
         public void Initialize()
         {
@@ -50,12 +56,8 @@ namespace ProcessControl.Procedural
             GetCellPosition += OnGetCellPosition;
             GetCellUnderMouse += OnGetCellUnderMouse;
 
-            // grid.cells.Clear();
             grid.chunks.Clear();
 
-            // var chunk = new Chunk();
-            // grid.chunks.Add(chunk);
-            
             grid.tilemap = GetComponentInChildren<Tilemap>();
 
             for (int y = -grid.gridDimensions.y / 2; y <= grid.gridDimensions.y / 2; y++) {
@@ -81,8 +83,6 @@ namespace ProcessControl.Procedural
                     }
                 }
             });
-            
-            // chunk.SetCells(ref grid.cells);
         }
 
         public void GenerateAllChunks() => GenerateChunks(grid.chunks);
@@ -93,48 +93,31 @@ namespace ProcessControl.Procedural
             for (int i = 0; i < chunks.Count; i++)
             {
                 int j = i;
-                triangulations[j] = Task.Factory.StartNew(() => GenerateCells(ref chunks[j].cells));
+                triangulations[j] = Task.Factory.StartNew(() => GenerateCells(chunks[j].cells));
             }
             Task.WaitAll(triangulations, 5000);
 
             // apply triangulations on main thread
-            chunks.ForEach(c => SetTiles(c.cells));
+            chunks.ForEach(c => SetTilemap(c.cells));
         }
         
-        public void GenerateCells(ref List<Cell> cells)
+        public void GenerateCells(List<Cell> cells) => cells.ForEach(c =>
         {
-            cells.ForEach(c =>
-            {
-                var noiseValue = GenerateNoise(grid, c);
-                grid.noiseRange.Add(noiseValue);
-                c.value = noiseValue;
-            });
+            var noiseValue = GenerateNoise(grid, c);
+            grid.noiseRange.Add(noiseValue);
+            c.value = noiseValue;
+        });
 
-            // Debug.Log($"Noise Range: {noiseRange.min}-{noiseRange.max}");
-        }
-
-        // public void Generate()
-        // {
-        //     grid.cells.ForEach(c =>
-        //     {
-        //         var noiseValue = GenerateNoise(c);
-        //         grid.noiseRange.Add(noiseValue);
-        //         c.value = noiseValue;
-        //         var tile = (noiseValue >= grid.noiseLayers[0].localZero) ? grid.tiles[0] : grid.tiles[1];
-        //         grid.tilemap.SetTile(new Vector3Int(c.coordinates.x, c.coordinates.y, 0), tile);
-        //     });
-
-        //     // Debug.Log($"Noise Range: {noiseRange.min}-{noiseRange.max}");
-        // }
-        
-        public void SetTiles(List<Cell> cells)
+        public void SetTilemap(List<Cell> cells) => cells.ForEach(c =>
         {
-            cells.ForEach(c =>
+            if (c.value < grid.noiseLayers[0].localZero)
             {
-                var tile = (c.value >= grid.noiseLayers[0].localZero) ? grid.tiles[0] : grid.tiles[1];
-                grid.tilemap.SetTile(new Vector3Int(c.coordinates.x, c.coordinates.y, 0), tile);
-            });
-        }
+                c.buildable = false;
+            }
+            
+            var tile = (c.value >= grid.noiseLayers[0].localZero) ? grid.tiles[1] : grid.tiles[0];
+            grid.tilemap.SetTile(new Vector3Int(c.coordinates.x, c.coordinates.y, 0), tile);
+        });
 
         //> GET THE ELEVATION AT ANY GIVEN POINT
          public static float GenerateNoise(Data grid, Cell cell)
@@ -161,27 +144,17 @@ namespace ProcessControl.Procedural
              return noiseValue;
          }
 
-        public void ClearGrid()
-        {
-            grid.tilemap.ClearAllTiles();
-        }
+        public void ClearTiles() => grid.tilemap.ClearAllTiles();
 
         //> GET CELLS 
         private Cell OnGetCellUnderMouse() => OnGetCellPosition(camera.MouseWorldPosition2D());
         private Cell OnGetCellPosition(Vector3 worldPosition) => OnGetCellCoords(new Vector2Int(worldPosition.x.FloorToInt(), worldPosition.y.FloorToInt()));
         private Cell OnGetCellCoords(Vector2Int coordinates)
         {
-            // return grid.cells.FirstOrDefault(c => c.coordinates == coordinates);
-            return null;
+            var cells = grid.chunks.SelectMany(chunk => chunk.cells);
+            var cell = cells.FirstOrDefault(cell => cell.coordinates == coordinates);
+            return cell;
         }
 
-        // private void OnDrawGizmos()
-        // {
-        //     Gizmos.color = Color.red;
-        //     grid.chunks.ForEach(chunk => chunk.cells.ForEach(cell =>
-        //     {
-        //                Gizmos.DrawCube(cell.center, Vector3.one * 0.2f);                 
-        //     }));
-        // }
     }
 }

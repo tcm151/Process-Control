@@ -34,7 +34,7 @@ namespace ProcessControl.Tools.Editor
                 grid.GenerateAllChunks();
             }
 
-            if (GUILayout.Button("Clear Grid")) grid.ClearGrid();
+            if (GUILayout.Button("Clear Grid")) grid.ClearTiles();
         }
     }
 }
