@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 
@@ -33,7 +34,7 @@ namespace ProcessControl.Tools
         }
 
         //> CAMERA
-        public static Vector3 MouseWorldPosition2D(this Camera camera)
+        public static Vector3 MousePosition2D(this Camera camera)
         {
             var worldPosition = camera.ScreenToWorldPoint(Input.mousePosition);
             worldPosition.z = 0f;
@@ -62,22 +63,39 @@ namespace ProcessControl.Tools
             return (direction.y > 0f) ? angle : -angle;
         }
 
-        //> IENUMERABLES
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> e)
+        public static Vector2Int FloorToInt(this Vector2 v2) => new Vector2Int
         {
-            var rng = new System.Random();
-            var array = e.ToArray();
-            var n = array.Length;
+            x = Mathf.FloorToInt(v2.x),
+            y = Mathf.FloorToInt(v2.y),
+        };
+
+        //> IENUMERABLES
+        public static List<T> Shuffle<T>(this List<T> list, int seed = 69)
+        {
+            var rng = new System.Random(seed);
+            var n = list.Count;
             
             while (n > 1)
             {
                 int k = rng.Next(n--);
-                (array[n], array[k]) = (array[k], array[n]);
+                (list[n], list[k]) = (list[k], list[n]);
             }
 
-            return array;
+            return list;
         }
-        
+
+        public static List<T> To2D<T>(this T[,] array)
+        {
+            var list = new List<T>(array.Length);
+            for (int x = 0; x < array.GetLength(0); x++) {
+                for (int y = 0; y < array.GetLength(1); y++)
+                {
+                    list.Add(array[x,y]);
+                }
+            }
+            return list;
+        }
+
         public static void MoveTowards(this ref Vector2 current, Vector2 target, float maxDelta)
             => current = Vector2.MoveTowards(current, target, maxDelta);
 
@@ -99,7 +117,7 @@ namespace ProcessControl.Tools
 
         public static Vector3 DirectionTo(this Vector3 origin, Vector3 target) => (target - origin).normalized;
 
-        //> MATHF
+        //> MATH ON FLOATS
         public static float Clamp(this float value, float min, float max)
             => Mathf.Clamp(value, min, max);
         

@@ -6,13 +6,14 @@ namespace ProcessControl.Procedural
     public static class Noise
     {
         //> NOISE TYPES
-        public enum Type { Simple, Rigid };
+        public enum Type { Simple, Rigid, Brownian, Swiss };
 
         //> NOISE LAYER SETTINGS
         [System.Serializable] public class Layer
         {
             public bool enabled = true;
             public bool useMask = true;
+            public bool subtract;
 
             public Type noiseType;
             public SimplexNoise generator = new SimplexNoise();
@@ -32,6 +33,7 @@ namespace ProcessControl.Procedural
             float generatedValue = 0f;
             float roughness = noise.baseRoughness;
             float amplitude = 1;
+            // float frequency = 1;
             float weight = 1;
 
             switch (noise.noiseType)
@@ -61,10 +63,21 @@ namespace ProcessControl.Procedural
                         amplitude *= noise.persistence;
                     } break;
                 }
+
+                case Type.Brownian:
+                {
+                    float acceleration = 2f;
+
+                    for (int i = 0; i < noise.octaves; i++)
+                    {
+                        generatedValue += noise.generator.Generate(vector3 * Mathf.Pow(acceleration, i)) / Mathf.Pow(acceleration, i);
+                    } break;
+                }
+                
             }
 
             generatedValue = Mathf.Max(0, generatedValue - noise.localZero);
-            return generatedValue * noise.strength;
+            return (noise.subtract) ? -generatedValue * noise.strength : generatedValue * noise.strength;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Tools;
 
@@ -30,10 +31,10 @@ namespace ProcessControl.Audio
             // StartCoroutine(CR_StartMusic(true));
         }
 
-        private IEnumerator CR_PlayPlaylist(SFX[] tracks, int channel, bool shuffle, bool loop)
+        private IEnumerator CR_PlayPlaylist(List<SFX> tracks, int channel, bool shuffle, bool loop)
         {
-            if (tracks.Length <= 0) Debug.LogWarning("Provided <colors=yellow>NO SONGS</color> in Playlist!");
-            if (shuffle) tracks = tracks.Shuffle().ToArray();
+            if (tracks.Count <= 0) Debug.LogWarning("Provided <colors=yellow>NO SONGS</color> in Playlist!");
+            if (shuffle) tracks = tracks.Shuffle();
             
             foreach (var track in tracks)
             {

@@ -21,16 +21,16 @@ namespace ProcessControl.Procedural
             public Vector2Int gridDimensions;
             public Vector2Int chunkDimensions;
             
+            [HideInInspector]
             public Tilemap tilemap;
             public List<TileBase> tiles;
             
-            public List<Noise.Layer> noiseLayers;
+            [Header("Noise")]
             public Range noiseRange;
+            public List<Noise.Layer> noiseLayers;
             
-            // public List<Cell> cells = new List<Cell>();
+            [Header("All Chunks")]
             public List<Chunk> chunks = new List<Chunk>();
-            // [HideInInspector] public List<Chunk> chunks = new List<Chunk>();
-
         }
         [SerializeField] internal Data grid;
 
@@ -72,23 +72,26 @@ namespace ProcessControl.Procedural
             
             grid.chunks.ForEach(c =>
             {
-                for (int y = -grid.chunkDimensions.y / 2; y < grid.chunkDimensions.y / 2; y++) {
-                    for (int x = -grid.chunkDimensions.x / 2; x < grid.chunkDimensions.x / 2; x++)
+                c.cells = new Cell[grid.chunkDimensions.x, grid.chunkDimensions.y];
+                
+                for (int y = 0; y < grid.chunkDimensions.y; y++) {
+                    for (int x = 0; x < grid.chunkDimensions.x; x++)
                     {
-                        c.cells.Add(new Cell
+                        c.cells[x,y] = new Cell
                         {
-                            center = new Vector3(x + c.chunkOffset.x+ 0.5f, y + c.chunkOffset.y + 0.5f),
+                            position = new Vector3(x + c.chunkOffset.x + 0.5f, y + c.chunkOffset.y + 0.5f),
                             coordinates = new Vector2Int(x + c.chunkOffset.x, y + c.chunkOffset.y),
-                        });
+                        };
                     }
                 }
             });
         }
 
+        //> GENERATE CHUNKS
         public void GenerateAllChunks() => GenerateChunks(grid.chunks);
-
         private void GenerateChunks(List<Chunk> chunks)
         {
+            // queue tasks
             Task[] triangulations = new Task[chunks.Count];
             for (int i = 0; i < chunks.Count; i++)
             {
@@ -98,26 +101,32 @@ namespace ProcessControl.Procedural
             Task.WaitAll(triangulations, 5000);
 
             // apply triangulations on main thread
-            chunks.ForEach(c => SetTilemap(c.cells));
+            chunks.ForEach(c => UpdateTilemap(c.cells));
         }
         
-        public void GenerateCells(List<Cell> cells) => cells.ForEach(c =>
+        public void GenerateCells(Cell[,] cells)
         {
-            var noiseValue = GenerateNoise(grid, c);
-            grid.noiseRange.Add(noiseValue);
-            c.value = noiseValue;
-        });
-
-        public void SetTilemap(List<Cell> cells) => cells.ForEach(c =>
-        {
-            if (c.value < grid.noiseLayers[0].localZero)
+            foreach (var cell in cells)
             {
-                c.buildable = false;
+                var noiseValue = GenerateNoise(grid, cell);
+                grid.noiseRange.Add(noiseValue);
+                cell.value = noiseValue;
             }
-            
-            var tile = (c.value >= grid.noiseLayers[0].localZero) ? grid.tiles[1] : grid.tiles[0];
-            grid.tilemap.SetTile(new Vector3Int(c.coordinates.x, c.coordinates.y, 0), tile);
-        });
+        }
+
+        public void UpdateTilemap(Cell[,] cells)
+        {
+            foreach (var cell in cells)
+            {
+                if (cell.value < grid.noiseLayers[0].localZero)
+                {
+                    cell.buildable = false;
+                }
+
+                var tile = (cell.value >= grid.noiseLayers[0].localZero) ? grid.tiles[1] : grid.tiles[0];
+                grid.tilemap.SetTile(new Vector3Int(cell.coordinates.x, cell.coordinates.y, 0), tile);
+            }
+        }
 
         //> GET THE ELEVATION AT ANY GIVEN POINT
          public static float GenerateNoise(Data grid, Cell cell)
@@ -127,7 +136,7 @@ namespace ProcessControl.Procedural
 
              if (grid.noiseLayers.Count > 0)
              {
-                 firstLayerElevation = Noise.GenerateValue(grid.noiseLayers[0], cell.center);
+                 firstLayerElevation = Noise.GenerateValue(grid.noiseLayers[0], cell.position);
                  if (grid.noiseLayers[0].enabled) noiseValue = firstLayerElevation;
              }
 
@@ -137,7 +146,7 @@ namespace ProcessControl.Procedural
                  if (!grid.noiseLayers[i].enabled) continue;
 
                  float firstLayerMask = (grid.noiseLayers[i].useMask) ? firstLayerElevation : 1;
-                 noiseValue += Noise.GenerateValue(grid.noiseLayers[i], cell.center) * firstLayerMask;
+                 noiseValue += Noise.GenerateValue(grid.noiseLayers[i], cell.position) * firstLayerMask;
              }
 
              grid.noiseRange.Add(noiseValue);
@@ -147,12 +156,21 @@ namespace ProcessControl.Procedural
         public void ClearTiles() => grid.tilemap.ClearAllTiles();
 
         //> GET CELLS 
-        private Cell OnGetCellUnderMouse() => OnGetCellPosition(camera.MouseWorldPosition2D());
+        private Cell OnGetCellUnderMouse()
+        {
+            Vector2 position = camera.MousePosition2D();
+            return OnGetCellCoords(position.FloorToInt());
+        }
+
         private Cell OnGetCellPosition(Vector3 worldPosition) => OnGetCellCoords(new Vector2Int(worldPosition.x.FloorToInt(), worldPosition.y.FloorToInt()));
         private Cell OnGetCellCoords(Vector2Int coordinates)
         {
-            var cells = grid.chunks.SelectMany(chunk => chunk.cells);
+            var cells = grid.chunks.SelectMany(chunk => chunk.cells.To2D());
             var cell = cells.FirstOrDefault(cell => cell.coordinates == coordinates);
+
+            // var cells = grid.chunks.ConvertAll(chunk => chunk.cells[coordinates.x, coordinates.y]);
+            // var cell = cells.FirstOrDefault(cell => cell.coordinates == coordinates);
+            
             return cell;
         }
 

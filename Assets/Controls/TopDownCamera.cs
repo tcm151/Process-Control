@@ -40,7 +40,7 @@ namespace ProcessControl.Controls
             if (Input.GetMouseButtonDown(2))
             {
                 dragging = true;
-                dragOrigin = camera.MouseWorldPosition2D();
+                dragOrigin = camera.MousePosition2D();
                 cameraOrigin = transform.position;
             }
 
@@ -52,7 +52,7 @@ namespace ProcessControl.Controls
             // if release, stop dragging
             if (Input.GetMouseButtonUp(2)) dragging = false;
 
-            mousePosition = camera.MouseWorldPosition2D();
+            mousePosition = camera.MousePosition2D();
             cameraPosition = transform.position;
 
             mouseInput.x = Input.GetAxisRaw("Mouse X");

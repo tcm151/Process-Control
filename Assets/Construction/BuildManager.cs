@@ -33,7 +33,7 @@ namespace ProcessControl.Construction
         private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
         private void OnSetNode(Node newSelection) => selectedNode = newSelection;
         private void OnSetEdge(Edge newSelection) => selectedEdge = newSelection;
-        public Node BuildNode(Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.center);
+        public Node BuildNode(Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.position);
         // public Edge BuildEdge(ProceduralGrid.Cell cell) => Factory.Spawn("Edges", selectedEdge, c)
         
         private void Awake()
@@ -66,7 +66,7 @@ namespace ProcessControl.Construction
                 {
                     firstNode = secondNode = null;
                     
-                    var firstCell = ProceduralGrid.GetCellPosition(camera.MouseWorldPosition2D());
+                    var firstCell = ProceduralGrid.GetCellPosition(camera.MousePosition2D());
                     if (firstCell is null || !firstCell.buildable)
                     {
                         Debug.Log("Invalid Cell!");
@@ -163,7 +163,7 @@ namespace ProcessControl.Construction
             //     Gizmos.color = Color.white;
             //     var cell = ProceduralGrid.GetCellUnderMouse();
             //     if (cell is null) return;
-            //     Gizmos.DrawWireCube(cell.center, Vector3.one);
+            //     Gizmos.DrawWireCube(cell.position, Vector3.one);
             // }
         }
     }
