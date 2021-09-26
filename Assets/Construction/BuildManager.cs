@@ -34,7 +34,7 @@ namespace ProcessControl.Construction
         private void OnSetNode(Node newSelection) => selectedNode = newSelection;
         private void OnSetEdge(Edge newSelection) => selectedEdge = newSelection;
         public Node BuildNode(Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.position);
-        // public Edge BuildEdge(ProceduralGrid.Cell cell) => Factory.Spawn("Edges", selectedEdge, c)
+        // public Edge BuildEdge(ProceduralGrid.parentCell cell) => Factory.Spawn("Edges", selectedEdge, c)
         
         private void Awake()
         {
@@ -69,14 +69,14 @@ namespace ProcessControl.Construction
                     var firstCell = ProceduralGrid.GetCellPosition(camera.MousePosition2D());
                     if (firstCell is null || !firstCell.buildable)
                     {
-                        Debug.Log("Invalid Cell!");
+                        Debug.Log("Invalid parentCell!");
                         return;
                     }
                     
                     if (!firstCell.occupied)
                     {
                         firstNode = firstCell.node = BuildNode(firstCell);
-                        firstNode.Cell = firstCell;
+                        firstNode.parentCell = firstCell;
                     }
                     else firstNode = firstCell.node;
                 }
@@ -86,7 +86,7 @@ namespace ProcessControl.Construction
                     var secondCell = ProceduralGrid.GetCellUnderMouse();
                     if (secondCell is null || !secondCell.buildable)
                     {
-                        Debug.Log("Invalid Cell!");
+                        Debug.Log("Invalid parentCell!");
                         return;
                     }
                     else
@@ -94,7 +94,7 @@ namespace ProcessControl.Construction
                         if (!secondCell.occupied)
                         {
                             secondNode = secondCell.node = BuildNode(secondCell);
-                            secondNode.Cell = secondCell;
+                            secondNode.parentCell = secondCell;
                         }
                         else secondNode = secondCell.node;
                         
@@ -113,20 +113,16 @@ namespace ProcessControl.Construction
             else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 var firstCell = ProceduralGrid.GetCellUnderMouse();
-                // Debug.Log(firstCell.coordinates);
+                Debug.Log(firstCell.coordinates);
                 // Debug.Log(firstCell.buildable);
-                // Debug.Log(firstCell.value);
-                
-                if (firstCell is null || !firstCell.buildable)
-                {
-                    Debug.Log("Invalid Cell!");
-                    return;
-                }
+                // Debug.Log(firstCell.terrainValue);
+
+                if (firstCell is null || !firstCell.buildable) Debug.Log("Invalid parentCell!");
                 else
                 {
                     firstNode = (firstCell.occupied) ? firstCell.node: BuildNode(firstCell);
+                    firstNode.parentCell = firstCell;
                     firstCell.node = firstNode;
-                    firstNode.Cell = firstCell;
 
                     if (firstNode is Merger || firstNode is Splitter)
                     {
@@ -137,8 +133,7 @@ namespace ProcessControl.Construction
                     }
                 }
             }
-
-            if (Input.GetKeyDown(KeyCode.Mouse1))
+            else if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 var cell = ProceduralGrid.GetCellUnderMouse();
                 if (cell is null || !cell.buildable)

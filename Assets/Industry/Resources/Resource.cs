@@ -13,6 +13,8 @@ namespace ProcessControl.Industry.Resources
             public int ticks;
             public bool sleeping;
             public int sleepThreshold = 512;
+
+            public Type type;
             
             public Vector3 position;
         }

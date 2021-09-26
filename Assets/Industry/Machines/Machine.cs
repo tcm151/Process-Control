@@ -15,8 +15,6 @@ namespace ProcessControl.Industry.Machines
         //> MACHINE DATA CONTAINER
         [Serializable] public class Data
         {
-            public Cell cell;
-            
             public bool sleeping;
             public int ticks;
             public int sleepThreshold = 256;

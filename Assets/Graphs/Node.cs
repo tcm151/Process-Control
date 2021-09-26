@@ -11,7 +11,7 @@ namespace ProcessControl.Graphs
         protected const int TicksPerSecond = 64;
         
         //> PROPERTIES
-        public Cell Cell {get; set;}
+        public Cell parentCell;
         public Vector3 Position => transform.position;
         
         //> INSTANCE HELPERS

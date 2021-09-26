@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 
 namespace ProcessControl.Procedural
@@ -23,7 +24,7 @@ namespace ProcessControl.Procedural
             [Range(00, .1f)] public float baseRoughness = 0.001f;
             [Range(00, 010)] public float roughness = 4f;
             [Range(00, 002)] public float persistence = 0.5f;
-            [Range(00, 1)] public float localZero = 0f;
+            [FormerlySerializedAs("localZero")][Range(00, 1)] public float threshold = 0f;
             public Vector3 offset = Vector3.zero;
         }
 
@@ -76,7 +77,7 @@ namespace ProcessControl.Procedural
                 
             }
 
-            generatedValue = Mathf.Max(0, generatedValue - noise.localZero);
+            generatedValue = Mathf.Max(0, generatedValue - noise.threshold);
             return (noise.subtract) ? -generatedValue * noise.strength : generatedValue * noise.strength;
         }
     }

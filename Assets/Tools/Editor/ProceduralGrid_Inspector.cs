@@ -26,12 +26,17 @@ namespace ProcessControl.Tools.Editor
             base.OnInspectorGUI();
 
             autoUpdate = EditorGUILayout.Toggle("Auto Update", autoUpdate);
-            if (check.changed && autoUpdate) grid.GenerateAllChunks();
+            if (check.changed && autoUpdate)
+            {
+                grid.GenerateAllChunks();
+                grid.GenerateAllResources();
+            }
 
             if (GUILayout.Button("Initialize & Generate"))
             {
                 grid.Initialize();
                 grid.GenerateAllChunks();
+                grid.GenerateAllResources();
             }
 
             if (GUILayout.Button("Clear Grid")) grid.ClearTiles();

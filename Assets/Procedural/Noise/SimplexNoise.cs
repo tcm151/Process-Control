@@ -81,7 +81,7 @@ namespace ProcessControl.Procedural
         }
 
         /// <summary>
-        /// Generates value, typically in range [-1, 1]
+        /// Generates terrainValue, typically in range [-1, 1]
         /// </summary>
         public float Generate(UnityEngine.Vector3 point)
         {
@@ -241,7 +241,7 @@ namespace ProcessControl.Procedural
                 n3 = t3 * t3 * Dot(Grad3[gi3], x3, y3, z3);
             }
 
-            // Add contributions from each corner to get the final noise value.
+            // Add contributions from each corner to get the final noise terrainValue.
             // The result is scaled to stay just inside [-1,1]
             return (float)(n0 + n1 + n2 + n3) * 32;
         }

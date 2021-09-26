@@ -14,11 +14,14 @@ namespace ProcessControl.Industry.Machines
         override protected void FixedUpdate()
         {
             base.FixedUpdate();
-
-            // Debug.Log("FIXED UPDATE!");
+            if (parentCell.resourceDeposit <= 0)
+            {
+                machine.sleeping = true;
+                return;
+            }
+            
             if ((++machine.ticks % (TicksPerSecond / extractionSpeed)) == 0)
             {
-                // Debug.Log("PRE CHECK!");
                 if (machine.outputInventory.Count >= machine.inventorySize) return;
                 
                 machine.ticks = 0;
@@ -39,9 +42,10 @@ namespace ProcessControl.Industry.Machines
 
         protected Resource ExtractResource()
         {
+            parentCell.resourceDeposit--;
             var resource = Factory.Spawn("Resources", extractionResource, Position);
-            resource.name = $"Resource.{i++:D3}";
-            // do more stuff
+            resource.data.type = parentCell.resourceType;
+            resource.name = $"{resource.data.type}.{i++:D3}";
             return resource;
         }
     }
