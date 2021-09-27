@@ -104,6 +104,8 @@ namespace ProcessControl.Industry.Conveyors
 
         private void FixedUpdate()
         {
+            //@ add sleeping when idle
+            
             if (++junction.ticks % (TicksPerSecond / 16) == 0)
             {
                 if (Input is {CanWithdraw: false}) NextInput();

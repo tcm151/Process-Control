@@ -21,7 +21,6 @@ namespace ProcessControl.Industry.Machines
 
             [Header("Inventory")]
             public int inventorySize = 8;
-            // public List<Resource> inventory = new List<Resource>();
             
             [Header("Input")]
             public bool inputEnabled = true;
@@ -43,11 +42,6 @@ namespace ProcessControl.Industry.Machines
         override public IO Input => machine.currentInput;
         override public IO Output => machine.currentOutput;
         
-        //> PROPERTIES
-        // virtual public bool Full => node.inputInventory.Count >= InventorySize;
-        // virtual public bool Empty => node.outputInventory.Count == 0;
-        // virtual public int InventorySize => node.inventorySize;
-
         //> CONNECT INPUT
         override public bool ConnectInput(IO input)
         {
@@ -57,6 +51,7 @@ namespace ProcessControl.Industry.Machines
             return true;
         }
         
+        //> DISCONNECT INPUT
         override public bool DisconnectInput(IO input)
         {
             if (!machine.inputs.Contains(input as Edge)) return false;
@@ -65,6 +60,7 @@ namespace ProcessControl.Industry.Machines
             return true;
         }
 
+        //> SWITCH TO NEXT VALID INPUT
         protected void NextInput()
         {
             if (!machine.inputEnabled || machine.currentInput is null || machine.maxInputs == 1) return;
@@ -80,6 +76,7 @@ namespace ProcessControl.Industry.Machines
             return true;
         }
         
+        //> DISCONNECT OUTPUT
         override public bool DisconnectOutput(IO output)
         {
             if (!machine.outputs.Contains(output as Edge)) return false;
@@ -88,6 +85,7 @@ namespace ProcessControl.Industry.Machines
             return true;
         }
 
+        //> SWITCH TO NEXT VALID OUTPUT
         protected void NextOutput()
         {
             if (!machine.outputEnabled || machine.currentOutput is null || machine.maxOutputs == 1) return;
@@ -116,7 +114,7 @@ namespace ProcessControl.Industry.Machines
             return resource;
         }
 
-        //> FIXED CALCULATION INTERVAL
+        //> SLEEP IF IDLE
         virtual protected void FixedUpdate()
         {
             if (machine.sleeping) return;

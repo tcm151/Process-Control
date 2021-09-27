@@ -10,16 +10,19 @@ namespace ProcessControl.Industry.Machines
         [SerializeField] public Resource extractionResource;
         [Range(0, 64)] public float extractionSpeed;
 
-        
+        //> FIXED CALCULATION INTERVAL
         override protected void FixedUpdate()
         {
             base.FixedUpdate();
+            
+            // sleep if ground is depleted
             if (parentCell.resourceDeposit <= 0)
             {
                 machine.sleeping = true;
                 return;
             }
             
+            // extraction interval check
             if ((++machine.ticks % (TicksPerSecond / extractionSpeed)) == 0)
             {
                 if (machine.outputInventory.Count >= machine.inventorySize) return;
@@ -29,17 +32,17 @@ namespace ProcessControl.Industry.Machines
             }
         }
 
+        //> DEPOSIT RESOURCE INTO INVENTORY
         override public void Deposit(Resource resource)
         {
             resource.data.position = Position;
-            // node.inventory.Add(resource);
             machine.outputInventory.Add(resource);
             resource.SetVisible(false);
-            // NextInput();
         }
 
         private int i;
 
+        //> EXTRACT RESOURCE FROM THE GROUND
         protected Resource ExtractResource()
         {
             parentCell.resourceDeposit--;

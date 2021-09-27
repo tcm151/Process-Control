@@ -33,9 +33,10 @@ namespace ProcessControl.Construction
         private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
         private void OnSetNode(Node newSelection) => selectedNode = newSelection;
         private void OnSetEdge(Edge newSelection) => selectedEdge = newSelection;
-        public Node BuildNode(Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.position);
-        // public Edge BuildEdge(ProceduralGrid.parentCell cell) => Factory.Spawn("Edges", selectedEdge, c)
+        private Node BuildNode(Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.position);
+        private Edge BuildEdge(Cell cell) => Factory.Spawn("Edges", selectedEdge, cell.position);
         
+        //> INITIALIZATION
         private void Awake()
         {
             camera = Camera.main;
@@ -45,11 +46,10 @@ namespace ProcessControl.Construction
             SetEdgeMode += OnSetConveyorMode;
         }
 
-
+        //> BUILD STUFF
         private void Update()
         {
-            
-            
+            //- toggle build mode
             if (Input.GetKeyDown(KeyCode.B))
             {
                 buildMode = !buildMode;
@@ -58,10 +58,10 @@ namespace ProcessControl.Construction
             
             if (!buildMode || selectedNode is null || EventSystem.current.IsPointerOverGameObject()) return;
             
-
+            //- handle conveyor building
             if (conveyorMode)
             {
-                
+                //- left click pressed
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     firstNode = secondNode = null;
@@ -81,14 +81,11 @@ namespace ProcessControl.Construction
                     else firstNode = firstCell.node;
                 }
 
+                //- left click released
                 if (Input.GetKeyUp(KeyCode.Mouse0))
                 {
                     var secondCell = ProceduralGrid.GetCellUnderMouse();
-                    if (secondCell is null || !secondCell.buildable)
-                    {
-                        Debug.Log("Invalid parentCell!");
-                        return;
-                    }
+                    if (secondCell is null || !secondCell.buildable) Debug.Log("Invalid parentCell!");
                     else
                     {
                         if (!secondCell.occupied)
@@ -110,12 +107,11 @@ namespace ProcessControl.Construction
                     }
                 }
             }
+            
+            //- regular node building
             else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 var firstCell = ProceduralGrid.GetCellUnderMouse();
-                Debug.Log(firstCell.coordinates);
-                // Debug.Log(firstCell.buildable);
-                // Debug.Log(firstCell.terrainValue);
 
                 if (firstCell is null || !firstCell.buildable) Debug.Log("Invalid parentCell!");
                 else
@@ -124,7 +120,7 @@ namespace ProcessControl.Construction
                     firstNode.parentCell = firstCell;
                     firstCell.node = firstNode;
 
-                    if (firstNode is Merger || firstNode is Splitter)
+                    if (firstNode is Junction)
                     {
                         // var newMachine = BuildNode(firstCell);
                         // newMachine.ConnectOutput(firstNode.machine.currentOutput);
@@ -133,33 +129,18 @@ namespace ProcessControl.Construction
                     }
                 }
             }
+            
+            //- right click delete
             else if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 var cell = ProceduralGrid.GetCellUnderMouse();
-                if (cell is null || !cell.buildable)
-                {
-                    Debug.Log("NO CELL FOUND!");
-                    return;
-                }
-                else
-                if (cell.occupied)
+                if (cell is null || !cell.buildable) Debug.Log("NO CELL FOUND!");
+                else if (cell.occupied)
                 {
                     Destroy(cell.node);
                     cell.node = null;
                 }
             }
-        }
-
-
-        private void OnDrawGizmos()
-        {
-            // if (buildMode)
-            // {
-            //     Gizmos.color = Color.white;
-            //     var cell = ProceduralGrid.GetCellUnderMouse();
-            //     if (cell is null) return;
-            //     Gizmos.DrawWireCube(cell.position, Vector3.one);
-            // }
         }
     }
 }
