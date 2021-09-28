@@ -23,14 +23,13 @@ namespace ProcessControl.Procedural
             public Vector2Int gridDimensions;
             public Vector2Int chunkDimensions;
             
-            [FormerlySerializedAs("tilemap")]
             public List<Tilemap> tilemaps;
             public List<TileBase> tiles;
             
             [Header("Noise")]
             public Range noiseRange;
             public List<Noise.Layer> terrainNoise;
-            [FormerlySerializedAs("oreNoise")] public List<Noise.Layer> resourceNoise;
+            public List<Noise.Layer> resourceNoise;
 
             [Header("Cells & Chunks")]
             public Cell lastCell;
@@ -108,15 +107,7 @@ namespace ProcessControl.Procedural
         public void GenerateAllChunks() => GenerateChunks(grid.chunks);
         private void GenerateChunks(List<Chunk> chunks)
         {
-            // queue tasks
-            // Task[] triangulations = new Task[chunks.Count];
-            // for (int i = 0; i < chunks.Count; i++)
-            // {
-            //     int j = i;
-            //     triangulations[j] = Task.Factory.StartNew(() => GenerateCells(chunks[j].cells));
-            // }
-            // Task.WaitAll(triangulations, 5000);
-
+            // multi-threaded chunk generation
             var tasks = new List<Task>();
             chunks.ForEach(c => tasks.Add(Task.Factory.StartNew(() => GenerateCells(c.cells))));
             Task.WaitAll(tasks.ToArray());

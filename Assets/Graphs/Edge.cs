@@ -7,7 +7,6 @@ namespace ProcessControl.Graphs
 {
     abstract public class Edge : MonoBehaviour, IO
     {
-
         abstract public float Length {get;}
 
         abstract public IO Input {get;}
