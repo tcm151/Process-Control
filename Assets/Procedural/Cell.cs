@@ -8,6 +8,14 @@ using UnityEngine.Serialization;
 
 namespace ProcessControl.Procedural
 {
+    [Serializable] public class ResourceDeposit
+    {
+        [HideInInspector] public float noiseValue;
+        
+        public int quantity;
+        public Resource.Type resource;
+    }
+    
     [Serializable] public class Cell
     {
         public bool occupied => node is { };
@@ -15,10 +23,8 @@ namespace ProcessControl.Procedural
 
         public Node node;
         public float terrainValue;
-        public float resourceValue;
 
-        public Resource.Type resourceType = Resource.Type.Copper;
-        public int resourceDeposit;        
+        public List<ResourceDeposit> resourceDeposits = new List<ResourceDeposit>();
 
         public Vector3 position;
         public Vector2Int coordinates;

@@ -2,9 +2,11 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using ProcessControl.Industry.Resources;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using ProcessControl.Tools;
+using Unity.Mathematics;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
@@ -132,21 +134,34 @@ namespace ProcessControl.Procedural
         {
             foreach (var cell in cells)
             {
-                var noiseValue = GenerateNoise(grid.resourceNoise, cell);
-                cell.resourceValue = noiseValue;
-
-                if (cell.resourceValue >= grid.resourceNoise[0].threshold)
+                grid.resourceNoise.ForEach(layer =>
                 {
-                    cell.resourceDeposit = (cell.resourceValue * 1024f).FloorToInt();
-                }
+                    var noiseValue = GenerateNoise(layer, cell);
+                    if (noiseValue >= layer.threshold)
+                    {
+                        cell.resourceDeposits.Add(new ResourceDeposit
+                        {
+                            noiseValue = noiseValue,
+                            quantity = (noiseValue * 2048f).FloorToInt(),
+                            resource = Resource.Type.Copper,
+                        });
+                            
+                    }
+                });
+                
             }
 
             foreach (var cell in cells)
             {
-                var tile = (cell.resourceValue >= grid.resourceNoise[0].threshold && cell.buildable) ? grid.tiles[2] : grid.tiles[3];
+                var tile = (cell.resourceDeposits.Count >= 1 && cell.resourceDeposits[0].noiseValue >= grid.resourceNoise[0].threshold && cell.buildable) ? grid.tiles[2] : grid.tiles[3];
                 grid.tilemaps[1].SetTile(new Vector3Int(cell.coordinates.x, cell.coordinates.y, 0), tile);
-                // grid.tilemaps[1].RefreshAllTiles();
+
+                // tile = (cell.resourceDeposits.Count >= 2 && cell.resourceDeposits[1].noiseValue >= grid.resourceNoise[1].threshold && cell.buildable) ? grid.tiles[4] : tile;
+                // grid.tilemaps[1].SetTile(new Vector3Int(cell.coordinates.x, cell.coordinates.y, 0), tile);
             }
+            
+            //! WARNING
+            // grid.tilemaps[1].RefreshAllTiles();
         }
 
         //> TILE MODIFICATION
@@ -187,6 +202,12 @@ namespace ProcessControl.Procedural
 
              return noiseValue;
          }
+
+        public static float GenerateNoise(Noise.Layer layer, Cell cell, float maskValue = 1)
+        {
+            if (!layer.enabled) return 0;
+            return Noise.GenerateValue(layer, cell.position) * maskValue;
+        }
 
         //> GET CELLS 
         private Cell OnGetCellUnderMouse()

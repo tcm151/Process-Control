@@ -1,7 +1,7 @@
-﻿using ProcessControl.Industry.Machines;
-using UnityEngine;
-using ProcessControl.Procedural;
+﻿using UnityEngine;
+using ProcessControl.Industry;
 using ProcessControl.Industry.Resources;
+using ProcessControl.Procedural;
 
 
 namespace ProcessControl.Graphs

@@ -33,7 +33,7 @@ namespace ProcessControl.Construction
         private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
         private void OnSetNode(Node newSelection) => selectedNode = newSelection;
         private void OnSetEdge(Edge newSelection) => selectedEdge = newSelection;
-        private Node BuildNode(Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.position);
+        private Node BuildNodeAt(Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.position);
         private Edge BuildEdge(Cell cell) => Factory.Spawn("Edges", selectedEdge, cell.position);
         
         //> INITIALIZATION
@@ -75,7 +75,7 @@ namespace ProcessControl.Construction
                     
                     if (!firstCell.occupied)
                     {
-                        firstNode = firstCell.node = BuildNode(firstCell);
+                        firstNode = firstCell.node = BuildNodeAt(firstCell);
                         firstNode.parentCell = firstCell;
                     }
                     else firstNode = firstCell.node;
@@ -90,7 +90,7 @@ namespace ProcessControl.Construction
                     {
                         if (!secondCell.occupied)
                         {
-                            secondNode = secondCell.node = BuildNode(secondCell);
+                            secondNode = secondCell.node = BuildNodeAt(secondCell);
                             secondNode.parentCell = secondCell;
                         }
                         else secondNode = secondCell.node;
@@ -116,25 +116,26 @@ namespace ProcessControl.Construction
                 if (firstCell is null || !firstCell.buildable) Debug.Log("Invalid parentCell!");
                 else
                 {
-                    firstNode = (firstCell.occupied) ? firstCell.node: BuildNode(firstCell);
+                    firstNode = (firstCell.occupied) ? firstCell.node: BuildNodeAt(firstCell);
                     firstNode.parentCell = firstCell;
                     firstCell.node = firstNode;
 
                     if (firstNode is Junction)
                     {
-                        // var newMachine = BuildNode(firstCell);
-                        // newMachine.ConnectOutput(firstNode.machine.currentOutput);
-                        // firstNode.machine.input.ConnectInput(newMachine);
-                        // Destroy(firstNode);
+                        //@ replace junctions with machines when applicable
                     }
                 }
             }
             
+            
+            
             //- right click delete
-            else if (Input.GetKeyDown(KeyCode.Mouse1))
+            if (Input.GetKeyDown(KeyCode.Mouse1))
             {
+                Debug.Log("Deleting Cell...");
+                
                 var cell = ProceduralGrid.GetCellUnderMouse();
-                if (cell is null || !cell.buildable) Debug.Log("NO CELL FOUND!");
+                if (cell is null) Debug.Log("NO CELL FOUND!");
                 else if (cell.occupied)
                 {
                     Destroy(cell.node);

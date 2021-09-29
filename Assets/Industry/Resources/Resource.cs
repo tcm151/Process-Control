@@ -6,7 +6,7 @@ namespace ProcessControl.Industry.Resources
 {
     public class Resource : MonoBehaviour
     {
-        public enum Type { Iron, Copper, Gold, Platinum }
+        public enum Type { None, Iron, Copper, Gold, Platinum }
         
         [Serializable] public class Data
         {

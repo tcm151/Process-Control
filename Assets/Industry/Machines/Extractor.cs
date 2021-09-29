@@ -16,7 +16,7 @@ namespace ProcessControl.Industry.Machines
             base.FixedUpdate();
             
             // sleep if ground is depleted
-            if (parentCell.resourceDeposit <= 0)
+            if (parentCell.resourceDeposits[0].quantity <= 0)
             {
                 machine.sleeping = true;
                 return;
@@ -45,9 +45,9 @@ namespace ProcessControl.Industry.Machines
         //> EXTRACT RESOURCE FROM THE GROUND
         protected Resource ExtractResource()
         {
-            parentCell.resourceDeposit--;
+            parentCell.resourceDeposits[0].quantity--;
             var resource = Factory.Spawn("Resources", extractionResource, Position);
-            resource.data.type = parentCell.resourceType;
+            resource.data.type = parentCell.resourceDeposits[0].resource;
             resource.name = $"{resource.data.type}.{i++:D3}";
             return resource;
         }
