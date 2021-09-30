@@ -95,11 +95,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38c4e781df9de0a45ac9252fd27289aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parentCell:
+    buildable: 1
+    node: {fileID: 0}
+    terrainValue: 0
+    resourceDeposits: []
+    position: {x: 0, y: 0, z: 0}
+    coordinates: {x: 0, y: 0}
   machine:
-    cell:
-      node: {fileID: 0}
-      coordinates: {x: 0, y: 0}
-      center: {x: 0, y: 0, z: 0}
     sleeping: 0
     ticks: 0
     sleepThreshold: 256
@@ -114,5 +117,5 @@ MonoBehaviour:
     currentOutput: {fileID: 0}
     outputs: []
     outputInventory: []
-  extractionResource: {fileID: 22261911864309029, guid: 914bc23ef0401f646895763d6f11a3b7, type: 3}
+  extractionResource: {fileID: 8654057297958639494, guid: e5cb8e324f1f70e42a6adb3aa7999a8d, type: 3}
   extractionSpeed: 1

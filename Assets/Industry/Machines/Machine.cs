@@ -118,7 +118,11 @@ namespace ProcessControl.Industry.Machines
         virtual protected void FixedUpdate()
         {
             if (machine.sleeping) return;
-            if (machine.ticks >= machine.sleepThreshold) machine.sleeping = true;
+            if (machine.ticks >= machine.sleepThreshold)
+            {
+                machine.sleeping = true;
+                return;
+            }
         }
         
         //> DESTROY AND CLEANUP MACHINE

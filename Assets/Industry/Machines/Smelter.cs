@@ -18,29 +18,33 @@ namespace ProcessControl.Industry.Machines
                 if (machine.inputInventory.Count == 0) return;
                 
                 machine.ticks = 0;
-                
 
-                var newResource = Smelt(machine.inputInventory.TakeFirst());
-                Deposit(newResource);
-                
-                // if (!machine.currentOutput || !machine.currentOutput.CanDeposit)
-                // {
-                //     machine.outputInventory.Add(newResource);
-                // }
-                // else
-                // {
-                //     newResource.SetVisible(true);
-                //     machine.currentOutput.Deposit(newResource);
-                // }
+                var resource = machine.inputInventory.TakeFirst();
+                // if (resource is Ore)
+                {
+                    var ingot = Smelt(resource);
+                    machine.outputInventory.Add(ingot);
+                }
+
+                // var newResource = Smelt(machine.inputInventory.TakeFirst());
+                // Deposit(newResource);
             }
         }
 
         private Resource Smelt(Resource resource)
         {
-            // Debug.Log("SMELTED RESOURCE!");
+            // var gameObject = resource.gameObject;
+            // var resourceData = resource.data;
+            // resource.Remove();
+            //
+            // var ingot = gameObject.AddComponent<Ingot>();
+            // ingot.data = resourceData;
+            
+            // return ingot;
+
             return resource;
         }
 
-        override public Resource Withdraw() => null;
+        // override public Resource Withdraw() => null;
     }
 }
