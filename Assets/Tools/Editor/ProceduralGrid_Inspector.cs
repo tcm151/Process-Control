@@ -12,7 +12,8 @@ namespace ProcessControl.Tools.Editor
     public class ProceduralGrid_Inspector : UnityEditor.Editor
     {
         private ProceduralGrid grid;
-        private bool autoUpdate;
+        private bool autoUpdateChunks;
+        private bool autoUpdateOre;
 
         private void OnEnable()
         {
@@ -25,11 +26,12 @@ namespace ProcessControl.Tools.Editor
 
             base.OnInspectorGUI();
 
-            autoUpdate = EditorGUILayout.Toggle("Auto Update", autoUpdate);
-            if (check.changed && autoUpdate)
+            autoUpdateChunks = EditorGUILayout.Toggle("Auto Update Chunks", autoUpdateChunks);
+            autoUpdateOre = EditorGUILayout.Toggle("Auto Update Ore", autoUpdateOre);
+            if (check.changed)
             {
-                grid.GenerateAllChunks();
-                grid.GenerateAllResources();
+                if (autoUpdateChunks) grid.GenerateAllChunks();
+                if (autoUpdateOre) grid.GenerateAllResources();
             }
 
             if (GUILayout.Button("Initialize & Generate"))
@@ -39,7 +41,7 @@ namespace ProcessControl.Tools.Editor
                 grid.GenerateAllResources();
             }
 
-            if (GUILayout.Button("Clear Grid")) grid.ClearTiles();
+            if (GUILayout.Button("Clear Grid")) grid.ClearAllTiles();
         }
     }
 }

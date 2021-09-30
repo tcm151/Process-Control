@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Graphs;
 using ProcessControl.Industry.Resources;
-using UnityEngine.Serialization;
 
 
 namespace ProcessControl.Procedural
@@ -13,7 +12,7 @@ namespace ProcessControl.Procedural
         [HideInInspector] public float noiseValue;
         
         public int quantity;
-        public Resource.Type resource;
+        public Resource.Type type;
     }
     
     [Serializable] public class Cell

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ProcessControl.Industry.Resources;
 using UnityEngine;
@@ -8,6 +9,7 @@ using UnityEngine.Tilemaps;
 using ProcessControl.Tools;
 using Unity.Mathematics;
 using UnityEngine.Serialization;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 #pragma warning disable 108, 114
@@ -45,12 +47,25 @@ namespace ProcessControl.Procedural
         public static Func<Cell> GetCellUnderMouse;
         public static Func<Vector3, Cell> GetCellPosition;
         public static Func<Vector2Int, Cell> GetCellCoords;
+        
+        private readonly Stopwatch timer = new Stopwatch();
 
         private void Awake()
         {
+            timer.Start();
             Initialize();
+            float initializationTime = timer.ElapsedMilliseconds;
+            timer.Restart();
             GenerateAllChunks();
+            float chunkGenerationTime = timer.ElapsedMilliseconds;
+            timer.Restart();
             GenerateAllResources();
+            float resourceGenerationTime = timer.ElapsedMilliseconds;
+            timer.Reset();
+            
+            Debug.Log($"Initialization in: {initializationTime} ms");
+            Debug.Log($"Chunk Generation in: {chunkGenerationTime} ms");
+            Debug.Log($"Resource Generation in: {resourceGenerationTime} ms");
         }
 
         private void Update()
@@ -76,6 +91,7 @@ namespace ProcessControl.Procedural
             grid.resourceNoise.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
 
             grid.tilemaps = GetComponentsInChildren<Tilemap>().ToList();
+            ClearAllTiles();
 
             //- create new chunks
             for (int y = -grid.gridDimensions.y / 2; y <= grid.gridDimensions.y / 2; y++) {
@@ -92,6 +108,7 @@ namespace ProcessControl.Procedural
             grid.chunks.ForEach(c =>
             {
                 c.cells = new Cell[grid.chunkDimensions.x, grid.chunkDimensions.y];
+                
                 for (int y = 0; y < grid.chunkDimensions.y; y++) {
                     for (int x = 0; x < grid.chunkDimensions.x; x++)
                     {
@@ -113,7 +130,7 @@ namespace ProcessControl.Procedural
             var tasks = new List<Task>();
             chunks.ForEach(c => tasks.Add(Task.Factory.StartNew(() => GenerateCells(c.cells))));
             Task.WaitAll(tasks.ToArray());
-
+            
             // apply triangulations on main thread
             chunks.ForEach(c => UpdateTerrainTiles(0, c.cells));
         }
@@ -134,38 +151,47 @@ namespace ProcessControl.Procedural
         {
             foreach (var cell in cells)
             {
-                grid.resourceNoise.ForEach(layer =>
-                {
-                    var noiseValue = GenerateNoise(layer, cell);
-                    if (noiseValue >= layer.threshold)
-                    {
-                        cell.resourceDeposits.Add(new ResourceDeposit
-                        {
-                            noiseValue = noiseValue,
-                            quantity = (noiseValue * 2048f).FloorToInt(),
-                            resource = Resource.Type.Copper,
-                        });
-                            
-                    }
-                });
+                cell.resourceDeposits.Clear();
                 
-            }
-
-            foreach (var cell in cells)
-            {
-                var tile = (cell.resourceDeposits.Count >= 1 && cell.resourceDeposits[0].noiseValue >= grid.resourceNoise[0].threshold && cell.buildable) ? grid.tiles[2] : grid.tiles[3];
+                var noiseValue = GenerateNoise(grid.resourceNoise[0], cell);
+                if (noiseValue >= grid.resourceNoise[0].threshold && cell.buildable)
+                {
+                    cell.resourceDeposits.Add(new ResourceDeposit
+                    {
+                        noiseValue = noiseValue,
+                        quantity = (noiseValue * 2048f).FloorToInt(),
+                        type = Resource.Type.Copper,
+                    });
+                }
+                
+                noiseValue = GenerateNoise(grid.resourceNoise[1], cell);
+                if (noiseValue >= grid.resourceNoise[1].threshold && cell.buildable)
+                {
+                    cell.resourceDeposits.Add(new ResourceDeposit
+                    {
+                        noiseValue = noiseValue,
+                        quantity = (noiseValue * 2048f).FloorToInt(),
+                        type = Resource.Type.Iron,
+                    });
+                }
+                
+                TileBase tile;
+                if (cell.resourceDeposits.Count == 0) tile = grid.tiles[3];
+                else
+                {
+                    tile = (cell.resourceDeposits[0].type) switch
+                    {
+                        Resource.Type.Copper => grid.tiles[2],
+                        Resource.Type.Iron   => grid.tiles[4],
+                        _                    => grid.tiles[3],
+                    };
+                }
                 grid.tilemaps[1].SetTile(new Vector3Int(cell.coordinates.x, cell.coordinates.y, 0), tile);
-
-                // tile = (cell.resourceDeposits.Count >= 2 && cell.resourceDeposits[1].noiseValue >= grid.resourceNoise[1].threshold && cell.buildable) ? grid.tiles[4] : tile;
-                // grid.tilemaps[1].SetTile(new Vector3Int(cell.coordinates.x, cell.coordinates.y, 0), tile);
             }
-            
-            //! WARNING
-            // grid.tilemaps[1].RefreshAllTiles();
         }
 
         //> TILE MODIFICATION
-        public void ClearTiles() => grid.tilemaps.ForEach(t => t.ClearAllTiles());
+        public void ClearAllTiles() => grid.tilemaps.ForEach(t => t.ClearAllTiles());
         public void UpdateTerrainTiles(int map, Cell[,] cells)
         {
             foreach (var cell in cells)

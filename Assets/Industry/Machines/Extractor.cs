@@ -47,7 +47,7 @@ namespace ProcessControl.Industry.Machines
         {
             parentCell.resourceDeposits[0].quantity--;
             var resource = Factory.Spawn("Resources", extractionResource, Position);
-            resource.data.type = parentCell.resourceDeposits[0].resource;
+            resource.data.type = parentCell.resourceDeposits[0].type;
             resource.name = $"{resource.data.type}.{i++:D3}";
             return resource;
         }
