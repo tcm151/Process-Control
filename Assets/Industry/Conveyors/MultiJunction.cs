@@ -88,7 +88,7 @@ namespace ProcessControl.Industry.Conveyors
         override public bool CanDeposit => junction.inventory is null;
         override public void Deposit(Resource resource)
         {
-            resource.data.position = Position;
+            resource.resource.position = Position;
             junction.inventory = resource;
         }
 

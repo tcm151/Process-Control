@@ -160,7 +160,7 @@ namespace ProcessControl.Procedural
                     {
                         noiseValue = noiseValue,
                         quantity = (noiseValue * 2048f).FloorToInt(),
-                        type = Resource.Type.Copper,
+                        material = Resource.Material.Copper,
                     });
                 }
                 
@@ -171,7 +171,7 @@ namespace ProcessControl.Procedural
                     {
                         noiseValue = noiseValue,
                         quantity = (noiseValue * 2048f).FloorToInt(),
-                        type = Resource.Type.Iron,
+                        material = Resource.Material.Iron,
                     });
                 }
                 
@@ -179,10 +179,10 @@ namespace ProcessControl.Procedural
                 if (cell.resourceDeposits.Count == 0) tile = grid.tiles[3];
                 else
                 {
-                    tile = (cell.resourceDeposits[0].type) switch
+                    tile = (cell.resourceDeposits[0].material) switch
                     {
-                        Resource.Type.Copper => grid.tiles[2],
-                        Resource.Type.Iron   => grid.tiles[4],
+                        Resource.Material.Copper => grid.tiles[2],
+                        Resource.Material.Iron   => grid.tiles[4],
                         _                    => grid.tiles[3],
                     };
                 }

@@ -35,7 +35,7 @@ namespace ProcessControl.Industry.Machines
         //> DEPOSIT RESOURCE INTO INVENTORY
         override public void Deposit(Resource resource)
         {
-            resource.data.position = Position;
+            resource.resource.position = Position;
             machine.outputInventory.Add(resource);
             resource.SetVisible(false);
         }
@@ -47,8 +47,8 @@ namespace ProcessControl.Industry.Machines
         {
             parentCell.resourceDeposits[0].quantity--;
             var resource = Factory.Spawn("Resources", extractionResource, Position);
-            resource.data.type = parentCell.resourceDeposits[0].type;
-            resource.name = $"{resource.data.type}.{i++:D3}";
+            resource.resource.material = parentCell.resourceDeposits[0].material;
+            resource.name = $"{resource.resource.material}.{i++:D3}";
             return resource;
         }
     }

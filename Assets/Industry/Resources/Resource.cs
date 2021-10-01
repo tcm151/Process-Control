@@ -1,45 +1,41 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 namespace ProcessControl.Industry.Resources
 {
     public class Resource : MonoBehaviour
     {
-        public enum Type { Copper, Iron, Gold, Platinum }
+        public enum Material { Copper, Iron, Gold, Platinum, Stone, Sand, }
+        public enum Type { Ore, Ingot, Plate, Gear, Wire, Cable, Screw, }
         
         [Serializable] public class Data
         {
             public int ticks;
-            public bool sleeping;
-            public int sleepThreshold = 512;
 
-            public Sprite sprite;
-            
+            [FormerlySerializedAs("type")] public Material material;
             public Type type;
+            public Sprite sprite;
             
             public Vector3 position;
         }
-        [SerializeField] internal Data data;
+        [FormerlySerializedAs("data")][SerializeField] internal Data resource;
 
         new private SpriteRenderer renderer;
+
+        public Vector3 position => resource.position;
 
         public void SetSprite(Sprite newSprite) => renderer.sprite = newSprite;
         public void SetVisible(bool visible) => renderer.enabled = visible;
 
-        public Vector3 position => data.position;
-
         private void Awake()
         {
-            data.position = transform.position;
+            resource.position = transform.position;
             renderer = GetComponent<SpriteRenderer>();
         }
 
-        private void FixedUpdate()
-        {
-            transform.position = data.position;
-        }
-
+        private void FixedUpdate() => transform.position = resource.position;
         public void OnDestroy() => Destroy(gameObject);
     }
 }
