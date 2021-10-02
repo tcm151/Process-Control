@@ -7,35 +7,41 @@ namespace ProcessControl.Industry.Resources
 {
     public class Resource : MonoBehaviour
     {
+        public static int COUNT = 0;
+        
         public enum Material { Copper, Iron, Gold, Platinum, Stone, Sand, }
         public enum Type { Ore, Ingot, Plate, Gear, Wire, Cable, Screw, }
         
+        public int ticks;
+        
         [Serializable] public class Data
         {
-            public int ticks;
-
-            [FormerlySerializedAs("type")] public Material material;
+            public string name;
+            public Material material;
             public Type type;
             public Sprite sprite;
             
-            public Vector3 position;
         }
-        [FormerlySerializedAs("data")][SerializeField] internal Data resource;
+        [FormerlySerializedAs("resource")][SerializeField] internal Data data;
 
         new private SpriteRenderer renderer;
 
-        public Vector3 position => resource.position;
-
-        public void SetSprite(Sprite newSprite) => renderer.sprite = newSprite;
-        public void SetVisible(bool visible) => renderer.enabled = visible;
-
+        public Vector3 position
+        {
+            get => transform.position;
+            set => transform.position = value;
+        }
+        
+        public void SetVisible(bool isVisible) => renderer.enabled = isVisible;
+        public void ToggleVisible() => renderer.enabled = !renderer.enabled;
+        
         private void Awake()
         {
-            resource.position = transform.position;
             renderer = GetComponent<SpriteRenderer>();
+            renderer.sprite = data.sprite;
         }
 
-        private void FixedUpdate() => transform.position = resource.position;
+        // private void FixedUpdate() => transform.position = resource.position;
         public void OnDestroy() => Destroy(gameObject);
     }
 }

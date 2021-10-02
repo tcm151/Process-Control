@@ -47,7 +47,7 @@ namespace ProcessControl.Industry.Conveyors
         //> ADD AND REMOVE RESOURCES
         override public bool CanDeposit => conveyor.inventory.Count < conveyor.inventorySize;
         override public void Deposit(Resource resource) => conveyor.inventory.Add(resource);
-        override public bool CanWithdraw => conveyor.inventory.Count >= 1 && conveyor.inventory[0].resource.ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerSecond;
+        override public bool CanWithdraw => conveyor.inventory.Count >= 1 && conveyor.inventory[0].ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerSecond;
         override public Resource Withdraw() => conveyor.inventory.TakeFirst();
         
         //> EVENTS
@@ -136,11 +136,12 @@ namespace ProcessControl.Industry.Conveyors
             for (int i = 0; i < conveyor.inventory.Count; i++)
             {
                 var resource = conveyor.inventory[i];
-                resource.resource.ticks++;
+                resource.ticks++;
                 
                 var indexPercentage = conveyor.distanceBetweenIO * ((conveyor.inventorySize - i) / (float) conveyor.inventorySize);
                 var indexPosition = conveyor.input.Position + conveyor.input.DirectionTo(conveyor.output) * indexPercentage;
-                resource.resource.position.MoveTowards(indexPosition, (float) conveyor.itemsPerSecond / TicksPerSecond);
+                // resource.position.MoveTowards(indexPosition, (float) conveyor.itemsPerSecond / TicksPerSecond);
+                resource.position = Vector3.MoveTowards(resource.position, indexPosition, (float)conveyor.itemsPerSecond / TicksPerSecond);
             }
 
 
@@ -148,7 +149,7 @@ namespace ProcessControl.Industry.Conveyors
             if (!CanWithdraw || !conveyor.output.CanDeposit || conveyor.output.Input as Conveyor != this) return;
             {
                 // if (conveyor.output.node.input != this) return;
-                conveyor.inventory[0].resource.ticks = 0;
+                conveyor.inventory[0].ticks = 0;
                 conveyor.output.Deposit(Withdraw());
             }
         }

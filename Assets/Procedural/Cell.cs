@@ -13,6 +13,7 @@ namespace ProcessControl.Procedural
         
         public int quantity;
         public Resource.Material material;
+        public Resource.Type type;
     }
     
     [Serializable] public class Cell

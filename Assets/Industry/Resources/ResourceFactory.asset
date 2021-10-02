@@ -9,6 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90c8efc8a7472774289fd7edbe9082f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 42ae0e1763e642498fa1fcee56130125, type: 3}
   m_Name: ResourceFactory
   m_EditorClassIdentifier: 
+  sceneName: Resources
+  resourcePrefabs:
+  - {fileID: 8944197672255531404, guid: e5cb8e324f1f70e42a6adb3aa7999a8d, type: 3}
+  - {fileID: 4706413003393893203, guid: 85ce8e8d8115b8149a2f2567db20edf3, type: 3}
+  - {fileID: 7742068402563150981, guid: 532a15784accf3345963854f4977d597, type: 3}
+  - {fileID: 5395973935837974106, guid: 0ee3263b885f6a449825724acb010cda, type: 3}
+  - {fileID: 1230618036173845307, guid: 379db22c3cc01aa4886cb3af38776cf1, type: 3}
+  - {fileID: 3098043079625890808, guid: 10c524db176d38940bc92257c137fa31, type: 3}
+  - {fileID: 5813676485201303039, guid: 422eaf454b8e3ca4885d60401d9bd95e, type: 3}
+  - {fileID: 7482814675444242563, guid: 2f684d1aaaf07484ebb8faa37ab5fe33, type: 3}

@@ -54,18 +54,16 @@ namespace ProcessControl.Procedural
         {
             timer.Start();
             Initialize();
-            float initializationTime = timer.ElapsedMilliseconds;
+            float init = timer.ElapsedMilliseconds;
             timer.Restart();
             GenerateAllChunks();
-            float chunkGenerationTime = timer.ElapsedMilliseconds;
+            float chunkGen = timer.ElapsedMilliseconds;
             timer.Restart();
             GenerateAllResources();
-            float resourceGenerationTime = timer.ElapsedMilliseconds;
+            float resourceGen = timer.ElapsedMilliseconds;
             timer.Reset();
             
-            Debug.Log($"Initialization in: {initializationTime} ms");
-            Debug.Log($"Chunk Generation in: {chunkGenerationTime} ms");
-            Debug.Log($"Resource Generation in: {resourceGenerationTime} ms");
+            Debug.Log($"{init} | {chunkGen} | {resourceGen} |= {init+chunkGen+resourceGen} ms");
         }
 
         private void Update()
@@ -161,6 +159,7 @@ namespace ProcessControl.Procedural
                         noiseValue = noiseValue,
                         quantity = (noiseValue * 2048f).FloorToInt(),
                         material = Resource.Material.Copper,
+                        type = Resource.Type.Ore,
                     });
                 }
                 
@@ -172,6 +171,7 @@ namespace ProcessControl.Procedural
                         noiseValue = noiseValue,
                         quantity = (noiseValue * 2048f).FloorToInt(),
                         material = Resource.Material.Iron,
+                        type = Resource.Type.Ore,
                     });
                 }
                 

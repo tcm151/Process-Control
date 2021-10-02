@@ -97,7 +97,7 @@ namespace ProcessControl.Industry.Machines
         override public bool CanDeposit => machine.inputInventory.Count < machine.inventorySize;
         override public void Deposit(Resource resource)
         {
-            resource.resource.position = Position;
+            resource.position = Position;
             resource.SetVisible(false);
             machine.inputInventory.Add(resource);
             NextInput();

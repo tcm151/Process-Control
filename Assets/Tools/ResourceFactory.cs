@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ProcessControl.Industry.Resources;
 using UnityEngine;
@@ -6,20 +7,28 @@ using UnityEngine;
 
 namespace ProcessControl.Tools
 {
+    [CreateAssetMenu(menuName = "Resources/Resource")]
     public class ResourceFactory : Factory
     {
-        public List<Resource> resourcePrefabs;
+        public string sceneName = "Resources";
 
-        public Resource SpawnResource(Resource.Material material, Resource.Type type, Vector3 position)
+        public List<Resource> resourcePrefabs;
+        
+        public static Func<Resource.Material, Resource.Type, Vector3, Resource> SpawnResource;
+
+        override protected void OnBegin() => SpawnResource += OnSpawnResource;
+
+        public Resource OnSpawnResource(Resource.Material material, Resource.Type type, Vector3 position)
         {
-            var prefab = resourcePrefabs.FirstOrDefault(o => o.resource.material == material && o.resource.type == type);
+            // Debug.Log("Spawning resource!");
+            var prefab = resourcePrefabs.FirstOrDefault(o => o.data.material == material && o.data.type == type);
             if (prefab is null)
             {
                 Debug.Log("RESOURCE DOES NOT EXIST!");
                 return null;
             }
             
-            var instance = Spawn("Resources", prefab, position);
+            var instance = Spawn(sceneName, prefab, position);
             return instance;
         }
     }

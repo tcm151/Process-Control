@@ -33,18 +33,14 @@ namespace ProcessControl.Industry.Machines
 
         private Resource Smelt(Resource resource)
         {
-            // var gameObject = resource.gameObject;
-            // var resourceData = resource.data;
-            // resource.Remove();
-            //
-            // var ingot = gameObject.AddComponent<Ingot>();
-            // ingot.data = resourceData;
             
-            // return ingot;
-
-            return resource;
+            var instance = ResourceFactory.SpawnResource(resource.data.material, Resource.Type.Ingot, Position);
+            if (instance is null) Debug.Log("NO PREFAB!");
+            instance.name = $"{instance.data.material} {instance.data.type}.{++Resource.COUNT:D4}";
+            
+            Destroy(resource);
+            
+            return instance;
         }
-
-        // override public Resource Withdraw() => null;
     }
 }

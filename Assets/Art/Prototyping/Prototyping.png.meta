@@ -5,6 +5,12 @@ TextureImporter:
   - first:
       213: 7789286953958122146
     second: Prototyping0
+  - first:
+      213: -4257203272254191653
+    second: Platinum Ingot
+  - first:
+      213: 8229158908750211603
+    second: Gold Ingot
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -94,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Conveyor_1
+      name: Prototyping_0
       rect:
         serializedVersion: 2
         x: 1
@@ -115,7 +121,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Conveyor_0
+      name: Prototyping_1
       rect:
         serializedVersion: 2
         x: 17
@@ -136,7 +142,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Conveyor_2
+      name: Prototyping_3
       rect:
         serializedVersion: 2
         x: 1
@@ -157,7 +163,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Machine_0
+      name: Prototyping_4
       rect:
         serializedVersion: 2
         x: 17
@@ -178,7 +184,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Conveyor_3
+      name: Prototyping_6
       rect:
         serializedVersion: 2
         x: 1
@@ -199,7 +205,49 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Copper
+      name: Prototyping_7
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 1
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2781119a7fe15d460800000000000000
+      internalID: 7265747622874388594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Prototyping_8
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 1
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4347c40aceeaef220800000000000000
+      internalID: 2521645172698936372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Copper Ore
       rect:
         serializedVersion: 2
         x: 34
@@ -220,7 +268,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Iron
+      name: Iron Ore
       rect:
         serializedVersion: 2
         x: 42
@@ -241,7 +289,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Platinum
+      name: Platinum Ore
       rect:
         serializedVersion: 2
         x: 34
@@ -262,7 +310,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gold
+      name: Gold Ore
       rect:
         serializedVersion: 2
         x: 42
@@ -278,6 +326,90 @@ TextureImporter:
       bones: []
       spriteID: 2022a8cdb9c2bc8a0800000000000000
       internalID: -6283879807133801982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Copper Ingot
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 26
+        width: 8
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2efd67d45dc928bd0800000000000000
+      internalID: -2629366792489345054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Iron Ingot
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 26
+        width: 8
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84f19a8a2c8109250800000000000000
+      internalID: 5949282332088803144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platinum Ingot
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 19
+        width: 8
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd788a4fd206be4c0800000000000000
+      internalID: -4257203272254191653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gold Ingot
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 19
+        width: 8
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31a2c447d68d33270800000000000000
+      internalID: 8229158908750211603
       vertices: []
       indices: 
       edges: []
