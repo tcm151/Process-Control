@@ -7,6 +7,8 @@ using ProcessControl.Industry.Resources;
 
 namespace ProcessControl.Procedural
 {
+    public enum Direction { Up, Down, Left, Right }
+    
     [Serializable] public class ResourceDeposit
     {
         [HideInInspector] public float noiseValue;

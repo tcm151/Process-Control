@@ -7,10 +7,10 @@ namespace ProcessControl.Industry.Resources
 {
     public class Resource : MonoBehaviour
     {
-        public static int COUNT = 0;
+        public static int Count = 0;
         
-        public enum Material { Copper, Iron, Gold, Platinum, Stone, Sand, }
-        public enum Type { Ore, Ingot, Plate, Gear, Wire, Cable, Screw, }
+        public enum Material { Copper, Iron, Gold, Platinum, Coal, Stone, Sand, }
+        public enum Type { Raw, Ingot, Plate, Gear, Wire, Cable, Screw, }
         
         public int ticks;
         

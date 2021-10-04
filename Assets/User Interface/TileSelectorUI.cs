@@ -1,6 +1,8 @@
 using UnityEngine;
 using ProcessControl.Procedural;
 using ProcessControl.Construction;
+using UnityEngine.EventSystems;
+
 #pragma warning disable 108,114
 
 namespace ProcessControl
@@ -23,6 +25,8 @@ namespace ProcessControl
 
         private void Update()
         {
+            // if (!EventSystem.current.IsPointerOverGameObject()) return;
+            
             var cell = ProceduralGrid.GetCellUnderMouse();
             transform.position = cell.position;
         }

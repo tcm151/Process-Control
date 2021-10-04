@@ -5,6 +5,7 @@ using Input = UnityEngine.Input;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Industry.Conveyors;
+using ProcessControl.Industry.Machines;
 using ProcessControl.Procedural;
 
 
@@ -33,7 +34,16 @@ namespace ProcessControl.Construction
         private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
         private void OnSetNode(Node newSelection) => selectedNode = newSelection;
         private void OnSetEdge(Edge newSelection) => selectedEdge = newSelection;
-        private Node BuildNodeAt(Cell cell) => Factory.Spawn("Nodes", selectedNode, cell.position);
+        private Node BuildNodeAt(Cell cell)
+        {
+            if (selectedNode is Machine) return Factory.Spawn("Machines", selectedNode, cell.position);
+            if (secondNode is Junction) return Factory.Spawn("Junctions", selectedNode, cell.position);
+            return Factory.Spawn("Nodes", selectedNode, cell.position);
+            
+            // Debug.Log("Selected node was not machine or junction...");
+            // return null;
+        }
+
         private Edge BuildEdge(Cell cell) => Factory.Spawn("Edges", selectedEdge, cell.position);
         
         //> INITIALIZATION
@@ -116,7 +126,7 @@ namespace ProcessControl.Construction
                 if (firstCell is null || !firstCell.buildable) Debug.Log("Invalid parentCell!");
                 else
                 {
-                    firstNode = (firstCell.occupied) ? firstCell.node: BuildNodeAt(firstCell);
+                    firstNode = (firstCell.occupied) ? firstCell.node : BuildNodeAt(firstCell);
                     firstNode.parentCell = firstCell;
                     firstCell.node = firstNode;
 
@@ -132,12 +142,11 @@ namespace ProcessControl.Construction
             //- right click delete
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
-                Debug.Log("Deleting Cell...");
-                
                 var cell = ProceduralGrid.GetCellUnderMouse();
                 if (cell is null) Debug.Log("NO CELL FOUND!");
                 else if (cell.occupied)
                 {
+                    Debug.Log("Deleting Cell...");
                     Destroy(cell.node);
                     cell.node = null;
                 }

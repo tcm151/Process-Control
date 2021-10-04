@@ -159,7 +159,7 @@ namespace ProcessControl.Procedural
                         noiseValue = noiseValue,
                         quantity = (noiseValue * 2048f).FloorToInt(),
                         material = Resource.Material.Copper,
-                        type = Resource.Type.Ore,
+                        type = Resource.Type.Raw,
                     });
                 }
                 
@@ -171,7 +171,19 @@ namespace ProcessControl.Procedural
                         noiseValue = noiseValue,
                         quantity = (noiseValue * 2048f).FloorToInt(),
                         material = Resource.Material.Iron,
-                        type = Resource.Type.Ore,
+                        type = Resource.Type.Raw,
+                    });
+                }
+                
+                noiseValue = GenerateNoise(grid.resourceNoise[2], cell);
+                if (noiseValue >= grid.resourceNoise[2].threshold && cell.buildable)
+                {
+                    cell.resourceDeposits.Add(new ResourceDeposit
+                    {
+                        noiseValue = noiseValue,
+                        quantity = (noiseValue * 2048f).FloorToInt(),
+                        material = Resource.Material.Gold,
+                        type = Resource.Type.Raw,
                     });
                 }
                 
@@ -183,7 +195,8 @@ namespace ProcessControl.Procedural
                     {
                         Resource.Material.Copper => grid.tiles[2],
                         Resource.Material.Iron   => grid.tiles[4],
-                        _                    => grid.tiles[3],
+                        Resource.Material.Gold   => grid.tiles[6],
+                        _                        => grid.tiles[3],
                     };
                 }
                 grid.tilemaps[1].SetTile(new Vector3Int(cell.coordinates.x, cell.coordinates.y, 0), tile);

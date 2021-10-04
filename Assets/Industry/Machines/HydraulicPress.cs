@@ -29,7 +29,7 @@ namespace ProcessControl.Industry.Machines
         {
             var instance = ResourceFactory.SpawnResource(resource.data.material, Resource.Type.Plate, Position);
             if (instance is null) Debug.Log("NO PREFAB!");
-            instance.name = $"{instance.data.material} {instance.data.type}.{++Resource.COUNT:D4}";
+            instance.name = $"{instance.data.material} {instance.data.type}.{++Resource.Count:D4}";
             
             Destroy(resource);
 
