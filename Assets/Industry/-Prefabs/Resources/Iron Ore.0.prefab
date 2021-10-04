@@ -100,4 +100,4 @@ MonoBehaviour:
     name: Iron Ore
     material: 1
     type: 0
-    sprite: {fileID: -8407734244809697837, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
+    sprite: {fileID: 5949282332088803144, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}

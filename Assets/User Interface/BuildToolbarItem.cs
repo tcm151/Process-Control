@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using ProcessControl.Construction;
 using ProcessControl.Graphs;
@@ -15,7 +16,10 @@ namespace ProcessControl.UI
         private Button button;
         private Image[] images;
 
-        private void Awake()
+        private void Awake() => Initialize();
+        private void OnValidate() => Initialize();
+
+        private void Initialize()
         {
             if (node is null && edge is null) return;
 
@@ -29,8 +33,9 @@ namespace ProcessControl.UI
 
             images = GetComponentsInChildren<Image>();
             images[1].sprite = (edge is { })
-            ? edge.GetComponent<SpriteRenderer>().sprite
-            : node.GetComponent<SpriteRenderer>().sprite;
+                ? edge.GetComponent<SpriteRenderer>().sprite
+                : node.GetComponent<SpriteRenderer>().sprite;
         }
+        
     }
 }

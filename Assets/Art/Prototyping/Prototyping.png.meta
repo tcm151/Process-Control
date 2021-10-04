@@ -7,10 +7,49 @@ TextureImporter:
     second: Prototyping0
   - first:
       213: -4257203272254191653
-    second: Platinum Ingot
+    second: Platinum Ore
   - first:
       213: 8229158908750211603
-    second: Gold Ingot
+    second: Gold Ore
+  - first:
+      213: 117069921524477121
+    second: Prototyping_0
+  - first:
+      213: 6068227909245428731
+    second: Prototyping_1
+  - first:
+      213: -6953518466671278013
+    second: Prototyping_3
+  - first:
+      213: -8214661901767815302
+    second: Prototyping_4
+  - first:
+      213: 3765535559286132249
+    second: Prototyping_6
+  - first:
+      213: 7265747622874388594
+    second: Prototyping_7
+  - first:
+      213: 2521645172698936372
+    second: Prototyping_8
+  - first:
+      213: 5510604081183631233
+    second: Copper Ingot
+  - first:
+      213: -2629366792489345054
+    second: Iron Ingot
+  - first:
+      213: 3622436900025349014
+    second: Platinum Ore
+  - first:
+      213: 2019939470169975084
+    second: Gold Ore
+  - first:
+      213: -6283879807133801982
+    second: Copper Ore
+  - first:
+      213: 5949282332088803144
+    second: Iron Ore
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -247,90 +286,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Copper Ore
-      rect:
-        serializedVersion: 2
-        x: 34
-        y: 42
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 187a4c42739997c40800000000000000
-      internalID: 5510604081183631233
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Iron Ore
-      rect:
-        serializedVersion: 2
-        x: 42
-        y: 42
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 69337470b2b754230800000000000000
-      internalID: 3622436900025349014
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Platinum Ore
-      rect:
-        serializedVersion: 2
-        x: 34
-        y: 34
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c29a54bfe34480c10800000000000000
-      internalID: 2019939470169975084
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Gold Ore
-      rect:
-        serializedVersion: 2
-        x: 42
-        y: 34
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2022a8cdb9c2bc8a0800000000000000
-      internalID: -6283879807133801982
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Copper Ingot
       rect:
         serializedVersion: 2
@@ -345,8 +300,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2efd67d45dc928bd0800000000000000
-      internalID: -2629366792489345054
+      spriteID: 187a4c42739997c40800000000000000
+      internalID: 5510604081183631233
       vertices: []
       indices: 
       edges: []
@@ -366,8 +321,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 84f19a8a2c8109250800000000000000
-      internalID: 5949282332088803144
+      spriteID: 2efd67d45dc928bd0800000000000000
+      internalID: -2629366792489345054
       vertices: []
       indices: 
       edges: []
@@ -387,8 +342,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bd788a4fd206be4c0800000000000000
-      internalID: -4257203272254191653
+      spriteID: 69337470b2b754230800000000000000
+      internalID: 3622436900025349014
       vertices: []
       indices: 
       edges: []
@@ -401,6 +356,90 @@ TextureImporter:
         y: 19
         width: 8
         height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c29a54bfe34480c10800000000000000
+      internalID: 2019939470169975084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Copper Ore
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 42
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2022a8cdb9c2bc8a0800000000000000
+      internalID: -6283879807133801982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Iron Ore
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 42
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84f19a8a2c8109250800000000000000
+      internalID: 5949282332088803144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Platinum Ore
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 34
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd788a4fd206be4c0800000000000000
+      internalID: -4257203272254191653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gold Ore
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 34
+        width: 6
+        height: 6
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

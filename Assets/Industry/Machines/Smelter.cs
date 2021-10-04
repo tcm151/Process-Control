@@ -15,9 +15,9 @@ namespace ProcessControl.Industry.Machines
             
             if (++machine.ticks % (TicksPerSecond *  smeltingSpeed) == 0)
             {
+                machine.ticks = 0;
                 if (machine.inputInventory.Count == 0) return;
                 
-                machine.ticks = 0;
 
                 var resource = machine.inputInventory.TakeFirst();
                 // if (resource is Ore)
@@ -33,7 +33,6 @@ namespace ProcessControl.Industry.Machines
 
         private Resource Smelt(Resource resource)
         {
-            
             var instance = ResourceFactory.SpawnResource(resource.data.material, Resource.Type.Ingot, Position);
             if (instance is null) Debug.Log("NO PREFAB!");
             instance.name = $"{instance.data.material} {instance.data.type}.{++Resource.COUNT:D4}";

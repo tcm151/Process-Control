@@ -100,4 +100,4 @@ MonoBehaviour:
     name: Gold Ore
     material: 2
     type: 0
-    sprite: {fileID: -6133121627723073563, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
+    sprite: {fileID: 8229158908750211603, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}

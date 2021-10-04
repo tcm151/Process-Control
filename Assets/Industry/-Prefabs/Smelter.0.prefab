@@ -105,8 +105,8 @@ MonoBehaviour:
   machine:
     sleeping: 0
     ticks: 0
-    sleepThreshold: 1024
-    inventorySize: 8
+    sleepThreshold: 2048
+    inventorySize: 16
     inputEnabled: 1
     maxInputs: 1
     currentInput: {fileID: 0}

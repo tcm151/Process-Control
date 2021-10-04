@@ -100,4 +100,4 @@ MonoBehaviour:
     name: Copper Ingot
     material: 0
     type: 1
-    sprite: {fileID: 6009568415799464446, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
+    sprite: {fileID: 5510604081183631233, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}

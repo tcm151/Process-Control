@@ -100,4 +100,4 @@ MonoBehaviour:
     name: Iron Ingot
     material: 1
     type: 1
-    sprite: {fileID: 1611980459562323357, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
+    sprite: {fileID: -2629366792489345054, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}

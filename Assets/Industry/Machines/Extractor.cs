@@ -7,8 +7,6 @@ namespace ProcessControl.Industry.Machines
 {
     public class Extractor : Machine
     {
-        public ResourceFactory resourceFactory;
-        
         [Range(0, 64)] public float extractionSpeed;
 
         //> FIXED CALCULATION INTERVAL
@@ -26,9 +24,9 @@ namespace ProcessControl.Industry.Machines
             // extraction interval check
             if ((++machine.ticks % (TicksPerSecond / extractionSpeed)) == 0)
             {
+                machine.ticks = 0;
                 if (machine.outputInventory.Count >= machine.inventorySize) return;
                 
-                machine.ticks = 0;
                 Deposit(ExtractResource());
             }
         }
