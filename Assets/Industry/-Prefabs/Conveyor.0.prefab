@@ -99,7 +99,7 @@ MonoBehaviour:
     sleeping: 0
     ticks: 0
     sleepThreshold: 256
-    itemsPerSecond: 2
+    itemsPerMinute: 64
     input: {fileID: 0}
     output: {fileID: 0}
     distanceBetweenIO: 0

@@ -100,4 +100,4 @@ MonoBehaviour:
     name: Iron Plate
     material: 1
     type: 2
-    sprite: {fileID: -2629366792489345054, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
+    sprite: {fileID: 1848216903799394968, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}

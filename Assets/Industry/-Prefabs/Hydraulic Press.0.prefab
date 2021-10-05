@@ -117,4 +117,4 @@ MonoBehaviour:
     currentOutput: {fileID: 0}
     outputs: []
     outputInventory: []
-  speed: 4
+  speed: 32

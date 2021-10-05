@@ -20,7 +20,7 @@ namespace ProcessControl.Tools
 
         public Resource OnSpawnResource(Resource.Material material, Resource.Type type, Vector3 position)
         {
-            // Debug.Log("Spawning resource!");
+            Debug.Log("Spawning resource!");
             var prefab = resourcePrefabs.FirstOrDefault(o => o.data.material == material && o.data.type == type);
             if (prefab is null)
             {
