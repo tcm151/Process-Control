@@ -5,6 +5,7 @@ using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Industry;
 using ProcessControl.Industry.Resources;
+using UnityEngine.Serialization;
 
 
 namespace ProcessControl.Industry.Conveyors
@@ -12,8 +13,6 @@ namespace ProcessControl.Industry.Conveyors
     [SelectionBase]
     public class Conveyor : Edge
     {
-        private const int TicksPerSecond = 64;
-        
         //> CONVEYOR DATA CONTAINER
         [Serializable] public class Data
         {
@@ -21,8 +20,9 @@ namespace ProcessControl.Industry.Conveyors
             public int ticks;
             public int sleepThreshold = 256;
             
+            [FormerlySerializedAs("itemsPerSecond")]
             [Header("Conveyor Speed")]
-            public int itemsPerSecond = 8;
+            public int itemsPerMinute = 8;
 
             [Header("IO")]
             public Node input;
@@ -47,7 +47,7 @@ namespace ProcessControl.Industry.Conveyors
         //> ADD AND REMOVE RESOURCES
         override public bool CanDeposit => conveyor.inventory.Count < conveyor.inventorySize;
         override public void Deposit(Resource resource) => conveyor.inventory.Add(resource);
-        override public bool CanWithdraw => conveyor.inventory.Count >= 1 && conveyor.inventory[0].ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerSecond;
+        override public bool CanWithdraw => conveyor.inventory.Count >= 1 && conveyor.inventory[0].ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerMinute;
         override public Resource Withdraw() => conveyor.inventory.TakeFirst();
         
         //> EVENTS
@@ -122,7 +122,7 @@ namespace ProcessControl.Industry.Conveyors
             // if (conveyor.ticks >= conveyor.sleepThreshold) conveyor.sleeping = true;
             
             //> EVERY INTERVAL PULL FROM INPUT IF CAPABLE
-            if (++conveyor.ticks > (TicksPerSecond / (conveyor.itemsPerSecond * 2)))
+            if (++conveyor.ticks > (TicksPerSecond / conveyor.itemsPerMinute))
             {
                 if (CanDeposit && conveyor.input.CanWithdraw && conveyor.input.Output as Conveyor == this)
                 {
@@ -141,7 +141,7 @@ namespace ProcessControl.Industry.Conveyors
                 var indexPercentage = conveyor.distanceBetweenIO * ((conveyor.inventorySize - i) / (float) conveyor.inventorySize);
                 var indexPosition = conveyor.input.Position + conveyor.input.DirectionTo(conveyor.output) * indexPercentage;
                 // resource.position.MoveTowards(indexPosition, (float) conveyor.itemsPerSecond / TicksPerSecond);
-                resource.position = Vector3.MoveTowards(resource.position, indexPosition, (float)conveyor.itemsPerSecond / TicksPerSecond);
+                resource.position = Vector3.MoveTowards(resource.position, indexPosition, (float)conveyor.itemsPerMinute / TicksPerMinute * TicksPerMinute);
             }
 
 

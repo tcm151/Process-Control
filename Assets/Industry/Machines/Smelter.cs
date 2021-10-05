@@ -13,7 +13,7 @@ namespace ProcessControl.Industry.Machines
         {
             base.FixedUpdate();
             
-            if (++machine.ticks % (TicksPerSecond *  smeltingSpeed) == 0)
+            if (++machine.ticks % (TicksPerMinute / smeltingSpeed) == 0)
             {
                 machine.ticks = 0;
                 if (machine.inputInventory.Count == 0) return;

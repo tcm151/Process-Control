@@ -47,7 +47,8 @@ namespace ProcessControl.Procedural
         public static Func<Cell> GetCellUnderMouse;
         public static Func<Vector3, Cell> GetCellPosition;
         public static Func<Vector2Int, Cell> GetCellCoords;
-        
+        public static Func<Cell, Cell[]> GetCellNeighbours;
+
         private readonly Stopwatch timer = new Stopwatch();
 
         private void Awake()
@@ -187,16 +188,29 @@ namespace ProcessControl.Procedural
                     });
                 }
                 
+                noiseValue = GenerateNoise(grid.resourceNoise[3], cell);
+                if (noiseValue >= grid.resourceNoise[3].threshold && cell.buildable)
+                {
+                    cell.resourceDeposits.Add(new ResourceDeposit
+                    {
+                        noiseValue = noiseValue,
+                        quantity = (noiseValue * 2048f).FloorToInt(),
+                        material = Resource.Material.Platinum,
+                        type = Resource.Type.Raw,
+                    });
+                }
+                
                 TileBase tile;
                 if (cell.resourceDeposits.Count == 0) tile = grid.tiles[3];
                 else
                 {
                     tile = (cell.resourceDeposits[0].material) switch
                     {
-                        Resource.Material.Copper => grid.tiles[2],
-                        Resource.Material.Iron   => grid.tiles[4],
-                        Resource.Material.Gold   => grid.tiles[6],
-                        _                        => grid.tiles[3],
+                        Resource.Material.Copper   => grid.tiles[2],
+                        Resource.Material.Iron     => grid.tiles[4],
+                        Resource.Material.Gold     => grid.tiles[6],
+                        Resource.Material.Platinum => grid.tiles[7],
+                        _                          => grid.tiles[3],
                     };
                 }
                 grid.tilemaps[1].SetTile(new Vector3Int(cell.coordinates.x, cell.coordinates.y, 0), tile);

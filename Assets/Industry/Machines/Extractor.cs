@@ -22,7 +22,7 @@ namespace ProcessControl.Industry.Machines
             }
             
             // extraction interval check
-            if ((++machine.ticks % (TicksPerSecond / extractionSpeed)) == 0)
+            if ((++machine.ticks % (TicksPerMinute / extractionSpeed)) == 0)
             {
                 machine.ticks = 0;
                 if (machine.outputInventory.Count >= machine.inventorySize) return;

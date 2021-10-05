@@ -13,7 +13,7 @@ namespace ProcessControl.Industry.Machines
         {
             base.FixedUpdate();
 
-            if ((++machine.ticks % (TicksPerSecond * speed)) == 0)
+            if ((++machine.ticks % (TicksPerMinute / speed)) == 0)
             {
                 machine.ticks = 0;
                 if (machine.inputInventory.Count == 0) return;
