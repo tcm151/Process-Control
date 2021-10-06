@@ -30,21 +30,19 @@ namespace ProcessControl.Construction
         public static Action<bool> OnBuildModeChanged;
         
         public Node firstNode, secondNode;
+        public Cell firstCell, secondCell;
         
         private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
         private void OnSetNode(Node newSelection) => selectedNode = newSelection;
         private void OnSetEdge(Edge newSelection) => selectedEdge = newSelection;
+        
+        private Edge BuildEdge(Node firstNode, Node secondNode) => Factory.Spawn("Edges", selectedEdge, Node.Center(firstNode, secondNode));
         private Node BuildNodeAt(Cell cell)
         {
             if (selectedNode is Machine) return Factory.Spawn("Machines", selectedNode, cell.position);
             if (secondNode is Junction) return Factory.Spawn("Junctions", selectedNode, cell.position);
             return Factory.Spawn("Nodes", selectedNode, cell.position);
-            
-            // Debug.Log("Selected node was not machine or junction...");
-            // return null;
         }
-
-        private Edge BuildEdge(Cell cell) => Factory.Spawn("Edges", selectedEdge, cell.position);
         
         //> INITIALIZATION
         private void Awake()
@@ -67,6 +65,9 @@ namespace ProcessControl.Construction
             }
             
             if (!buildMode || selectedNode is null || EventSystem.current.IsPointerOverGameObject()) return;
+
+            // firstNode = secondNode = null;
+            // firstCell = secondCell = null;
             
             //- handle conveyor building
             if (conveyorMode)
@@ -75,8 +76,8 @@ namespace ProcessControl.Construction
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     firstNode = secondNode = null;
-                    
-                    var firstCell = ProceduralGrid.GetCellPosition(camera.MousePosition2D());
+
+                    firstCell = ProceduralGrid.GetCellUnderMouse();
                     if (firstCell is null || !firstCell.buildable)
                     {
                         Debug.Log("Invalid parentCell!");
@@ -94,10 +95,11 @@ namespace ProcessControl.Construction
                 //- left click released
                 if (Input.GetKeyUp(KeyCode.Mouse0))
                 {
-                    var secondCell = ProceduralGrid.GetCellUnderMouse();
-                    if (secondCell is null || !secondCell.buildable) Debug.Log("Invalid parentCell!");
+                    secondCell = ProceduralGrid.GetCellUnderMouse();
+                    if (firstCell is null || secondCell is null || !secondCell.buildable) Debug.Log("Invalid parentCell!");
                     else
                     {
+                        
                         if (!secondCell.occupied)
                         {
                             secondNode = secondCell.node = BuildNodeAt(secondCell);
@@ -105,15 +107,46 @@ namespace ProcessControl.Construction
                         }
                         else secondNode = secondCell.node;
                         
-                        // if (!firstNode.AvailableOutput) return;
-                        // if (!secondNode.AvailableInput) return;
-                        
-                        var conveyor = Factory.Spawn("Edges", selectedEdge, Node.Center(firstNode, secondNode));
+                        if ((firstCell.coords.x == secondCell.coords.x) == (firstCell.coords.y == secondCell.coords.y))
+                        {
+                            Debug.Log("NOT STRAIGHT LINE CONVEYOR");
+                            var cell1 = ProceduralGrid.GetCellCoords(new Vector2Int(firstCell.coords.x, secondCell.coords.y));
+                            var cell2 = ProceduralGrid.GetCellCoords(new Vector2Int(secondCell.coords.x, firstCell.coords.y));
 
-                        firstNode.ConnectOutput(conveyor);
-                        conveyor.ConnectInput(firstNode);
-                        conveyor.ConnectOutput(secondNode);
-                        secondNode.ConnectInput(conveyor);
+                            if (!cell1.buildable || cell1.occupied)
+                            {
+                                Debug.Log("CELL 1 INVALID");
+                            }
+
+                            if (!cell2.buildable || cell2.occupied)
+                            {
+                                Debug.Log("CELL 2 INVALID");
+                            }
+
+                            var junction = BuildNodeAt(cell1);
+                            cell1.node = junction;
+                            junction.parentCell = cell1;
+                            
+                            var conveyor1 = BuildEdge(firstNode, junction);
+                            var conveyor2 = BuildEdge(junction, secondNode);
+                            
+                            firstNode.ConnectOutput(conveyor1);
+                            conveyor1.ConnectInput(firstNode);
+                            conveyor1.ConnectOutput(junction);
+                            junction.ConnectInput(conveyor1);
+                            conveyor2.ConnectInput(junction);
+                            conveyor2.ConnectOutput(secondNode);
+                            secondNode.ConnectInput(conveyor2);
+                        }
+                        else
+                        {
+                            var conveyor = BuildEdge(firstNode, secondNode);
+
+                            firstNode.ConnectOutput(conveyor);
+                            conveyor.ConnectInput(firstNode);
+                            conveyor.ConnectOutput(secondNode);
+                            secondNode.ConnectInput(conveyor);
+                        }
                     }
                 }
             }
@@ -121,7 +154,7 @@ namespace ProcessControl.Construction
             //- regular node building
             else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                var firstCell = ProceduralGrid.GetCellUnderMouse();
+                firstCell = ProceduralGrid.GetCellUnderMouse();
 
                 if (firstCell is null || !firstCell.buildable) Debug.Log("Invalid parentCell!");
                 else

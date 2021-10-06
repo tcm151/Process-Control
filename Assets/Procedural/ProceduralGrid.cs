@@ -114,7 +114,7 @@ namespace ProcessControl.Procedural
                         c.cells[x,y] = new Cell
                         {
                             position = new Vector3(x + c.chunkOffset.x + 0.5f, y + c.chunkOffset.y + 0.5f),
-                            coordinates = new Vector2Int(x + c.chunkOffset.x, y + c.chunkOffset.y),
+                            coords = new Vector2Int(x + c.chunkOffset.x, y + c.chunkOffset.y),
                         };
                     }
                 }
@@ -213,7 +213,7 @@ namespace ProcessControl.Procedural
                         _                          => grid.tiles[3],
                     };
                 }
-                grid.tilemaps[1].SetTile(new Vector3Int(cell.coordinates.x, cell.coordinates.y, 0), tile);
+                grid.tilemaps[1].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
             }
         }
 
@@ -226,7 +226,7 @@ namespace ProcessControl.Procedural
                 if (cell.terrainValue < grid.terrainNoise[0].threshold) cell.buildable = false;
 
                 var tile = (cell.terrainValue >= grid.terrainNoise[0].threshold) ? grid.tiles[1] : grid.tiles[0];
-                grid.tilemaps[map].SetTile(new Vector3Int(cell.coordinates.x, cell.coordinates.y, 0), tile);
+                grid.tilemaps[map].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
             }
         }
         
@@ -272,7 +272,7 @@ namespace ProcessControl.Procedural
         private Cell OnGetCellCoords(Vector2Int coordinates)
         {
             var cells = grid.chunks.SelectMany(chunk => chunk.cells.To2D());
-            var cell = cells.FirstOrDefault(cell => cell.coordinates == coordinates);
+            var cell = cells.FirstOrDefault(cell => cell.coords == coordinates);
 
             // var cells = noiseLayers.chunks.ConvertAll(chunk => chunk.cells[coordinates.x, coordinates.y]);
             // var cell = cells.FirstOrDefault(cell => cell.coordinates == coordinates);
