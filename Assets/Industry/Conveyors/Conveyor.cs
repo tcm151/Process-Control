@@ -136,21 +136,26 @@ namespace ProcessControl.Industry.Conveyors
             for (int i = 0; i < conveyor.inventory.Count; i++)
             {
                 var resource = conveyor.inventory[i];
-                resource.ticks++;
                 
                 var indexPercentage = conveyor.distanceBetweenIO * ((conveyor.inventorySize - i) / (float) conveyor.inventorySize);
                 var indexPosition = conveyor.input.Position + conveyor.input.DirectionTo(conveyor.output) * indexPercentage;
-                // resource.position.MoveTowards(indexPosition, (float) conveyor.itemsPerSecond / TicksPerSecond);
-                resource.position = Vector3.MoveTowards(resource.position, indexPosition, (float)conveyor.itemsPerMinute / TicksPerMinute * TicksPerMinute);
+
+                if (resource.position != indexPosition) resource.ticks++;
+                
+                resource.position = Vector3.MoveTowards(resource.position, indexPosition, conveyor.itemsPerMinute / (float) (TicksPerMinute));
             }
 
 
             //> DEPOSIT FIRST ITEM IN OUTPUT
             if (!CanWithdraw || !conveyor.output.CanDeposit || conveyor.output.Input as Conveyor != this) return;
             {
-                // if (conveyor.output.node.input != this) return;
-                conveyor.inventory[0].ticks = 0;
-                conveyor.output.Deposit(Withdraw());
+                if (conveyor.output.Input as Conveyor != this) return;
+                
+                if (conveyor.inventory[0].ticks >= conveyor.distanceBetweenIO * (TicksPerMinute / (float) conveyor.itemsPerMinute))
+                {
+                    conveyor.inventory[0].ticks = 0;
+                    conveyor.output.Deposit(Withdraw());
+                }
             }
         }
         
