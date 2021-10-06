@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Graphs;
 using ProcessControl.Industry.Resources;
+using UnityEngine.Serialization;
 
 
 namespace ProcessControl.Procedural
@@ -29,6 +30,6 @@ namespace ProcessControl.Procedural
         public List<ResourceDeposit> resourceDeposits = new List<ResourceDeposit>();
 
         public Vector3 position;
-        public Vector2Int coordinates;
+        [FormerlySerializedAs("coordinates")] public Vector2Int coords;
     }
 }
