@@ -8,7 +8,7 @@ namespace ProcessControl.UI
         {
             base.Awake();
             
-            BuildManager.OnBuildModeChanged += TogglePanel;
+            ConstructionManager.OnBuildModeChanged += TogglePanel;
         }
 
         private void TogglePanel(bool truth)

@@ -18,7 +18,7 @@ namespace ProcessControl
             camera = Camera.main;
             renderer = GetComponent<SpriteRenderer>();
             
-            BuildManager.OnBuildModeChanged += UpdateVisible;
+            ConstructionManager.OnBuildModeChanged += UpdateVisible;
         }
 
         private void UpdateVisible(bool truth) => renderer.enabled = truth;

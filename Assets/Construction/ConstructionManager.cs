@@ -11,7 +11,7 @@ using ProcessControl.Procedural;
 
 namespace ProcessControl.Construction
 {
-    public class BuildManager : MonoBehaviour
+    public class ConstructionManager : MonoBehaviour
     {
         public Node selectedNode;
         public Edge selectedEdge;
@@ -107,9 +107,9 @@ namespace ProcessControl.Construction
                         }
                         else secondNode = secondCell.node;
                         
+                        //- if conveyor end points not parallel
                         if ((firstCell.coords.x == secondCell.coords.x) == (firstCell.coords.y == secondCell.coords.y))
                         {
-                            Debug.Log("NOT STRAIGHT LINE CONVEYOR");
                             var cell1 = ProceduralGrid.GetCellCoords(new Vector2Int(firstCell.coords.x, secondCell.coords.y));
                             var cell2 = ProceduralGrid.GetCellCoords(new Vector2Int(secondCell.coords.x, firstCell.coords.y));
 

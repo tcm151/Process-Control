@@ -26,9 +26,9 @@ namespace ProcessControl.UI
             button = GetComponent<Button>();
             button.onClick.AddListener(() =>
             {
-                BuildManager.SetNode(node);
-                BuildManager.SetEdge(edge);
-                BuildManager.SetEdgeMode(isEdge);
+                ConstructionManager.SetNode(node);
+                ConstructionManager.SetEdge(edge);
+                ConstructionManager.SetEdgeMode(isEdge);
             });
 
             images = GetComponentsInChildren<Image>();
