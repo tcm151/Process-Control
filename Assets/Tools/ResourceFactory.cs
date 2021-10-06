@@ -16,7 +16,7 @@ namespace ProcessControl.Tools
         
         public static Func<Resource.Material, Resource.Type, Vector3, Resource> SpawnResource;
 
-        override protected void OnBegin() => SpawnResource += OnSpawnResource;
+        override protected void Awake() => SpawnResource += OnSpawnResource;
 
         public Resource OnSpawnResource(Resource.Material material, Resource.Type type, Vector3 position)
         {
