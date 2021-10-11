@@ -8,6 +8,7 @@ using ProcessControl.Industry.Conveyors;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Procedural;
 using ProcessControl.UI;
+#pragma warning disable 108,114
 
 
 namespace ProcessControl.Construction
@@ -22,7 +23,7 @@ namespace ProcessControl.Construction
         [SerializeField] private bool buildMode;
         [SerializeField] private bool conveyorMode;
         
-        new private Camera camera;
+        private Camera camera;
         
         //> EVENT TRIGGERS
         public static Action<Node> SetNode;

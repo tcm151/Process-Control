@@ -38,6 +38,8 @@ namespace ProcessControl.Industry.Machines
         }
         [SerializeField] internal Data machine;
 
+        public Action onInventoryModified;
+
         //> IO INTERFACE
         override public IO Input => machine.currentInput;
         override public IO Output => machine.currentOutput;
@@ -100,6 +102,7 @@ namespace ProcessControl.Industry.Machines
             resource.position = Position;
             resource.SetVisible(false);
             machine.inputInventory.Add(resource);
+            onInventoryModified?.Invoke();
             NextInput();
         }
 
@@ -109,6 +112,7 @@ namespace ProcessControl.Industry.Machines
         override public Resource Withdraw()
         {
             var resource = machine.outputInventory.TakeFirst();
+            onInventoryModified?.Invoke();
             resource.SetVisible(true);
             NextOutput();
             return resource;

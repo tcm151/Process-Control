@@ -6,6 +6,7 @@ using ProcessControl.Graphs;
 using ProcessControl.Industry;
 using ProcessControl.Industry.Resources;
 using UnityEngine.Serialization;
+#pragma warning disable 108,114
 
 
 namespace ProcessControl.Industry.Conveyors
@@ -35,7 +36,7 @@ namespace ProcessControl.Industry.Conveyors
         }
         [SerializeField] internal Data conveyor;
 
-        new private SpriteRenderer renderer;
+        private SpriteRenderer renderer;
         public void SetLength(float size) => renderer.size = new Vector2(size, 1);
 
         override public float Length { get

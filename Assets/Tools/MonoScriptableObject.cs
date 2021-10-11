@@ -2,9 +2,9 @@
 
 #if UNITY_EDITOR
     using UnityEditor;
-#endif
- 
+
 [InitializeOnLoad]
+#endif
 abstract public class MonoScriptableObject : ScriptableObject
 {
     static MonoScriptableObject()
@@ -12,8 +12,8 @@ abstract public class MonoScriptableObject : ScriptableObject
         // throw new System.NotImplementedException();
     }
 
-    abstract protected void Awake();
-    virtual protected void OnDestroy() { }
+    abstract protected void OnBegin();
+    virtual protected void OnEnd() { }
 
     #if UNITY_EDITOR
         protected void OnEnable() => EditorApplication.playModeStateChanged += OnPlayStateChange;
@@ -21,11 +21,11 @@ abstract public class MonoScriptableObject : ScriptableObject
 
         private void OnPlayStateChange(PlayModeStateChange state)
         {
-            if (state == PlayModeStateChange.EnteredPlayMode) Awake();
-            else if (state == PlayModeStateChange.ExitingPlayMode) OnDestroy();
+            if (state == PlayModeStateChange.EnteredPlayMode) OnBegin();
+            else if (state == PlayModeStateChange.ExitingPlayMode) OnEnd();
         }
     #else
-        protected void OnEnable() => Awake();
-        protected void OnDisable() => OnDestroy();
+        protected void OnEnable() => OnBegin();
+        protected void OnDisable() => OnEnd();
     #endif
 }

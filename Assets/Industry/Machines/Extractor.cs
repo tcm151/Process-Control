@@ -36,6 +36,7 @@ namespace ProcessControl.Industry.Machines
         {
             resource.position = Position;
             machine.outputInventory.Add(resource);
+            onInventoryModified?.Invoke();
             resource.SetVisible(false);
         }
 

@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+#pragma warning disable 108,114
 
 namespace ProcessControl.UI
 {
@@ -29,12 +31,12 @@ namespace ProcessControl.UI
 
         public float Height => transform.rect.height;
         public float Width => transform.rect.width;
-        
+
         protected Canvas canvas;
         protected CanvasGroup group;
         protected GraphicRaycaster raycaster;
+        protected CanvasRenderer renderer;
         new protected RectTransform transform;
-        new protected CanvasRenderer renderer;
         
         virtual protected void Awake()
         {
@@ -44,5 +46,12 @@ namespace ProcessControl.UI
             transform = GetComponent<RectTransform>();
             raycaster = GetComponent<GraphicRaycaster>();
         }
+
+    }
+
+    abstract public class UI_DraggableWindow : UI_Window, IDragHandler, IPointerDownHandler
+    {
+        public void OnDrag(PointerEventData eventData) => transform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        public void OnPointerDown(PointerEventData eventData) => transform.SetAsLastSibling();
     }
 }

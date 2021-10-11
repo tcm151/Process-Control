@@ -15,7 +15,7 @@ namespace ProcessControl.Tools
 
         //> PUBLIC EVENT 
         public static Func<Resource.Material, Resource.Type, Vector3, Resource> SpawnResource;
-        override protected void Awake() => SpawnResource += OnSpawnResource;
+        override protected void OnBegin() => SpawnResource += OnSpawnResource;
 
         //> SPAWN A RESOURCE OF MATCHING MATERIAL AND TYPE
         private Resource OnSpawnResource(Resource.Material material, Resource.Type type, Vector3 position)
