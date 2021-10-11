@@ -14,6 +14,7 @@ namespace ProcessControl.UI
             //@ add tweening animation
             group.alpha = 1;
             group.interactable = true;
+            raycaster.enabled = true;
         }
 
         public void Hide()
@@ -21,6 +22,7 @@ namespace ProcessControl.UI
             //@ add tweening animation
             group.alpha = 0;
             group.interactable = false;
+            raycaster.enabled = false;
         }
 
         abstract public void GoBack();
