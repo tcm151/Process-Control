@@ -1,17 +1,14 @@
 using System;
+using System.Linq;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using ProcessControl.Industry.Resources;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using ProcessControl.Tools;
-using Unity.Mathematics;
-using UnityEngine.Serialization;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
-
+using ProcessControl.Tools;
+using ProcessControl.Industry.Resources;
 #pragma warning disable 108, 114
 
 
@@ -41,16 +38,15 @@ namespace ProcessControl.Procedural
         }
         [SerializeField] internal Data grid;
 
-        
         private Camera camera;
+        private readonly Stopwatch timer = new Stopwatch();
 
         public static Func<Cell> GetCellUnderMouse;
         public static Func<Vector3, Cell> GetCellPosition;
         public static Func<Vector2Int, Cell> GetCellCoords;
         public static Func<Cell, Cell[]> GetCellNeighbours;
 
-        private readonly Stopwatch timer = new Stopwatch();
-
+        //> INITIALIZATION
         private void Awake()
         {
             timer.Start();
@@ -67,6 +63,7 @@ namespace ProcessControl.Procedural
             Debug.Log($"{init} | {chunkGen} | {resourceGen} |= {init+chunkGen+resourceGen} ms");
         }
 
+        //> CACHE LAST TOUCHED CELL
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
@@ -134,25 +131,28 @@ namespace ProcessControl.Procedural
             chunks.ForEach(c => UpdateTerrainTiles(0, c.cells));
         }
 
+        //> GENERATE CELLS
         public void GenerateAllCells() => grid.chunks.ForEach(c => GenerateCells(c.cells));
         public void GenerateCells(Cell[,] cells)
         {
             foreach (var cell in cells)
             {
-                var noiseValue = GenerateNoise(grid.terrainNoise, cell);
+                var noiseValue = Noise.GenerateValue(grid.terrainNoise, cell.position);
                 grid.noiseRange.Add(noiseValue);
                 cell.terrainValue = noiseValue;
             }
         }
 
-        public void GenerateAllResources() => grid.chunks.ForEach(c => GenerateOre(c.cells));
-        public void GenerateOre(Cell[,] cells)
+        //> GENERATE RESOURCES
+        public void GenerateAllResources() => grid.chunks.ForEach(c => GenerateResources(c.cells));
+        public void GenerateResources(Cell[,] cells)
         {
             foreach (var cell in cells)
             {
                 cell.resourceDeposits.Clear();
                 
-                var noiseValue = GenerateNoise(grid.resourceNoise[0], cell);
+                //@ refactor this into a ForEach
+                var noiseValue = Noise.GenerateValue(grid.resourceNoise[0], cell.position);
                 if (noiseValue >= grid.resourceNoise[0].threshold && cell.buildable)
                 {
                     cell.resourceDeposits.Add(new ResourceDeposit
@@ -164,7 +164,7 @@ namespace ProcessControl.Procedural
                     });
                 }
                 
-                noiseValue = GenerateNoise(grid.resourceNoise[1], cell);
+                noiseValue = Noise.GenerateValue(grid.resourceNoise[1], cell.position);
                 if (noiseValue >= grid.resourceNoise[1].threshold && cell.buildable)
                 {
                     cell.resourceDeposits.Add(new ResourceDeposit
@@ -176,7 +176,7 @@ namespace ProcessControl.Procedural
                     });
                 }
                 
-                noiseValue = GenerateNoise(grid.resourceNoise[2], cell);
+                noiseValue = Noise.GenerateValue(grid.resourceNoise[2], cell.position);
                 if (noiseValue >= grid.resourceNoise[2].threshold && cell.buildable)
                 {
                     cell.resourceDeposits.Add(new ResourceDeposit
@@ -188,7 +188,7 @@ namespace ProcessControl.Procedural
                     });
                 }
                 
-                noiseValue = GenerateNoise(grid.resourceNoise[3], cell);
+                noiseValue = Noise.GenerateValue(grid.resourceNoise[3], cell.position);
                 if (noiseValue >= grid.resourceNoise[3].threshold && cell.buildable)
                 {
                     cell.resourceDeposits.Add(new ResourceDeposit
@@ -206,11 +206,11 @@ namespace ProcessControl.Procedural
                 {
                     tile = (cell.resourceDeposits[0].material) switch
                     {
-                        Resource.Material.Copper   => grid.tiles[2],
                         Resource.Material.Iron     => grid.tiles[4],
                         Resource.Material.Gold     => grid.tiles[6],
+                        Resource.Material.Copper   => grid.tiles[2],
                         Resource.Material.Platinum => grid.tiles[7],
-                        _                          => grid.tiles[3],
+                                    _              => grid.tiles[3],
                     };
                 }
                 grid.tilemaps[1].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
@@ -230,37 +230,37 @@ namespace ProcessControl.Procedural
             }
         }
         
-        //> GET A NOISE VALUE FOR ANY SPECIFIC CELL
-         public static float GenerateNoise(List<Noise.Layer> noiseLayers, Cell cell)
-         {
-             float noiseValue = 0f;
-             float firstLayerElevation = 0f;
-
-             //- calculate first layer
-             if (noiseLayers.Count > 0)
-             {
-                 firstLayerElevation = Noise.GenerateValue(noiseLayers[0], cell.position);
-                 if (noiseLayers[0].enabled) noiseValue = firstLayerElevation;
-             }
-
-             //- calculate every other layer
-             for (int i = 1; i < noiseLayers.Count; i++)
-             {
-                 // ignore if not enabled
-                 if (!noiseLayers[i].enabled) continue;
-
-                 float firstLayerMask = (noiseLayers[i].useMask) ? firstLayerElevation : 1;
-                 noiseValue += Noise.GenerateValue(noiseLayers[i], cell.position) * firstLayerMask;
-             }
-
-             return noiseValue;
-         }
-
-        public static float GenerateNoise(Noise.Layer layer, Cell cell, float maskValue = 1)
-        {
-            if (!layer.enabled) return 0;
-            return Noise.GenerateValue(layer, cell.position) * maskValue;
-        }
+        // //> GET A NOISE VALUE FOR ANY SPECIFIC CELL
+        // public static float GenerateNoise(List<Noise.Layer> noiseLayers, Cell cell)
+        // {
+        //     float noiseValue = 0f;
+        //     float firstLayerValue = 0f;
+        //
+        //     //- calculate first layer
+        //     if (noiseLayers.Count > 0)
+        //     {
+        //      firstLayerValue = Noise.GenerateValue(noiseLayers[0], cell.position);
+        //      if (noiseLayers[0].enabled) noiseValue = firstLayerValue;
+        //     }
+        //
+        //     //- calculate every other layer
+        //     for (int i = 1; i < noiseLayers.Count; i++)
+        //     {
+        //      // ignore if not enabled
+        //      if (!noiseLayers[i].enabled) continue;
+        //
+        //      float firstLayerMask = (noiseLayers[i].useMask) ? firstLayerValue : 1;
+        //      noiseValue += Noise.GenerateValue(noiseLayers[i], cell.position) * firstLayerMask;
+        //     }
+        //
+        //     return noiseValue;
+        // }
+        //
+        // public static float GenerateNoise(Noise.Layer layer, Cell cell, float maskValue = 1)
+        // {
+        //     if (!layer.enabled) return 0;
+        //     return Noise.GenerateValue(layer, cell.position) * maskValue;
+        // }
 
         //> GET CELLS 
         private Cell OnGetCellUnderMouse()
@@ -268,15 +268,16 @@ namespace ProcessControl.Procedural
             Vector2 position = camera.MousePosition2D();
             return OnGetCellCoords(position.FloorToInt());
         }
-        private Cell OnGetCellPosition(Vector3 worldPosition) => OnGetCellCoords(new Vector2Int(worldPosition.x.FloorToInt(), worldPosition.y.FloorToInt()));
+        private Cell OnGetCellPosition(Vector3 worldPosition)
+        {
+            var coords = new Vector2Int(worldPosition.x.FloorToInt(), worldPosition.y.FloorToInt());
+            return OnGetCellCoords(coords);
+        }
         private Cell OnGetCellCoords(Vector2Int coordinates)
         {
             var cells = grid.chunks.SelectMany(chunk => chunk.cells.To2D());
             var cell = cells.FirstOrDefault(cell => cell.coords == coordinates);
 
-            // var cells = noiseLayers.chunks.ConvertAll(chunk => chunk.cells[coordinates.x, coordinates.y]);
-            // var cell = cells.FirstOrDefault(cell => cell.coordinates == coordinates);
-            
             return cell;
         }
     }

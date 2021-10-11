@@ -36,6 +36,8 @@ namespace ProcessControl.Controls
         //> HANDLE INPUT
         private void Update()
         {
+            if (Time.timeScale == 0f) return;
+            
             // get middle mouse button
             if (Input.GetKeyDown(KeyCode.Mouse2))
             {

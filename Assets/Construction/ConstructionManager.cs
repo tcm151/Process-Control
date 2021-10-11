@@ -7,12 +7,15 @@ using ProcessControl.Graphs;
 using ProcessControl.Industry.Conveyors;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Procedural;
+using ProcessControl.UI;
 
 
 namespace ProcessControl.Construction
 {
     public class ConstructionManager : MonoBehaviour
     {
+        public LayerMask panelMask;
+        
         public Node selectedNode;
         public Edge selectedEdge;
 
@@ -36,7 +39,7 @@ namespace ProcessControl.Construction
         private void OnSetNode(Node newSelection) => selectedNode = newSelection;
         private void OnSetEdge(Edge newSelection) => selectedEdge = newSelection;
         
-        private Edge BuildEdge(Node firstNode, Node secondNode) => Factory.Spawn("Edges", selectedEdge, Node.Center(firstNode, secondNode));
+        private Edge BuildEdgeBetween(Node firstNode, Node secondNode) => Factory.Spawn("Edges", selectedEdge, Node.Center(firstNode, secondNode));
         private Node BuildNodeAt(Cell cell)
         {
             if (selectedNode is Machine) return Factory.Spawn("Machines", selectedNode, cell.position);
@@ -57,6 +60,10 @@ namespace ProcessControl.Construction
         //> BUILD STUFF
         private void Update()
         {
+            
+            //- return is paused
+            if (Time.timeScale == 0f) return;
+            
             //- toggle build mode
             if (Input.GetKeyDown(KeyCode.B))
             {
@@ -64,10 +71,8 @@ namespace ProcessControl.Construction
                 OnBuildModeChanged?.Invoke(buildMode);
             }
             
+            //! THIS EVENT SYSTEM CHECK DOES NOT WORK WITH MY UI SOLUTION, NEEDS TO BE FIXED!
             if (!buildMode || selectedNode is null || EventSystem.current.IsPointerOverGameObject()) return;
-
-            // firstNode = secondNode = null;
-            // firstCell = secondCell = null;
             
             //- handle conveyor building
             if (conveyorMode)
@@ -113,34 +118,39 @@ namespace ProcessControl.Construction
                             var cell1 = ProceduralGrid.GetCellCoords(new Vector2Int(firstCell.coords.x, secondCell.coords.y));
                             var cell2 = ProceduralGrid.GetCellCoords(new Vector2Int(secondCell.coords.x, firstCell.coords.y));
 
+                            Cell bestCell = cell1;
+                            
                             if (!cell1.buildable || cell1.occupied)
                             {
                                 Debug.Log("CELL 1 INVALID");
+                                bestCell = cell2;
                             }
 
                             if (!cell2.buildable || cell2.occupied)
                             {
                                 Debug.Log("CELL 2 INVALID");
+                                return;
                             }
 
-                            var junction = BuildNodeAt(cell1);
-                            cell1.node = junction;
-                            junction.parentCell = cell1;
+                            var junction = BuildNodeAt(bestCell);
+                            bestCell.node = junction;
+                            junction.parentCell = bestCell;
                             
-                            var conveyor1 = BuildEdge(firstNode, junction);
-                            var conveyor2 = BuildEdge(junction, secondNode);
+                            var conveyor1 = BuildEdgeBetween(firstNode, junction);
+                            var conveyor2 = BuildEdgeBetween(junction, secondNode);
                             
                             firstNode.ConnectOutput(conveyor1);
                             conveyor1.ConnectInput(firstNode);
                             conveyor1.ConnectOutput(junction);
                             junction.ConnectInput(conveyor1);
+                            junction.ConnectOutput(conveyor2);
                             conveyor2.ConnectInput(junction);
                             conveyor2.ConnectOutput(secondNode);
                             secondNode.ConnectInput(conveyor2);
                         }
                         else
                         {
-                            var conveyor = BuildEdge(firstNode, secondNode);
+                            var conveyor = BuildEdgeBetween(firstNode, secondNode);
 
                             firstNode.ConnectOutput(conveyor);
                             conveyor.ConnectInput(firstNode);
@@ -163,7 +173,7 @@ namespace ProcessControl.Construction
                     firstNode.parentCell = firstCell;
                     firstCell.node = firstNode;
 
-                    if (firstNode is Junction)
+                    if (firstNode is Junction )
                     {
                         //@ replace junctions with machines when applicable
                     }
