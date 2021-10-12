@@ -169,8 +169,8 @@ namespace ProcessControl.Procedural
                     {
                         noiseValue = noiseValue,
                         quantity = (noiseValue * 2048f).FloorToInt(),
-                        material = Resource.Material.Copper,
-                        type = Resource.Type.Raw,
+                        material = ResourceProperties.Material.Copper,
+                        type = ResourceProperties.Form.Raw,
                     });
                 }
                 
@@ -181,8 +181,8 @@ namespace ProcessControl.Procedural
                     {
                         noiseValue = noiseValue,
                         quantity = (noiseValue * 2048f).FloorToInt(),
-                        material = Resource.Material.Iron,
-                        type = Resource.Type.Raw,
+                        material = ResourceProperties.Material.Iron,
+                        type = ResourceProperties.Form.Raw,
                     });
                 }
                 
@@ -193,8 +193,8 @@ namespace ProcessControl.Procedural
                     {
                         noiseValue = noiseValue,
                         quantity = (noiseValue * 2048f).FloorToInt(),
-                        material = Resource.Material.Gold,
-                        type = Resource.Type.Raw,
+                        material = ResourceProperties.Material.Gold,
+                        type = ResourceProperties.Form.Raw,
                     });
                 }
                 
@@ -205,8 +205,8 @@ namespace ProcessControl.Procedural
                     {
                         noiseValue = noiseValue,
                         quantity = (noiseValue * 2048f).FloorToInt(),
-                        material = Resource.Material.Platinum,
-                        type = Resource.Type.Raw,
+                        material = ResourceProperties.Material.Platinum,
+                        type = ResourceProperties.Form.Raw,
                     });
                 }
                 
@@ -216,10 +216,10 @@ namespace ProcessControl.Procedural
                 {
                     tile = (cell.resourceDeposits[0].material) switch
                     {
-                        Resource.Material.Iron     => grid.tiles[4],
-                        Resource.Material.Gold     => grid.tiles[6],
-                        Resource.Material.Copper   => grid.tiles[2],
-                        Resource.Material.Platinum => grid.tiles[7],
+                        ResourceProperties.Material.Iron     => grid.tiles[4],
+                        ResourceProperties.Material.Gold     => grid.tiles[6],
+                        ResourceProperties.Material.Copper   => grid.tiles[2],
+                        ResourceProperties.Material.Platinum => grid.tiles[7],
                                     _              => grid.tiles[3],
                     };
                 }

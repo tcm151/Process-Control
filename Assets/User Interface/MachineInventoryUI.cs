@@ -37,7 +37,7 @@ namespace ProcessControl
             if (selectedMachine.machine.inputInventory.Count >= 1)
             {
                 inputIcon.enabled = true;
-                inputIcon.sprite = selectedMachine.machine.inputInventory[0].data.sprite;
+                inputIcon.sprite = selectedMachine.machine.inputInventory[0].sprite;
                 inputCount.text = selectedMachine.machine.inputInventory.Count.ToString();
             }
             else
@@ -49,12 +49,12 @@ namespace ProcessControl
             if (selectedMachine.machine.outputInventory.Count >= 1)
             {
                 outputIcon.enabled = true;
-                outputIcon.sprite = selectedMachine.machine.outputInventory[0].data.sprite;
+                outputIcon.sprite = selectedMachine.machine.outputInventory[0].sprite;
                 outputCount.text = selectedMachine.machine.outputInventory.Count.ToString();
             }
             else
             {
-                outputIcon.sprite = null;
+                outputIcon.enabled = false;
                 outputCount.text = "";
             }
         }

@@ -52,7 +52,7 @@ namespace ProcessControl.Industry.Machines
             // Debug.Log(prefab.type);
             var instance = ResourceFactory.SpawnResource(prefab.material, prefab.type, Position);
             if (instance is null) Debug.Log("NO PREFAB!");
-            instance.name = $"{instance.data.material} {instance.data.type}.{i++:D4}";
+            // instance.name = $"{instance.resourceProperties.material} {instance.resourceProperties.form}.{i++:D4}";
             return instance;
         }
     }

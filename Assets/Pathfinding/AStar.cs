@@ -8,15 +8,17 @@ namespace ProcessControl.Pathfinding
 {
     public static class AStar
     {
-        public class PathCell
+        public class Path<T>
         {
+            public T cell;
+            
             public Vector2Int coordinates;
             
             public int gCost;
             public int hCost;
             public int fCost => gCost + hCost;
 
-            public PathCell previousCell;
+            public Path<T> Previous;
         }
         
         private static List<Vector3> FindPath(Cell[,] cells, Vector3 start, Vector3 end)
@@ -29,11 +31,18 @@ namespace ProcessControl.Pathfinding
 
             foreach (var cell in cells)
             {
-                var pathCell = new PathCell
+                if (cell == startCell)
                 {
+                    
+                }
+                
+                var pathCell = new Path<Cell>
+                {
+                    cell = cell,
+                    
                     coordinates = cell.coords,
-                    gCost = Int32.MaxValue,
-                    hCost = 
+                    gCost = int.MaxValue,
+                    hCost = 0, 
                 };
             }
             

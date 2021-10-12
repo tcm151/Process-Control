@@ -27,9 +27,9 @@ namespace ProcessControl.Industry.Machines
 
         private Resource EngagePress(Resource resource)
         {
-            var instance = ResourceFactory.SpawnResource(resource.data.material, Resource.Type.Plate, Position);
+            var instance = ResourceFactory.SpawnResource(resource.resourceProperties.material, ResourceProperties.Form.Plate, Position);
             if (instance is null) Debug.Log("NO PREFAB!");
-            instance.name = $"{instance.data.material} {instance.data.type}.{++Resource.Count:D4}";
+            instance.name = $"{instance.resourceProperties.material} {instance.resourceProperties.form}.{++Resource.Count:D4}";
             
             Destroy(resource);
 

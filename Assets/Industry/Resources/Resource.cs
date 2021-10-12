@@ -10,23 +10,15 @@ namespace ProcessControl.Industry.Resources
     {
         public static int Count = 0;
         
-        public enum Material { Copper, Iron, Gold, Platinum, Coal, Stone, Sand, }
-        public enum Type { Raw, Ingot, Plate, Gear, Wire, Cable, Screw, }
-        
         public int ticks;
         
-        [Serializable] public class Data
-        {
-            public string name;
-            public Material material;
-            public Type type;
-            public Sprite sprite;
-            
-        }
-        [FormerlySerializedAs("resource")][SerializeField] internal Data data;
+        [FormerlySerializedAs("properties")][FormerlySerializedAs("data")][SerializeField] internal ResourceProperties resourceProperties;
 
         private SpriteRenderer renderer;
 
+
+        public Sprite sprite => resourceProperties.sprite;
+        
         public Vector3 position
         {
             get => transform.position;
@@ -35,14 +27,20 @@ namespace ProcessControl.Industry.Resources
         
         public void SetVisible(bool isVisible) => renderer.enabled = isVisible;
         public void ToggleVisible() => renderer.enabled = !renderer.enabled;
+
+        public void SetProperties(ResourceProperties newProperties)
+        {
+            resourceProperties = newProperties;
+            renderer.sprite = resourceProperties.sprite;
+            gameObject.name = resourceProperties.name;
+        }
         
         private void Awake()
         {
             renderer = GetComponent<SpriteRenderer>();
-            renderer.sprite = data.sprite;
+            // renderer.sprite = resourceProperties.sprite;
         }
 
-        // private void FixedUpdate() => transform.position = resource.position;
         public void OnDestroy() => Destroy(gameObject);
     }
 }
