@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
@@ -46,7 +47,12 @@ namespace ProcessControl.Industry.Conveyors
         }}
 
         //> ADD AND REMOVE RESOURCES
-        override public bool CanDeposit => conveyor.inventory.Count < conveyor.inventorySize;
+        override public bool CanDeposit
+            => conveyor.inventory.Count == 0
+            || conveyor.inventory.Count < conveyor.inventorySize
+            && conveyor.inventory.Count >= 1
+            && conveyor.inventory.Last().ticks >= 2 * TicksPerSecond / conveyor.itemsPerMinute;
+        
         override public void Deposit(Resource resource) => conveyor.inventory.Add(resource);
         override public bool CanWithdraw => conveyor.inventory.Count >= 1 && conveyor.inventory[0].ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerMinute;
         override public Resource Withdraw() => conveyor.inventory.TakeFirst();
@@ -123,7 +129,7 @@ namespace ProcessControl.Industry.Conveyors
             // if (conveyor.ticks >= conveyor.sleepThreshold) conveyor.sleeping = true;
             
             //> EVERY INTERVAL PULL FROM INPUT IF CAPABLE
-            if (++conveyor.ticks > (TicksPerSecond / conveyor.itemsPerMinute))
+            if (++conveyor.ticks > (TicksPerMinute / (conveyor.itemsPerMinute * 2)))
             {
                 if (CanDeposit && conveyor.input.CanWithdraw && conveyor.input.Output as Conveyor == this)
                 {
