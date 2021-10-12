@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Graphs;
 using ProcessControl.Industry.Resources;
-using UnityEngine.Serialization;
 
 
 namespace ProcessControl.Procedural
 {
-    public enum Direction { Up, Down, Left, Right }
-    
     [Serializable] public class ResourceDeposit
     {
         [HideInInspector] public float noiseValue;
@@ -19,7 +16,7 @@ namespace ProcessControl.Procedural
         public ResourceProperties.Form type;
     }
 
-    [Serializable] public class Cell
+    public class Cell
     {
         public enum Directions
         {
@@ -32,20 +29,38 @@ namespace ProcessControl.Procedural
 
         public Node node;
         public float terrainValue;
-        // public Cell[] neighbours = new Cell[8];
+        public Cell[] neighbours = new Cell[8];
 
-        public Cell upLeft;
-        public Cell up;
-        public Cell upRight;
-        public Cell right;
-        public Cell downRight;
-        public Cell down;
-        public Cell downLeft;
-        public Cell left;
+        // public Cell upLeft;
+        // public Cell up;
+        // public Cell upRight;
+        // public Cell right;
+        // public Cell downRight;
+        // public Cell down;
+        // public Cell downLeft;
+        // public Cell left;
 
         public List<ResourceDeposit> resourceDeposits = new List<ResourceDeposit>();
 
         public Vector3 position;
         public Vector2Int coords;
+
+        public PathInfo pathInfo = new PathInfo();
+    }
+
+    public class PathInfo
+    {
+        public int hCost;
+        public int gCost = int.MaxValue;
+        public int fCost => gCost + hCost;
+
+        public Cell previousInPath;
+
+        public void Reset()
+        {
+            hCost = 0;
+            gCost = int.MaxValue;
+            previousInPath = null;
+        }
     }
 }

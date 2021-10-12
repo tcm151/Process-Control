@@ -111,8 +111,31 @@ namespace ProcessControl.Tools
         
         public static void MoveTowards(this ref Vector3 current, Vector3 target, float maxDelta)
             => current = Vector3.MoveTowards(current, target, maxDelta);
-        
 
+        public static Vector3 VectorTo(this Vector3 first, Vector3 second)
+            => second - first;
+
+        public static Vector3 Abs(this  Vector3 vector) => new Vector3
+        {
+            x = Mathf.Abs(vector.x),
+            y = Mathf.Abs(vector.y),
+            z = Mathf.Abs(vector.z),
+        };
+
+        public static Vector3Int CeilToInt(this Vector3 vector) => new Vector3Int
+        {
+            x = vector.x.CeilToInt(),
+            y = vector.y.CeilToInt(),
+            z = vector.z.CeilToInt(),
+        };
+        
+        public static Vector3Int FloorToInt(this Vector3 vector) => new Vector3Int
+        {
+            x = vector.x.FloorToInt(),
+            y = vector.y.FloorToInt(),
+            z = vector.z.FloorToInt(),
+        };
+        
         public static Vector3 DirectionTo(this Vector3 origin, Vector3 target) => (target - origin).normalized;
 
         //> MATH ON FLOATS
@@ -127,5 +150,8 @@ namespace ProcessControl.Tools
 
         public static int FloorToInt(this float value)
             => Mathf.FloorToInt(value);
+
+        public static int CeilToInt(this float value)
+            => Mathf.CeilToInt(value);
     }
 }

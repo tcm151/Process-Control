@@ -45,6 +45,8 @@ namespace ProcessControl.Procedural
         public static Func<Vector3, Cell> GetCellPosition;
         public static Func<Vector2Int, Cell> GetCellCoords;
 
+        public static Func<List<Chunk>> GetChunks;
+
         //> INITIALIZATION
         private void Awake()
         {
@@ -80,6 +82,8 @@ namespace ProcessControl.Procedural
             GetCellPosition += OnGetCellPosition;
             GetCellUnderMouse += OnGetCellUnderMouse;
 
+            GetChunks += () => grid.chunks;
+
             grid.chunks.Clear();
             
             grid.terrainNoise.ForEach(t => t.offset = Random.insideUnitSphere * (Random.value * 10));
@@ -113,16 +117,38 @@ namespace ProcessControl.Procedural
                             coords = new Vector2Int(x + c.chunkOffset.x, y + c.chunkOffset.y),
                         };
 
-                        if (x - 1 >= 0 && y + 1 < grid.chunkDimensions.y) c.cells[x, y].upLeft = c.cells[x - 1, y + 1];
-                        if (y + 1 < grid.chunkDimensions.y) c.cells[x, y].up = c.cells[x, y + 1];
-                        if (x + 1 < grid.chunkDimensions.x && y + 1 < grid.chunkDimensions.y) c.cells[x, y].upRight = c.cells[x + 1, y + 1];
+                        if (x - 1 >= 0 && y + 1 < grid.chunkDimensions.y) c.cells[x, y].neighbours[0] = c.cells[x - 1, y + 1];
+                        if (y + 1 < grid.chunkDimensions.y) c.cells[x, y].neighbours[1] = c.cells[x, y + 1];
+                        if (x + 1 < grid.chunkDimensions.x && y + 1 < grid.chunkDimensions.y) c.cells[x, y].neighbours[2] = c.cells[x + 1, y + 1];
                         
-                        if (x - 1 >= 0) c.cells[x, y].left = c.cells[x - 1, y];
-                        if (x + 1 < grid.chunkDimensions.x) c.cells[x, y].right = c.cells[x + 1, y];
+                        if (x - 1 >= 0) c.cells[x, y].neighbours[3] = c.cells[x - 1, y];
+                        if (x + 1 < grid.chunkDimensions.x) c.cells[x, y].neighbours[4] = c.cells[x + 1, y];
                         
-                        if (x - 1 >= 0 && y - 1 >= 0 ) c.cells[x, y].downLeft = c.cells[x - 1, y - 1];
-                        if (y - 1 >= 0) c.cells[x, y].down = c.cells[x, y - 1];
-                        if (x + 1 < grid.chunkDimensions.x && y - 1 >= 0) c.cells[x, y].downRight = c.cells[x + 1, y - 1];
+                        if (x - 1 >= 0 && y - 1 >= 0 ) c.cells[x, y].neighbours[5] = c.cells[x - 1, y - 1];
+                        if (y - 1 >= 0) c.cells[x, y].neighbours[6] = c.cells[x, y - 1];
+                        if (x + 1 < grid.chunkDimensions.x && y - 1 >= 0) c.cells[x, y].neighbours[7] = c.cells[x + 1, y - 1];
+                    }
+                }
+                
+                for (int y = 0; y < grid.chunkDimensions.y; y++) {
+                    for (int x = 0; x < grid.chunkDimensions.x; x++)
+                    {
+                        // c.cells[x,y] = new Cell
+                        // {
+                        //     position = new Vector3(x + c.chunkOffset.x + 0.5f, y + c.chunkOffset.y + 0.5f),
+                        //     coords = new Vector2Int(x + c.chunkOffset.x, y + c.chunkOffset.y),
+                        // };
+
+                        if (x - 1 >= 0 && y + 1 < grid.chunkDimensions.y) c.cells[x, y].neighbours[0] = c.cells[x - 1, y + 1];
+                        if (y + 1 < grid.chunkDimensions.y) c.cells[x, y].neighbours[1] = c.cells[x, y + 1];
+                        if (x + 1 < grid.chunkDimensions.x && y + 1 < grid.chunkDimensions.y) c.cells[x, y].neighbours[2] = c.cells[x + 1, y + 1];
+                        
+                        if (x - 1 >= 0) c.cells[x, y].neighbours[3] = c.cells[x - 1, y];
+                        if (x + 1 < grid.chunkDimensions.x) c.cells[x, y].neighbours[4] = c.cells[x + 1, y];
+                        
+                        if (x - 1 >= 0 && y - 1 >= 0 ) c.cells[x, y].neighbours[5] = c.cells[x - 1, y - 1];
+                        if (y - 1 >= 0) c.cells[x, y].neighbours[6] = c.cells[x, y - 1];
+                        if (x + 1 < grid.chunkDimensions.x && y - 1 >= 0) c.cells[x, y].neighbours[7] = c.cells[x + 1, y - 1];
                     }
                 }
             });
@@ -289,6 +315,20 @@ namespace ProcessControl.Procedural
             var cell = cells.FirstOrDefault(cell => cell.coords == coordinates);
 
             return cell;
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (grid.lastCell is null) return;
+         
+            Gizmos.color = Color.red;
+            for (int i = 0; i < grid.lastCell.neighbours.Length; i++)
+            {
+                if (grid.lastCell.neighbours[i] is null) continue;
+
+                Gizmos.color = Color.Lerp(Color.black, Color.white, i / 7f);
+                Gizmos.DrawSphere(grid.lastCell.neighbours[i].position, 0.25f);
+            }
         }
     }
 }

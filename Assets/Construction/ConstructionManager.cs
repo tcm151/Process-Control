@@ -7,7 +7,6 @@ using ProcessControl.Graphs;
 using ProcessControl.Industry.Conveyors;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Procedural;
-using ProcessControl.UI;
 #pragma warning disable 108,114
 
 
@@ -15,8 +14,6 @@ namespace ProcessControl.Construction
 {
     public class ConstructionManager : MonoBehaviour
     {
-        public LayerMask panelMask;
-        
         public Node selectedNode;
         public Edge selectedEdge;
 
