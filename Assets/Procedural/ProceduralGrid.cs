@@ -44,7 +44,6 @@ namespace ProcessControl.Procedural
         public static Func<Cell> GetCellUnderMouse;
         public static Func<Vector3, Cell> GetCellPosition;
         public static Func<Vector2Int, Cell> GetCellCoords;
-        public static Func<Cell, Cell[]> GetCellNeighbours;
 
         //> INITIALIZATION
         private void Awake()
@@ -113,6 +112,17 @@ namespace ProcessControl.Procedural
                             position = new Vector3(x + c.chunkOffset.x + 0.5f, y + c.chunkOffset.y + 0.5f),
                             coords = new Vector2Int(x + c.chunkOffset.x, y + c.chunkOffset.y),
                         };
+
+                        if (x - 1 >= 0 && y + 1 < grid.chunkDimensions.y) c.cells[x, y].upLeft = c.cells[x - 1, y + 1];
+                        if (y + 1 < grid.chunkDimensions.y) c.cells[x, y].up = c.cells[x, y + 1];
+                        if (x + 1 < grid.chunkDimensions.x && y + 1 < grid.chunkDimensions.y) c.cells[x, y].upRight = c.cells[x + 1, y + 1];
+                        
+                        if (x - 1 >= 0) c.cells[x, y].left = c.cells[x - 1, y];
+                        if (x + 1 < grid.chunkDimensions.x) c.cells[x, y].right = c.cells[x + 1, y];
+                        
+                        if (x - 1 >= 0 && y - 1 >= 0 ) c.cells[x, y].downLeft = c.cells[x - 1, y - 1];
+                        if (y - 1 >= 0) c.cells[x, y].down = c.cells[x, y - 1];
+                        if (x + 1 < grid.chunkDimensions.x && y - 1 >= 0) c.cells[x, y].downRight = c.cells[x + 1, y - 1];
                     }
                 }
             });

@@ -25,7 +25,7 @@ abstract public class MonoScriptableObject : ScriptableObject
             else if (state == PlayModeStateChange.ExitingPlayMode) OnEnd();
         }
     #else
-        protected void OnEnable() => OnBegin();
-        protected void OnDisable() => OnEnd();
+        protected void Awake() => OnBegin();
+        protected void OnDestroy() => OnEnd();
     #endif
 }

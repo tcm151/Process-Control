@@ -18,18 +18,34 @@ namespace ProcessControl.Procedural
         public Resource.Material material;
         public Resource.Type type;
     }
-    
+
     [Serializable] public class Cell
     {
+        public enum Directions
+        {
+            UpLeft, Up, UpRight, Right,
+            DownRight, Down, DownLeft, Left,
+        }
+        
         public bool occupied => node is { };
         public bool buildable = true;
 
         public Node node;
         public float terrainValue;
+        // public Cell[] neighbours = new Cell[8];
+
+        public Cell upLeft;
+        public Cell up;
+        public Cell upRight;
+        public Cell right;
+        public Cell downRight;
+        public Cell down;
+        public Cell downLeft;
+        public Cell left;
 
         public List<ResourceDeposit> resourceDeposits = new List<ResourceDeposit>();
 
         public Vector3 position;
-        [FormerlySerializedAs("coordinates")] public Vector2Int coords;
+        public Vector2Int coords;
     }
 }

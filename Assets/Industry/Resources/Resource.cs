@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Serialization;
+#pragma warning disable 108,114
 
 
 namespace ProcessControl.Industry.Resources
@@ -24,7 +25,7 @@ namespace ProcessControl.Industry.Resources
         }
         [FormerlySerializedAs("resource")][SerializeField] internal Data data;
 
-        new private SpriteRenderer renderer;
+        private SpriteRenderer renderer;
 
         public Vector3 position
         {
