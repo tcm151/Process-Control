@@ -26,11 +26,13 @@ namespace ProcessControl.Controls
         private Vector3 cameraPosition;
         private readonly Vector3 cameraOffset = new Vector3(0, 0, -10);
 
+        public Transform initialTarget;
+
         //> INITIALIZATION 
         private void Awake()
         {
             camera = GetComponent<Camera>();
-            camera.transform.position = cameraOffset;
+            camera.transform.position = initialTarget.position + cameraOffset;
         }
 
         //> HANDLE INPUT

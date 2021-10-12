@@ -31,6 +31,11 @@ namespace ProcessControl.Tools
             return list[index];
         }
 
+        public static void ForEach<T>(this T[] array, Action<T> action)
+        {
+            for (int i = 0; i < array.Length; i++) action(array[i]);
+        }
+
         //> CAMERA
         public static Vector3 MousePosition2D(this Camera camera)
         {

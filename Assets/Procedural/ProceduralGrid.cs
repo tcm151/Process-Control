@@ -117,16 +117,21 @@ namespace ProcessControl.Procedural
                             coords = new Vector2Int(x + c.chunkOffset.x, y + c.chunkOffset.y),
                         };
 
+                        //- Associate Neighbours
+                        // upLeft, up, upRight
                         if (x - 1 >= 0 && y + 1 < grid.chunkDimensions.y) c.cells[x, y].neighbours[0] = c.cells[x - 1, y + 1];
                         if (y + 1 < grid.chunkDimensions.y) c.cells[x, y].neighbours[1] = c.cells[x, y + 1];
                         if (x + 1 < grid.chunkDimensions.x && y + 1 < grid.chunkDimensions.y) c.cells[x, y].neighbours[2] = c.cells[x + 1, y + 1];
                         
+                        // left, right
                         if (x - 1 >= 0) c.cells[x, y].neighbours[3] = c.cells[x - 1, y];
                         if (x + 1 < grid.chunkDimensions.x) c.cells[x, y].neighbours[4] = c.cells[x + 1, y];
                         
+                        // downLeft, down, downRight
                         if (x - 1 >= 0 && y - 1 >= 0 ) c.cells[x, y].neighbours[5] = c.cells[x - 1, y - 1];
                         if (y - 1 >= 0) c.cells[x, y].neighbours[6] = c.cells[x, y - 1];
                         if (x + 1 < grid.chunkDimensions.x && y - 1 >= 0) c.cells[x, y].neighbours[7] = c.cells[x + 1, y - 1];
+
                     }
                 }
                 
