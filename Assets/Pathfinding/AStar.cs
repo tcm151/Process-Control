@@ -68,10 +68,10 @@ namespace ProcessControl.Pathfinding
                 if (currentCell == endCell)
                 {
                     timer.Stop();
-                    Debug.Log($"{timer.ElapsedMilliseconds} ms");
+                    // Debug.Log($"{timer.ElapsedMilliseconds} ms");
                     var finalPath = CalculateFinalPath(endCell);
                     if (finalPath is null) Debug.Log("PATH NOT FOUND");
-                    else Debug.Log($"{finalPath.Count} m");
+                    else Debug.Log($"{finalPath.Count} m path in {timer.ElapsedMilliseconds} ms");
                     return finalPath;
                 }
 

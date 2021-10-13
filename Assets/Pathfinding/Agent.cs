@@ -40,30 +40,30 @@ namespace ProcessControl.Pathfinding
 
         private void FixedUpdate()
         {
-            if (currentPath is null || currentPath.Count == 0) return;
+            // if (currentPath is null || currentPath.Count == 0) return;
 
-            switch (movement)
+            if (currentPath is { } && currentPath.Count >= 1)
             {
-                case Movement.Idle: break;
-                case Movement.Moving:
+                var currentPosition = transform.position;
+                if (currentPosition.DistanceTo(currentPath[0]) < 0.8f) currentPath.RemoveAt(0);
+                // if (currentPosition == currentPath[0]) 
+                if (currentPath.Count == 0)
                 {
-                    var currentPosition = transform.position;
-                    if (currentPosition == currentPath[0]) currentPath.RemoveAt(0);
-                    if (currentPath.Count == 0) return;
-                    currentPosition.MoveTowards(currentPath[0], 2.5f * Time.deltaTime);
-                    transform.up = -transform.position.DirectionTo(currentPath[0]);
-                    transform.position = currentPosition;
-                    break;
+                    currentPath = null;
+                    return;
                 }
+                
+                currentPosition.MoveTowards(currentPath[0], 2.5f * Time.deltaTime);
+                transform.up = -transform.position.DirectionTo(currentPath[0]);
+                transform.position = currentPosition;
             }
-            
-            
         }
 
         private void OnDrawGizmos()
         {
             if (currentPath is null || currentPath.Count == 0) return;
 
+            Gizmos.DrawLine(transform.position, currentPath[0]);
             for (int i = 0; i < currentPath.Count - 1; i++)
             {
                 Gizmos.DrawLine(currentPath[i], currentPath[i+1]);

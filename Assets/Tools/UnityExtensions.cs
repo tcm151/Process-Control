@@ -120,6 +120,9 @@ namespace ProcessControl.Tools
         public static Vector3 VectorTo(this Vector3 first, Vector3 second)
             => second - first;
 
+        public static float DistanceTo(this Vector3 first, Vector3 second)
+            => Vector3.Distance(first, second);
+
         public static Vector3 Abs(this  Vector3 vector) => new Vector3
         {
             x = Mathf.Abs(vector.x),
