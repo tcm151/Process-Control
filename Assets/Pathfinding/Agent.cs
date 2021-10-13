@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using ProcessControl.Construction;
 using ProcessControl.Procedural;
 using ProcessControl.Tools;
 using UnityEngine;
@@ -17,14 +18,20 @@ namespace ProcessControl.Pathfinding
         
         private Vector3 startPosition, endPosition;
         private List<Vector3> currentPath = new List<Vector3>();
+
+        private bool buildMode;
         
         private void Awake()
         {
             movement = Movement.Idle;
+            ConstructionManager.OnBuildModeChanged += isEnabled => buildMode = isEnabled;
+
         }
 
         private void Update()
         {
+            if (buildMode) return;
+            
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 var startCell = ProceduralGrid.GetCellPosition(transform.position);

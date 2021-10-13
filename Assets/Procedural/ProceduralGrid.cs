@@ -340,18 +340,18 @@ namespace ProcessControl.Procedural
             return cell;
         }
 
-        private void OnDrawGizmos()
-        {
-            if (grid.lastCell is null) return;
-         
-            Gizmos.color = Color.red;
-            for (int i = 0; i < grid.lastCell.neighbours.Length; i++)
-            {
-                if (grid.lastCell.neighbours[i] is null) continue;
-        
-                Gizmos.color = Color.Lerp(Color.black, Color.white, i / 7f);
-                Gizmos.DrawSphere(grid.lastCell.neighbours[i].position, 0.25f);
-            }
-        }
+        // private void OnDrawGizmos()
+        // {
+        //     if (grid.lastCell is null) return;
+        //  
+        //     Gizmos.color = Color.red;
+        //     for (int i = 0; i < grid.lastCell.neighbours.Length; i++)
+        //     {
+        //         if (grid.lastCell.neighbours[i] is null) continue;
+        //
+        //         Gizmos.color = Color.Lerp(Color.black, Color.white, i / 7f);
+        //         Gizmos.DrawSphere(grid.lastCell.neighbours[i].position, 0.25f);
+        //     }
+        // }
     }
 }
