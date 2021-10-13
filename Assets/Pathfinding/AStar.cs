@@ -11,12 +11,13 @@ namespace ProcessControl.Pathfinding
 {
     public static class AStar
     {
-        public static List<Vector3> FindPath(Cell[,] cells, Vector3 start, Vector3 end)
+        // public static List<Vector3> FindPath(Cell[,] cells, Vector3 start, Vector3 end)
+        public static List<Vector3> FindPath(Vector3 start, Vector3 end)
         {
             var timer = new Stopwatch();
             timer.Start();
             
-            foreach (var cell in cells) cell.pathInfo.Reset();
+            // foreach (var cell in cells) cell.pathInfo.Reset();
 
 
             var startCell = ProceduralGrid.GetCellPosition(start);
@@ -29,6 +30,9 @@ namespace ProcessControl.Pathfinding
                 timer.Stop();
                 return null;
             }
+            
+            startCell.pathInfo.Reset();
+            endCell.pathInfo.Reset();
 
             if (!endCell.buildable)
             {
@@ -48,19 +52,12 @@ namespace ProcessControl.Pathfinding
 
             while (openList.Count > 0)
             {
-                var currentCell = openList.OrderBy(pc => pc.pathInfo.fCost).FirstOrDefault();
-                if (currentCell is null)
-                {
-                    Debug.Log("LIST IS EMPTY MAYBE");
-                    Debug.Log(timer.ElapsedMilliseconds);
-                    timer.Stop();
-                    return null;
-                }
-
+                var currentCell = openList.OrderBy(pc => pc.pathInfo.fCost).First();
                 if (!currentCell.buildable)
                 {
                     openList.Remove(currentCell);
                     closedList.Add(currentCell);
+                    currentCell.pathInfo.Reset();
                     // Debug.Log("SKIP!");
                     continue;
                 }
@@ -77,11 +74,13 @@ namespace ProcessControl.Pathfinding
 
                 openList.Remove(currentCell);
                 closedList.Add(currentCell);
+                // currentCell.pathInfo.Reset();
 
                 foreach (var neighbourCell in currentCell.neighbours)
                 {
                     if (neighbourCell is null || closedList.Contains(neighbourCell)) continue;
 
+                    neighbourCell.pathInfo.Reset();
                     int gCost = currentCell.pathInfo.gCost + Distance(currentCell, neighbourCell);
                     if (gCost < neighbourCell.pathInfo.gCost)
                     {
@@ -96,8 +95,7 @@ namespace ProcessControl.Pathfinding
             }
             
             // NO OPEN NODES!
-            Debug.Log("NO PATH COULD NOT BE FOUND!");
-            Debug.Log(timer.ElapsedMilliseconds);
+            Debug.Log($"No path found in {timer.ElapsedMilliseconds} ms");
             timer.Stop();
             return null;
         }

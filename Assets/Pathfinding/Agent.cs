@@ -11,15 +11,13 @@ namespace ProcessControl.Pathfinding
     public class Agent : MonoBehaviour
     {
         public enum Movement { Idle, Moving }
-        public enum Task { DoingJob, AcceptingJob }
+        // public enum Task { DoingJob, AcceptingJob }
         
         private Movement movement;
         
         private Vector3 startPosition, endPosition;
-        private List<Vector3> currentPath;
+        private List<Vector3> currentPath = new List<Vector3>();
         
-        // public void 
-
         private void Awake()
         {
             movement = Movement.Idle;
@@ -34,7 +32,10 @@ namespace ProcessControl.Pathfinding
                 var endCell = ProceduralGrid.GetCellUnderMouse();
                 endPosition = endCell.position;
 
-                currentPath = AStar.FindPath(ProceduralGrid.GetChunks()[0].cells, startPosition, endPosition);
+                currentPath?.Clear();
+
+                var newPath = AStar.FindPath(startPosition, endPosition);
+                if (newPath is { }) currentPath = newPath;
             }
         }
 

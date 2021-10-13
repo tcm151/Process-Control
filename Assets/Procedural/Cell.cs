@@ -18,6 +18,8 @@ namespace ProcessControl.Procedural
 
     public class Cell
     {
+        internal Chunk parentChunk;
+        
         public enum Directions
         {
             UpLeft, Up, UpRight, Right,

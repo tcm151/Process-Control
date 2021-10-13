@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using ProcessControl.Procedural;
 using ProcessControl.Tools;
 using UnityEngine;
@@ -12,10 +13,6 @@ namespace ProcessControl.Jobs
         public void TakeJob(Job newJob) => currentJob = newJob;
 
         
-        private void Update()
-        {
-            
-        }
-
+        
     }
 }
