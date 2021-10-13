@@ -36,9 +36,7 @@ namespace ProcessControl.Tools.Editor
 
             if (GUILayout.Button("Initialize & Generate"))
             {
-                grid.Initialize();
-                grid.GenerateAllChunks();
-                grid.GenerateAllResources();
+                grid.Awake();
             }
 
             if (GUILayout.Button("Clear Grid")) grid.ClearAllTiles();

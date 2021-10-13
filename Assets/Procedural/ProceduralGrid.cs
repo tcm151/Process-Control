@@ -52,7 +52,7 @@ namespace ProcessControl.Procedural
         public static Func<Chunk[,]> GetChunkArray;
 
         //> INITIALIZATION
-        private void Awake()
+        public void Awake()
         {
             timer.Start();
             Initialize();
@@ -103,9 +103,12 @@ namespace ProcessControl.Procedural
             for (int y = 0; y < grid.gridResolution; y++) {
                 for (int x = 0; x < grid.gridResolution; x++)
                 {
+                    float xOffset = (x - (grid.gridResolution / 2f)) * grid.chunkResolution;
+                    float yOffset = (y - (grid.gridResolution / 2f)) * grid.chunkResolution;
+                    
                     grid.chunkArray[x, y] = new Chunk
                     {
-                        chunkOffset = new Vector2Int(x * grid.chunkResolution, y * grid.chunkResolution),
+                        chunkOffset = new Vector2Int(xOffset.FloorToInt(), yOffset.FloorToInt()),
                     };
                     // Debug.Log($"Chunk offset for [{x},{y}]:  {grid.chunkArray[x, y].chunkOffset}");
                 }
