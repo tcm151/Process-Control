@@ -70,6 +70,7 @@ namespace ProcessControl.Construction
             }
             
             //! THIS EVENT SYSTEM CHECK DOES NOT WORK WITH MY UI SOLUTION, NEEDS TO BE FIXED!
+            // might be fixed lol
             if (!buildMode || selectedNode is null || EventSystem.current.IsPointerOverGameObject()) return;
             
             //- handle conveyor building

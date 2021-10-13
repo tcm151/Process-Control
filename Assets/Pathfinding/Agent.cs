@@ -14,42 +14,40 @@ namespace ProcessControl.Pathfinding
         public enum Movement { Idle, Moving }
         // public enum Task { DoingJob, AcceptingJob }
         
-        private Movement movement;
+        // private Movement movement;
         
-        private Vector3 startPosition, endPosition;
-        private List<Vector3> currentPath = new List<Vector3>();
+        // private Vector3 startPosition, endPosition;
+        protected List<Vector3> currentPath = new List<Vector3>();
 
         private bool buildMode;
         
         private void Awake()
         {
-            movement = Movement.Idle;
+            // movement = Movement.Idle;
             ConstructionManager.OnBuildModeChanged += isEnabled => buildMode = isEnabled;
 
         }
 
-        private void Update()
-        {
-            if (buildMode) return;
-            
-            if (Input.GetKeyDown(KeyCode.Mouse1))
-            {
-                var startCell = ProceduralGrid.GetCellPosition(transform.position);
-                startPosition = startCell.position;
-                var endCell = ProceduralGrid.GetCellUnderMouse();
-                endPosition = endCell.position;
-
-                currentPath?.Clear();
-
-                var newPath = AStar.FindPath(startPosition, endPosition);
-                if (newPath is { }) currentPath = newPath;
-            }
-        }
+        // private void Update()
+        // {
+        //     if (buildMode) return;
+        //     
+        //     if (Input.GetKeyDown(KeyCode.Mouse1))
+        //     {
+        //         var startCell = ProceduralGrid.GetCellPosition(transform.position);
+        //         startPosition = startCell.position;
+        //         var endCell = ProceduralGrid.GetCellUnderMouse();
+        //         endPosition = endCell.position;
+        //
+        //         currentPath?.Clear();
+        //
+        //         var newPath = AStar.FindPath(startPosition, endPosition);
+        //         if (newPath is { }) currentPath = newPath;
+        //     }
+        // }
 
         private void FixedUpdate()
         {
-            // if (currentPath is null || currentPath.Count == 0) return;
-
             if (currentPath is { } && currentPath.Count >= 1)
             {
                 var currentPosition = transform.position;

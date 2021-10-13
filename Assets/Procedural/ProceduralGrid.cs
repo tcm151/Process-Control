@@ -33,6 +33,7 @@ namespace ProcessControl.Procedural
             public Range noiseRange;
             public List<Noise.Layer> terrainNoise;
             public List<Noise.Layer> resourceNoise;
+            public List<ResourceNoiseLayer> resourceNoiseLayers;
 
             [Header("Cells & Chunks")]
             public Cell lastCell;
@@ -92,7 +93,8 @@ namespace ProcessControl.Procedural
             // grid.chunks.Clear();
             
             grid.terrainNoise.ForEach(t => t.offset = Random.insideUnitSphere * (Random.value * 10));
-            grid.resourceNoise.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
+            // grid.resourceNoise.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
+            grid.resourceNoiseLayers.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
 
             grid.tilemaps = GetComponentsInChildren<Tilemap>().ToList();
             ClearAllTiles();
@@ -209,54 +211,69 @@ namespace ProcessControl.Procedural
             {
                 cell.resourceDeposits.Clear();
                 
+                grid.resourceNoiseLayers.ForEach(rnl =>
+                {
+                    var noiseValue = Noise.GenerateValue(rnl, cell.position);
+                    if (noiseValue >= rnl.threshold && cell.buildable)
+                    {
+                        cell.resourceDeposits.Add(new ResourceDeposit
+                        {
+                            noiseValue = noiseValue,
+                            quantity = (noiseValue * 16484f).FloorToInt(),
+                            material = rnl.resource.material,
+                            type = rnl.resource.form,
+                        });
+                    }
+                });
+                
                 //@ refactor this into a ForEach
-                var noiseValue = Noise.GenerateValue(grid.resourceNoise[0], cell.position);
-                if (noiseValue >= grid.resourceNoise[0].threshold && cell.buildable)
-                {
-                    cell.resourceDeposits.Add(new ResourceDeposit
-                    {
-                        noiseValue = noiseValue,
-                        quantity = (noiseValue * 2048f).FloorToInt(),
-                        material = ResourceProperties.Material.Copper,
-                        type = ResourceProperties.Form.Raw,
-                    });
-                }
-                
-                noiseValue = Noise.GenerateValue(grid.resourceNoise[1], cell.position);
-                if (noiseValue >= grid.resourceNoise[1].threshold && cell.buildable)
-                {
-                    cell.resourceDeposits.Add(new ResourceDeposit
-                    {
-                        noiseValue = noiseValue,
-                        quantity = (noiseValue * 2048f).FloorToInt(),
-                        material = ResourceProperties.Material.Iron,
-                        type = ResourceProperties.Form.Raw,
-                    });
-                }
-                
-                noiseValue = Noise.GenerateValue(grid.resourceNoise[2], cell.position);
-                if (noiseValue >= grid.resourceNoise[2].threshold && cell.buildable)
-                {
-                    cell.resourceDeposits.Add(new ResourceDeposit
-                    {
-                        noiseValue = noiseValue,
-                        quantity = (noiseValue * 2048f).FloorToInt(),
-                        material = ResourceProperties.Material.Gold,
-                        type = ResourceProperties.Form.Raw,
-                    });
-                }
-                
-                noiseValue = Noise.GenerateValue(grid.resourceNoise[3], cell.position);
-                if (noiseValue >= grid.resourceNoise[3].threshold && cell.buildable)
-                {
-                    cell.resourceDeposits.Add(new ResourceDeposit
-                    {
-                        noiseValue = noiseValue,
-                        quantity = (noiseValue * 2048f).FloorToInt(),
-                        material = ResourceProperties.Material.Platinum,
-                        type = ResourceProperties.Form.Raw,
-                    });
-                }
+                // var noiseValue = Noise.GenerateValue(grid.resourceNoise[0], cell.position);
+                // if (noiseValue >= grid.resourceNoise[0].threshold && cell.buildable)
+                // {
+                //     cell.resourceDeposits.Add(new ResourceDeposit
+                //     {
+                //         noiseValue = noiseValue,
+                //         quantity = (noiseValue * 2048f).FloorToInt(),
+                //         material = ResourceProperties.Material.Copper,
+                //         type = ResourceProperties.Form.Raw,
+                //     });
+                // }
+                //
+                // noiseValue = Noise.GenerateValue(grid.resourceNoise[1], cell.position);
+                // if (noiseValue >= grid.resourceNoise[1].threshold && cell.buildable)
+                // {
+                //     cell.resourceDeposits.Add(new ResourceDeposit
+                //     {
+                //         noiseValue = noiseValue,
+                //         quantity = (noiseValue * 2048f).FloorToInt(),
+                //         material = ResourceProperties.Material.Iron,
+                //         type = ResourceProperties.Form.Raw,
+                //     });
+                // }
+                //
+                // noiseValue = Noise.GenerateValue(grid.resourceNoise[2], cell.position);
+                // if (noiseValue >= grid.resourceNoise[2].threshold && cell.buildable)
+                // {
+                //     cell.resourceDeposits.Add(new ResourceDeposit
+                //     {
+                //         noiseValue = noiseValue,
+                //         quantity = (noiseValue * 2048f).FloorToInt(),
+                //         material = ResourceProperties.Material.Gold,
+                //         type = ResourceProperties.Form.Raw,
+                //     });
+                // }
+                //
+                // noiseValue = Noise.GenerateValue(grid.resourceNoise[3], cell.position);
+                // if (noiseValue >= grid.resourceNoise[3].threshold && cell.buildable)
+                // {
+                //     cell.resourceDeposits.Add(new ResourceDeposit
+                //     {
+                //         noiseValue = noiseValue,
+                //         quantity = (noiseValue * 2048f).FloorToInt(),
+                //         material = ResourceProperties.Material.Platinum,
+                //         type = ResourceProperties.Form.Raw,
+                //     });
+                // }
                 
                 TileBase tile;
                 if (cell.resourceDeposits.Count == 0) tile = grid.tiles[3];
@@ -266,9 +283,10 @@ namespace ProcessControl.Procedural
                     {
                         ResourceProperties.Material.Iron     => grid.tiles[4],
                         ResourceProperties.Material.Gold     => grid.tiles[6],
+                        ResourceProperties.Material.Coal     => grid.tiles[8],
                         ResourceProperties.Material.Copper   => grid.tiles[2],
                         ResourceProperties.Material.Platinum => grid.tiles[7],
-                                    _              => grid.tiles[3],
+                                    _                        => grid.tiles[3],
                     };
                 }
                 grid.tilemaps[1].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
@@ -353,5 +371,10 @@ namespace ProcessControl.Procedural
         //         Gizmos.DrawSphere(grid.lastCell.neighbours[i].position, 0.25f);
         //     }
         // }
+    }
+
+    [Serializable] public class ResourceNoiseLayer : Noise.Layer
+    {
+        public ResourceProperties resource;
     }
 }

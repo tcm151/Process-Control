@@ -16,10 +16,11 @@ namespace ProcessControl.Jobs
     
     public class Job
     {
-        public Cell origin;
-        public List<Step> steps;
+        // public Cell origin;
+        // public List<Step> steps;
+        public Cell destination;
 
-        public bool Completed => steps.TrueForAll(s => s.completed);
+        // public bool Completed => steps.TrueForAll(s => s.completed);
     }
 
     public interface IWorker
