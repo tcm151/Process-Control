@@ -19,12 +19,13 @@ namespace ProcessControl.Jobs
         // public Cell origin;
         // public List<Step> steps;
         public Cell destination;
+        public bool complete = false;
 
         // public bool Completed => steps.TrueForAll(s => s.completed);
     }
 
     public interface IWorker
     {
-        public void TakeJob(Job newJob);
+        public void AcceptJob(Job newJob);
     }
 }

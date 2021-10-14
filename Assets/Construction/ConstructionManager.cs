@@ -6,6 +6,7 @@ using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Industry.Conveyors;
 using ProcessControl.Industry.Machines;
+using ProcessControl.Jobs;
 using ProcessControl.Procedural;
 #pragma warning disable 108,114
 
@@ -163,6 +164,7 @@ namespace ProcessControl.Construction
             //- regular node building
             else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
+                
                 firstCell = ProceduralGrid.GetCellUnderMouse();
 
                 if (firstCell is null || !firstCell.buildable) Debug.Log("Invalid parentCell!");
@@ -176,6 +178,12 @@ namespace ProcessControl.Construction
                     {
                         //@ replace junctions with machines when applicable
                     }
+                    
+                    AgentManager.QueueJob(new Job
+                    {
+                        destination = firstCell,
+                        complete = false,
+                    });
                 }
             }
             

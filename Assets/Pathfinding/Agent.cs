@@ -18,10 +18,12 @@ namespace ProcessControl.Pathfinding
         
         // private Vector3 startPosition, endPosition;
         protected List<Vector3> currentPath = new List<Vector3>();
+        
+        public event Action onReachedDestination;
 
         private bool buildMode;
         
-        private void Awake()
+        virtual protected void Awake()
         {
             // movement = Movement.Idle;
             ConstructionManager.OnBuildModeChanged += isEnabled => buildMode = isEnabled;
@@ -55,6 +57,7 @@ namespace ProcessControl.Pathfinding
                 // if (currentPosition == currentPath[0]) 
                 if (currentPath.Count == 0)
                 {
+                    onReachedDestination?.Invoke();
                     currentPath = null;
                     return;
                 }

@@ -5,8 +5,11 @@ using ProcessControl.Tools;
 
 namespace ProcessControl.Controls
 {
+    [RequireComponent(typeof(Rigidbody2D))]
     public class TopDownCamera : MonoBehaviour
     {
+        private Rigidbody2D rigidbody;
+        
         [Header("Zoom")]
         public float minZoom;
         public float maxZoom;
@@ -16,6 +19,7 @@ namespace ProcessControl.Controls
         public float panSpeed = 1;
         public float dragSpeed = 1;
         public float acceleration = 1;
+        public float deceleration = 1;
 
         private bool dragging;
         private Camera camera;
@@ -31,6 +35,8 @@ namespace ProcessControl.Controls
         //> INITIALIZATION 
         private void Awake()
         {
+            rigidbody = GetComponent<Rigidbody2D>();
+            
             camera = GetComponent<Camera>();
             camera.transform.position = initialTarget.position + cameraOffset;
         }
@@ -69,7 +75,7 @@ namespace ProcessControl.Controls
         }
         
         //> MOVE THE CAMERA
-        private void LateUpdate()
+        private void FixedUpdate()
         {
             if (dragging)
             {
@@ -77,8 +83,25 @@ namespace ProcessControl.Controls
             }
             else
             {
-                var desiredPosition = cameraPosition + movementInput * (panSpeed * camera.orthographicSize);
-                transform.position = Vector3.MoveTowards(cameraPosition, desiredPosition, acceleration);
+                
+                var currentVelocity = rigidbody.velocity;
+                
+                Vector2 desiredVelocity = (movementInput) switch
+                {
+                    {x: 0f, y: 0f} => Vector2.zero,
+                    _ => movementInput * (panSpeed * camera.orthographicSize),
+                };
+
+                float maxAcceleration = (movementInput) switch
+                {
+                    {x: 0f, y: 0f} => deceleration,
+                    _ => acceleration,
+                };
+                
+                currentVelocity.MoveTowards(desiredVelocity, maxAcceleration * Time.deltaTime);
+                
+                // transform.position = Vector3.MoveTowards(cameraPosition, desiredPosition, acceleration);
+                rigidbody.velocity = currentVelocity;
             }
         }
 
