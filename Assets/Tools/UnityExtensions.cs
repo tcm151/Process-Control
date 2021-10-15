@@ -36,6 +36,16 @@ namespace ProcessControl.Tools
             for (int i = 0; i < array.Length; i++) action(array[i]);
         }
 
+        public static void ForEach<T>(this T[,] array2d, Action<T> action)
+        {
+            for (int i = 0; i < array2d.GetLength(0); i++) {
+                for (int j = 0; j < array2d.GetLength(1); j++)
+                {
+                    action(array2d[i, j]);
+                }
+            }
+        }
+
         //> CAMERA
         public static Vector3 MousePosition2D(this Camera camera)
         {
@@ -70,6 +80,13 @@ namespace ProcessControl.Tools
         {
             x = Mathf.FloorToInt(v2.x),
             y = Mathf.FloorToInt(v2.y),
+        };
+
+        public static Vector3 ToVector3(this Vector2Int v2) => new Vector3
+        {
+            x = v2.x,
+            y = v2.y,
+            z = 0f,
         };
 
         //> IENUMERABLES

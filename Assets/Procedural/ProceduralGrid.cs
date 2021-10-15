@@ -21,8 +21,6 @@ namespace ProcessControl.Procedural
         public class Data
         {
             [Header("Resolution")]
-            // public Vector2Int gridDimensions;
-            // public Vector2Int chunkDimensions;
             public int chunkResolution = 64;
             public int gridResolution = 4;
             
@@ -32,12 +30,11 @@ namespace ProcessControl.Procedural
             [Header("Noise")]
             public Range noiseRange;
             public List<Noise.Layer> terrainNoise;
-            public List<Noise.Layer> resourceNoise;
+            // public List<Noise.Layer> resourceNoise;
             public List<ResourceNoiseLayer> resourceNoiseLayers;
 
             [Header("Cells & Chunks")]
             public Cell lastCell;
-            // public List<Chunk> chunks = new List<Chunk>();
             public Chunk[,] chunkArray;
         }
         [SerializeField] internal Data grid;
@@ -49,7 +46,6 @@ namespace ProcessControl.Procedural
         public static Func<Vector3, Cell> GetCellPosition;
         public static Func<Vector2Int, Cell> GetCellCoords;
 
-        // public static Func<List<Chunk>> GetChunks;
         public static Func<Chunk[,]> GetChunkArray;
 
         //> INITIALIZATION
@@ -75,6 +71,7 @@ namespace ProcessControl.Procedural
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 grid.lastCell = GetCellUnderMouse();
+                Debug.Log(grid.lastCell.indexes);
             }
         }
 
@@ -87,13 +84,9 @@ namespace ProcessControl.Procedural
             GetCellPosition += OnGetCellPosition;
             GetCellUnderMouse += OnGetCellUnderMouse;
 
-            // GetChunks += () => grid.chunks;
             GetChunkArray += () => grid.chunkArray;
 
-            // grid.chunks.Clear();
-            
             grid.terrainNoise.ForEach(t => t.offset = Random.insideUnitSphere * (Random.value * 10));
-            // grid.resourceNoise.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
             grid.resourceNoiseLayers.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
 
             grid.tilemaps = GetComponentsInChildren<Tilemap>().ToList();
@@ -111,11 +104,14 @@ namespace ProcessControl.Procedural
                     grid.chunkArray[x, y] = new Chunk
                     {
                         chunkOffset = new Vector2Int(xOffset.FloorToInt(), yOffset.FloorToInt()),
+                        neighbours = new Chunk[8],
+                        cells = new Cell[grid.chunkResolution, grid.chunkResolution],
                     };
                     // Debug.Log($"Chunk offset for [{x},{y}]:  {grid.chunkArray[x, y].chunkOffset}");
                 }
             }
             
+            //- assign chunk neighbours
             for (int y = 0; y < grid.gridResolution; y++) {
                 for (int x = 0; x < grid.gridResolution; x++)
                 {
@@ -133,40 +129,90 @@ namespace ProcessControl.Procedural
             }
             
             //- create cell arrays
-            foreach (var c in grid.chunkArray)
+            foreach (var chunk in grid.chunkArray)
             {
-                c.cells = new Cell[grid.chunkResolution, grid.chunkResolution];
-
                 for (int y = 0; y < grid.chunkResolution; y++) {
                     for (int x = 0; x < grid.chunkResolution; x++)
                     {
-                        c.cells[x, y] = new Cell
+                        chunk.cells[x, y] = new Cell
                         {
-                            parentChunk = c,
+                            parentChunk = chunk,
 
-                            position = new Vector3(x + c.chunkOffset.x + 0.5f, y + c.chunkOffset.y + 0.5f),
-                            coords = new Vector2Int(x + c.chunkOffset.x, y + c.chunkOffset.y),
+                            position = new Vector3(x + chunk.chunkOffset.x + 0.5f, y + chunk.chunkOffset.y + 0.5f),
+                            coords = new Vector2Int(x + chunk.chunkOffset.x, y + chunk.chunkOffset.y),
+                            indexes = new Vector2Int(x, y),
                         };
                     }
                 }
 
+                
+            }
+            
+            foreach (var chunk in grid.chunkArray)
+            {
                 for (int y = 0; y < grid.chunkResolution; y++) {
                     for (int x = 0; x < grid.chunkResolution; x++)
                     {
-                        if (x - 1 >= 0 && y + 1 < grid.chunkResolution) c.cells[x, y].neighbours[0] = c.cells[x - 1, y + 1];
-                        if (y + 1 < grid.chunkResolution) c.cells[x, y].neighbours[1] = c.cells[x, y + 1];
-                        if (x + 1 < grid.chunkResolution && y + 1 < grid.chunkResolution) c.cells[x, y].neighbours[2] = c.cells[x + 1, y + 1];
+                        if (x - 1 >= 0 && y + 1 < grid.chunkResolution) chunk.cells[x, y].neighbours[0] = chunk.cells[x - 1, y + 1];
+                        if (y + 1 < grid.chunkResolution) chunk.cells[x, y].neighbours[1] = chunk.cells[x, y + 1];
+                        if (x + 1 < grid.chunkResolution && y + 1 < grid.chunkResolution) chunk.cells[x, y].neighbours[2] = chunk.cells[x + 1, y + 1];
 
-                        if (x - 1 >= 0) c.cells[x, y].neighbours[3] = c.cells[x - 1, y];
-                        if (x + 1 < grid.chunkResolution) c.cells[x, y].neighbours[4] = c.cells[x + 1, y];
+                        if (x - 1 >= 0) chunk.cells[x, y].neighbours[3] = chunk.cells[x - 1, y];
+                        if (x + 1 < grid.chunkResolution) chunk.cells[x, y].neighbours[4] = chunk.cells[x + 1, y];
 
-                        if (x - 1 >= 0 && y - 1 >= 0) c.cells[x, y].neighbours[5] = c.cells[x - 1, y - 1];
-                        if (y - 1 >= 0) c.cells[x, y].neighbours[6] = c.cells[x, y - 1];
-                        if (x + 1 < grid.chunkResolution && y - 1 >= 0) c.cells[x, y].neighbours[7] = c.cells[x + 1, y - 1];
+                        if (x - 1 >= 0 && y - 1 >= 0) chunk.cells[x, y].neighbours[5] = chunk.cells[x - 1, y - 1];
+                        if (y - 1 >= 0) chunk.cells[x, y].neighbours[6] = chunk.cells[x, y - 1];
+                        if (x + 1 < grid.chunkResolution && y - 1 >= 0) chunk.cells[x, y].neighbours[7] = chunk.cells[x + 1, y - 1];
 
-                        if (c.neighbours[0] is { } && x - 1 == -1 && y + 1 == grid.chunkResolution) c.cells[x, y].neighbours[0] = c.neighbours[0].cells[grid.chunkResolution-1, 0];
-                        // if (c.neighbours[1] is { } && y + 1 == grid.chunkResolution) c.cells[x, y].neighbours[1] = c.neighbours[1].cells[x, 0];
-                        //! need to add cases for end of chunks for seamless pathfinding
+                        //! corners
+                        if (chunk.neighbours[0] is { } && x - 1 == -1 && y + 1 == grid.chunkResolution) chunk.cells[x, y].neighbours[0] = chunk.neighbours[0].cells[grid.chunkResolution-1, 0];
+                        if (chunk.neighbours[2] is { } && x + 1 == grid.chunkResolution && y + 1 == grid.chunkResolution) chunk.cells[x, y].neighbours[2] = chunk.neighbours[2].cells[0, 0];
+                        if (chunk.neighbours[5] is { } && x - 1 == -1 && y - 1 == -1) chunk.cells[x, y].neighbours[5] = chunk.neighbours[5].cells[grid.chunkResolution - 1, grid.chunkResolution - 1];
+                        if (chunk.neighbours[7] is { } && x + 1 == grid.chunkResolution && y - 1 == -1) chunk.cells[x, y].neighbours[7] = chunk.neighbours[7].cells[0, grid.chunkResolution - 1];
+                        
+                        //! top
+                        if (chunk.neighbours[1] is { } && y + 1 == grid.chunkResolution)
+                        {
+                            chunk.cells[x, y].neighbours[1] = chunk.neighbours[1].cells[x, 0];
+                            if (x > 0 && x < grid.chunkResolution - 1)
+                            {
+                                chunk.cells[x, y].neighbours[0] = chunk.neighbours[1].cells[x-1, 0];
+                                chunk.cells[x, y].neighbours[2] = chunk.neighbours[1].cells[x+1, 0];
+                            }
+                        }
+
+                        //! left
+                        if (chunk.neighbours[3] is { } && x - 1 == -1)
+                        {
+                            chunk.cells[x, y].neighbours[3] = chunk.neighbours[3].cells[grid.chunkResolution - 1, y];
+                            if (y > 0 && y < grid.chunkResolution - 1)
+                            {
+                                chunk.cells[x, y].neighbours[0] = chunk.neighbours[3].cells[grid.chunkResolution-1, y+1];
+                                chunk.cells[x, y].neighbours[5] = chunk.neighbours[3].cells[grid.chunkResolution-1, y-1];
+                            }
+                        }
+                        
+                        //! right
+                        if (chunk.neighbours[4] is { } && x + 1 == grid.chunkResolution)
+                        {
+                            chunk.cells[x, y].neighbours[4] = chunk.neighbours[4].cells[0, y];
+                            if (y > 0 && y < grid.chunkResolution - 1)
+                            {
+                                chunk.cells[x, y].neighbours[2] = chunk.neighbours[4].cells[0, y+1];
+                                chunk.cells[x, y].neighbours[7] = chunk.neighbours[4].cells[0, y-1];
+                            }
+                        }
+                        
+                        //! bottom
+                        if (chunk.neighbours[6] is { } && y - 1 == -1)
+                        {
+                            chunk.cells[x, y].neighbours[6] = chunk.neighbours[6].cells[x, grid.chunkResolution - 1];
+                            if (x > 0 && x < grid.chunkResolution - 1)
+                            {
+                                chunk.cells[x, y].neighbours[5] = chunk.neighbours[6].cells[x-1, grid.chunkResolution-1];
+                                chunk.cells[x, y].neighbours[7] = chunk.neighbours[6].cells[x+1, grid.chunkResolution-1];
+                            }
+                        }
                     }
                 }
             }
@@ -177,8 +223,6 @@ namespace ProcessControl.Procedural
         // private void GenerateChunks(List<Chunk> chunks)
         private void GenerateChunks(Chunk[,] chunks)
         {
-            // Debug.Log($"{chunks.Length} chunks in grid");
-            
             // multi-threaded chunk generation
             var tasks = new List<Task>();
             foreach (var c in chunks) tasks.Add(Task.Factory.StartNew(() => GenerateCells(c.cells)));
@@ -226,55 +270,6 @@ namespace ProcessControl.Procedural
                     }
                 });
                 
-                //@ refactor this into a ForEach
-                // var noiseValue = Noise.GenerateValue(grid.resourceNoise[0], cell.position);
-                // if (noiseValue >= grid.resourceNoise[0].threshold && cell.buildable)
-                // {
-                //     cell.resourceDeposits.Add(new ResourceDeposit
-                //     {
-                //         noiseValue = noiseValue,
-                //         quantity = (noiseValue * 2048f).FloorToInt(),
-                //         material = ResourceProperties.Material.Copper,
-                //         type = ResourceProperties.Form.Raw,
-                //     });
-                // }
-                //
-                // noiseValue = Noise.GenerateValue(grid.resourceNoise[1], cell.position);
-                // if (noiseValue >= grid.resourceNoise[1].threshold && cell.buildable)
-                // {
-                //     cell.resourceDeposits.Add(new ResourceDeposit
-                //     {
-                //         noiseValue = noiseValue,
-                //         quantity = (noiseValue * 2048f).FloorToInt(),
-                //         material = ResourceProperties.Material.Iron,
-                //         type = ResourceProperties.Form.Raw,
-                //     });
-                // }
-                //
-                // noiseValue = Noise.GenerateValue(grid.resourceNoise[2], cell.position);
-                // if (noiseValue >= grid.resourceNoise[2].threshold && cell.buildable)
-                // {
-                //     cell.resourceDeposits.Add(new ResourceDeposit
-                //     {
-                //         noiseValue = noiseValue,
-                //         quantity = (noiseValue * 2048f).FloorToInt(),
-                //         material = ResourceProperties.Material.Gold,
-                //         type = ResourceProperties.Form.Raw,
-                //     });
-                // }
-                //
-                // noiseValue = Noise.GenerateValue(grid.resourceNoise[3], cell.position);
-                // if (noiseValue >= grid.resourceNoise[3].threshold && cell.buildable)
-                // {
-                //     cell.resourceDeposits.Add(new ResourceDeposit
-                //     {
-                //         noiseValue = noiseValue,
-                //         quantity = (noiseValue * 2048f).FloorToInt(),
-                //         material = ResourceProperties.Material.Platinum,
-                //         type = ResourceProperties.Form.Raw,
-                //     });
-                // }
-                
                 TileBase tile;
                 if (cell.resourceDeposits.Count == 0) tile = grid.tiles[3];
                 else
@@ -306,37 +301,6 @@ namespace ProcessControl.Procedural
             }
         }
         
-        // //> GET A NOISE VALUE FOR ANY SPECIFIC CELL
-        // public static float GenerateNoise(List<Noise.Layer> noiseLayers, Cell cell)
-        // {
-        //     float noiseValue = 0f;
-        //     float firstLayerValue = 0f;
-        //
-        //     //- calculate first layer
-        //     if (noiseLayers.Count > 0)
-        //     {
-        //      firstLayerValue = Noise.GenerateValue(noiseLayers[0], cell.position);
-        //      if (noiseLayers[0].enabled) noiseValue = firstLayerValue;
-        //     }
-        //
-        //     //- calculate every other layer
-        //     for (int i = 1; i < noiseLayers.Count; i++)
-        //     {
-        //      // ignore if not enabled
-        //      if (!noiseLayers[i].enabled) continue;
-        //
-        //      float firstLayerMask = (noiseLayers[i].useMask) ? firstLayerValue : 1;
-        //      noiseValue += Noise.GenerateValue(noiseLayers[i], cell.position) * firstLayerMask;
-        //     }
-        //
-        //     return noiseValue;
-        // }
-        //
-        // public static float GenerateNoise(Noise.Layer layer, Cell cell, float maskValue = 1)
-        // {
-        //     if (!layer.enabled) return 0;
-        //     return Noise.GenerateValue(layer, cell.position) * maskValue;
-        // }
 
         //> GET CELLS 
         private Cell OnGetCellUnderMouse()
@@ -358,19 +322,32 @@ namespace ProcessControl.Procedural
             return cell;
         }
 
-        // private void OnDrawGizmos()
-        // {
-        //     if (grid.lastCell is null) return;
-        //  
-        //     Gizmos.color = Color.red;
-        //     for (int i = 0; i < grid.lastCell.neighbours.Length; i++)
-        //     {
-        //         if (grid.lastCell.neighbours[i] is null) continue;
-        //
-        //         Gizmos.color = Color.Lerp(Color.black, Color.white, i / 7f);
-        //         Gizmos.DrawSphere(grid.lastCell.neighbours[i].position, 0.25f);
-        //     }
-        // }
+        //> DRAW HELPFUL GIZMOS
+        private void OnDrawGizmos()
+        {
+            if (grid.lastCell is null) return;
+         
+            // Gizmos.color = Color.red;
+            for (int i = 0; i < grid.lastCell.neighbours.Length; i++)
+            {
+                if (grid.lastCell.neighbours[i] is null) continue;
+        
+                Gizmos.color = Color.Lerp(Color.red, Color.black, i / 7f);
+                Gizmos.DrawSphere(grid.lastCell.neighbours[i].position, 0.25f);
+            }
+            
+            // Gizmos.color = Color.green;
+            for (int i = 0; i < grid.lastCell.parentChunk.neighbours.Length; i++)
+            {
+                if (grid.lastCell.parentChunk.neighbours[i] is null) continue;
+                
+                Gizmos.color = Color.Lerp(Color.green, Color.black, i / 7f);
+                var chunkOffset = grid.lastCell.parentChunk.neighbours[i].chunkOffset.ToVector3();
+                chunkOffset.x += grid.chunkResolution / 2f;
+                chunkOffset.y += grid.chunkResolution / 2f;
+                Gizmos.DrawSphere(chunkOffset, grid.chunkResolution * 0.5f);
+            }
+        }
     }
 
     [Serializable] public class ResourceNoiseLayer : Noise.Layer

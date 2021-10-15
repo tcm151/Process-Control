@@ -46,6 +46,7 @@ namespace ProcessControl.Procedural
 
         public Vector3 position;
         public Vector2Int coords;
+        public Vector2Int indexes;
 
         public PathInfo pathInfo = new PathInfo();
     }
