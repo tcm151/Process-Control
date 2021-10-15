@@ -174,44 +174,32 @@ namespace ProcessControl.Procedural
                         if (chunk.neighbours[1] is { } && y + 1 == grid.chunkResolution)
                         {
                             chunk.cells[x, y].neighbours[1] = chunk.neighbours[1].cells[x, 0];
-                            if (x > 0 && x < grid.chunkResolution - 1)
-                            {
-                                chunk.cells[x, y].neighbours[0] = chunk.neighbours[1].cells[x-1, 0];
-                                chunk.cells[x, y].neighbours[2] = chunk.neighbours[1].cells[x+1, 0];
-                            }
+                            if (x > 0) chunk.cells[x, y].neighbours[0] = chunk.neighbours[1].cells[x-1, 0];
+                            if (x < grid.chunkResolution-1) chunk.cells[x, y].neighbours[2] = chunk.neighbours[1].cells[x+1, 0];
                         }
 
                         //! left
                         if (chunk.neighbours[3] is { } && x - 1 == -1)
                         {
                             chunk.cells[x, y].neighbours[3] = chunk.neighbours[3].cells[grid.chunkResolution - 1, y];
-                            if (y > 0 && y < grid.chunkResolution - 1)
-                            {
-                                chunk.cells[x, y].neighbours[0] = chunk.neighbours[3].cells[grid.chunkResolution-1, y+1];
-                                chunk.cells[x, y].neighbours[5] = chunk.neighbours[3].cells[grid.chunkResolution-1, y-1];
-                            }
+                            if (y > 0) chunk.cells[x, y].neighbours[5] = chunk.neighbours[3].cells[grid.chunkResolution-1, y-1];
+                            if (y < grid.chunkResolution-1) chunk.cells[x, y].neighbours[0] = chunk.neighbours[3].cells[grid.chunkResolution-1, y+1];
                         }
                         
                         //! right
                         if (chunk.neighbours[4] is { } && x + 1 == grid.chunkResolution)
                         {
                             chunk.cells[x, y].neighbours[4] = chunk.neighbours[4].cells[0, y];
-                            if (y > 0 && y < grid.chunkResolution - 1)
-                            {
-                                chunk.cells[x, y].neighbours[2] = chunk.neighbours[4].cells[0, y+1];
-                                chunk.cells[x, y].neighbours[7] = chunk.neighbours[4].cells[0, y-1];
-                            }
+                            if (y > 0) chunk.cells[x, y].neighbours[7] = chunk.neighbours[4].cells[0, y - 1];
+                            if (y < grid.chunkResolution - 1) chunk.cells[x, y].neighbours[2] = chunk.neighbours[4].cells[0, y+1];
                         }
                         
                         //! bottom
                         if (chunk.neighbours[6] is { } && y - 1 == -1)
                         {
                             chunk.cells[x, y].neighbours[6] = chunk.neighbours[6].cells[x, grid.chunkResolution - 1];
-                            if (x > 0 && x < grid.chunkResolution - 1)
-                            {
-                                chunk.cells[x, y].neighbours[5] = chunk.neighbours[6].cells[x-1, grid.chunkResolution-1];
-                                chunk.cells[x, y].neighbours[7] = chunk.neighbours[6].cells[x+1, grid.chunkResolution-1];
-                            }
+                            if (x < grid.chunkResolution - 1) chunk.cells[x, y].neighbours[7] = chunk.neighbours[6].cells[x+1, grid.chunkResolution-1];
+                            if (x > 0) chunk.cells[x, y].neighbours[5] = chunk.neighbours[6].cells[x-1, grid.chunkResolution-1];
                         }
                     }
                 }
