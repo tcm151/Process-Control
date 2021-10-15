@@ -70,8 +70,8 @@ namespace ProcessControl.Construction
                 OnBuildModeChanged?.Invoke(buildMode);
             }
             
-            //! THIS EVENT SYSTEM CHECK DOES NOT WORK WITH MY UI SOLUTION, NEEDS TO BE FIXED!
             // might be fixed lol
+            //! THIS EVENT SYSTEM CHECK DOES NOT WORK WITH MY UI SOLUTION, NEEDS TO BE FIXED!
             if (!buildMode || selectedNode is null || EventSystem.current.IsPointerOverGameObject()) return;
             
             //- handle conveyor building
@@ -178,12 +178,17 @@ namespace ProcessControl.Construction
                     {
                         //@ replace junctions with machines when applicable
                     }
-                    
-                    AgentManager.QueueJob(new Job
+
+                    if (firstNode is Machine machine)
                     {
-                        destination = firstCell,
-                        complete = false,
-                    });
+                        AgentManager.QueueJob(new Job
+                        {
+                            destination = firstCell,
+                            complete = false,
+                        });
+                        
+                    }
+                    
                 }
             }
             

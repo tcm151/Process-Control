@@ -39,6 +39,8 @@ namespace ProcessControl.Procedural
         }
         [SerializeField] internal Data grid;
 
+        public bool showNeighbours = false;
+        
         private Camera camera;
         private readonly Stopwatch timer = new Stopwatch();
 
@@ -129,7 +131,7 @@ namespace ProcessControl.Procedural
             }
             
             //- create cell arrays
-            foreach (var chunk in grid.chunkArray)
+            grid.chunkArray.ForEach(chunk =>
             {
                 for (int y = 0; y < grid.chunkResolution; y++) {
                     for (int x = 0; x < grid.chunkResolution; x++)
@@ -137,18 +139,16 @@ namespace ProcessControl.Procedural
                         chunk.cells[x, y] = new Cell
                         {
                             parentChunk = chunk,
-
                             position = new Vector3(x + chunk.chunkOffset.x + 0.5f, y + chunk.chunkOffset.y + 0.5f),
                             coords = new Vector2Int(x + chunk.chunkOffset.x, y + chunk.chunkOffset.y),
                             indexes = new Vector2Int(x, y),
                         };
                     }
                 }
-
-                
-            }
+            });
             
-            foreach (var chunk in grid.chunkArray)
+            
+            grid.chunkArray.ForEach(chunk =>
             {
                 for (int y = 0; y < grid.chunkResolution; y++) {
                     for (int x = 0; x < grid.chunkResolution; x++)
@@ -203,36 +203,29 @@ namespace ProcessControl.Procedural
                         }
                     }
                 }
-            }
+            });
         }
 
         //> GENERATE CHUNKS
         public void GenerateAllChunks() => GenerateChunks(grid.chunkArray);
-        // private void GenerateChunks(List<Chunk> chunks)
         private void GenerateChunks(Chunk[,] chunks)
         {
             // multi-threaded chunk generation
             var tasks = new List<Task>();
-            foreach (var c in chunks) tasks.Add(Task.Factory.StartNew(() => GenerateCells(c.cells)));
-            // chunks.ForEach(c => tasks.Add(Task.Factory.StartNew(() => GenerateCells(c.cells))));
+            chunks.ForEach(c => tasks.Add(Task.Factory.StartNew(() => GenerateCells(c.cells))));
             Task.WaitAll(tasks.ToArray());
             
             // apply triangulations on main thread
-            // chunks.ForEach(c => UpdateTerrainTiles(0, c.cells));
-            foreach (var c in chunks) UpdateTerrainTiles(0, c.cells);
+            chunks.ForEach(c => UpdateTerrainTiles(0, c.cells));
         }
 
         //> GENERATE CELLS
-        // public void GenerateAllCells() => grid.chunks.ForEach(c => GenerateCells(c.cells));
-        public void GenerateCells(Cell[,] cells)
+        private void GenerateCells(Cell[,] cells) => cells.ForEach(c =>
         {
-            foreach (var cell in cells)
-            {
-                var noiseValue = Noise.GenerateValue(grid.terrainNoise, cell.position);
-                grid.noiseRange.Add(noiseValue);
-                cell.terrainValue = noiseValue;
-            }
-        }
+            var noiseValue = Noise.GenerateValue(grid.terrainNoise, c.position);
+            grid.noiseRange.Add(noiseValue);
+            c.terrainValue = noiseValue;
+        });
 
         //> GENERATE RESOURCES
         // public void GenerateAllResources() => grid.chunks.ForEach(c => GenerateResources(c.cells));
@@ -303,7 +296,6 @@ namespace ProcessControl.Procedural
         }
         private Cell OnGetCellCoords(Vector2Int coordinates)
         {
-            // var cells = grid.chunks.SelectMany(chunk => chunk.cells.To2D());
             var cells = grid.chunkArray.To2D().SelectMany(c => c.cells.To2D());
             var cell = cells.FirstOrDefault(cell => cell.coords == coordinates);
 
@@ -313,9 +305,8 @@ namespace ProcessControl.Procedural
         //> DRAW HELPFUL GIZMOS
         private void OnDrawGizmos()
         {
-            if (grid.lastCell is null) return;
+            if (!showNeighbours || grid.lastCell is null) return;
          
-            // Gizmos.color = Color.red;
             for (int i = 0; i < grid.lastCell.neighbours.Length; i++)
             {
                 if (grid.lastCell.neighbours[i] is null) continue;
@@ -324,7 +315,6 @@ namespace ProcessControl.Procedural
                 Gizmos.DrawSphere(grid.lastCell.neighbours[i].position, 0.25f);
             }
             
-            // Gizmos.color = Color.green;
             for (int i = 0; i < grid.lastCell.parentChunk.neighbours.Length; i++)
             {
                 if (grid.lastCell.parentChunk.neighbours[i] is null) continue;

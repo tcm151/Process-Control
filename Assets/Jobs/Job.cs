@@ -19,6 +19,7 @@ namespace ProcessControl.Jobs
         // public Cell origin;
         // public List<Step> steps;
         public Cell destination;
+        public Action action;
         public bool complete = false;
 
         // public bool Completed => steps.TrueForAll(s => s.completed);

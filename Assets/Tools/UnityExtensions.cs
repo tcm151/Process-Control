@@ -30,7 +30,34 @@ namespace ProcessControl.Tools
             index = (index >= list.Count - 1) ? 0 : ++index;
             return list[index];
         }
+        
+        public static List<T> Shuffle<T>(this List<T> list, int seed = 69)
+        {
+            var rng = new System.Random(seed);
+            var n = list.Count;
+            
+            while (n > 1)
+            {
+                int k = rng.Next(n--);
+                (list[n], list[k]) = (list[k], list[n]);
+            }
 
+            return list;
+        }
+        
+        public static List<T> To2D<T>(this T[,] array)
+        {
+            var list = new List<T>(array.Length);
+            for (int x = 0; x < array.GetLength(0); x++) {
+                for (int y = 0; y < array.GetLength(1); y++)
+                {
+                    list.Add(array[x,y]);
+                }
+            }
+            return list;
+        }
+
+        //> ARRAYS
         public static void ForEach<T>(this T[] array, Action<T> action)
         {
             for (int i = 0; i < array.Length; i++) action(array[i]);
@@ -76,6 +103,12 @@ namespace ProcessControl.Tools
             return (direction.y > 0f) ? angle : -angle;
         }
 
+        public static void MoveTowards(this ref Vector2 current, Vector2 target, float maxDelta)
+            => current = Vector2.MoveTowards(current, target, maxDelta);
+
+        public static void Lerp(this ref Vector2 current, Vector2 target, float maxDelta)
+            => current = Vector2.Lerp(current, target, maxDelta);
+        
         public static Vector2Int FloorToInt(this Vector2 v2) => new Vector2Int
         {
             x = Mathf.FloorToInt(v2.x),
@@ -89,38 +122,6 @@ namespace ProcessControl.Tools
             z = 0f,
         };
 
-        //> IENUMERABLES
-        public static List<T> Shuffle<T>(this List<T> list, int seed = 69)
-        {
-            var rng = new System.Random(seed);
-            var n = list.Count;
-            
-            while (n > 1)
-            {
-                int k = rng.Next(n--);
-                (list[n], list[k]) = (list[k], list[n]);
-            }
-
-            return list;
-        }
-
-        public static List<T> To2D<T>(this T[,] array)
-        {
-            var list = new List<T>(array.Length);
-            for (int x = 0; x < array.GetLength(0); x++) {
-                for (int y = 0; y < array.GetLength(1); y++)
-                {
-                    list.Add(array[x,y]);
-                }
-            }
-            return list;
-        }
-
-        public static void MoveTowards(this ref Vector2 current, Vector2 target, float maxDelta)
-            => current = Vector2.MoveTowards(current, target, maxDelta);
-
-        public static void Lerp(this ref Vector2 current, Vector2 target, float maxDelta)
-            => current = Vector2.Lerp(current, target, maxDelta);
 
         //> VECTOR3
         public static float Angle(this Vector3 direction)
