@@ -62,7 +62,7 @@ namespace ProcessControl.Pathfinding
                     return;
                 }
                 
-                currentPosition.MoveTowards(currentPath[0], 2.5f * Time.deltaTime);
+                currentPosition.MoveTowardsR(currentPath[0], 2.5f * Time.deltaTime);
                 transform.up = -transform.position.DirectionTo(currentPath[0]);
                 transform.position = currentPosition;
             }

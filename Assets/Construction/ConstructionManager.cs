@@ -82,7 +82,7 @@ namespace ProcessControl.Construction
                 {
                     firstNode = secondNode = null;
 
-                    firstCell = ProceduralGrid.GetCellUnderMouse();
+                    firstCell = TileGrid.GetCellUnderMouse();
                     if (firstCell is null || !firstCell.buildable)
                     {
                         Debug.Log("Invalid parentCell!");
@@ -100,7 +100,7 @@ namespace ProcessControl.Construction
                 //- left click released
                 if (Input.GetKeyUp(KeyCode.Mouse0))
                 {
-                    secondCell = ProceduralGrid.GetCellUnderMouse();
+                    secondCell = TileGrid.GetCellUnderMouse();
                     if (firstCell is null || secondCell is null || !secondCell.buildable) Debug.Log("Invalid parentCell!");
                     else
                     {
@@ -115,8 +115,8 @@ namespace ProcessControl.Construction
                         //- if conveyor end points not parallel
                         if ((firstCell.coords.x == secondCell.coords.x) == (firstCell.coords.y == secondCell.coords.y))
                         {
-                            var cell1 = ProceduralGrid.GetCellCoords(new Vector2Int(firstCell.coords.x, secondCell.coords.y));
-                            var cell2 = ProceduralGrid.GetCellCoords(new Vector2Int(secondCell.coords.x, firstCell.coords.y));
+                            var cell1 = TileGrid.GetCellAtCoordinates(new Vector2Int(firstCell.coords.x, secondCell.coords.y));
+                            var cell2 = TileGrid.GetCellAtCoordinates(new Vector2Int(secondCell.coords.x, firstCell.coords.y));
 
                             Cell bestCell = cell1;
                             
@@ -165,7 +165,7 @@ namespace ProcessControl.Construction
             else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 
-                firstCell = ProceduralGrid.GetCellUnderMouse();
+                firstCell = TileGrid.GetCellUnderMouse();
 
                 if (firstCell is null || !firstCell.buildable) Debug.Log("Invalid parentCell!");
                 else
@@ -181,9 +181,12 @@ namespace ProcessControl.Construction
 
                     if (firstNode is Machine machine)
                     {
+                        machine.machine.enabled = false;
+                        
                         AgentManager.QueueJob(new Job
                         {
                             destination = firstCell,
+                            action = machine.Build,
                             complete = false,
                         });
                         
@@ -197,7 +200,7 @@ namespace ProcessControl.Construction
             //- right click delete
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
-                var cell = ProceduralGrid.GetCellUnderMouse();
+                var cell = TileGrid.GetCellUnderMouse();
                 if (cell is null) Debug.Log("NO CELL FOUND!");
                 else if (cell.occupied)
                 {

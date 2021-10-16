@@ -65,7 +65,7 @@ namespace ProcessControl
             
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                var selectedCell = ProceduralGrid.GetCellUnderMouse();
+                var selectedCell = TileGrid.GetCellUnderMouse();
                 if (selectedCell is {occupied: true, node: Machine n})
                 {
                     selectedMachine = n;

@@ -11,46 +11,36 @@ namespace ProcessControl.Pathfinding
 {
     public static class AStar
     {
-        // public static List<Vector3> FindPath(Cell[,] cells, Vector3 start, Vector3 end)
         public static List<Vector3> FindPath(Vector3 start, Vector3 end)
         {
             var timer = new Stopwatch();
             timer.Start();
             
-            // foreach (var cell in cells) cell.pathInfo.Reset();
-
-
-            var startCell = ProceduralGrid.GetCellPosition(start);
-            var endCell = ProceduralGrid.GetCellPosition(end);
-
+            var startCell = TileGrid.GetCellAtPosition(start);
+            var endCell = TileGrid.GetCellAtPosition(end);
             if (startCell is null || endCell is null)
             {
-                Debug.Log("START OR END PATHING ERROR!");
-                Debug.Log(timer.ElapsedMilliseconds);
-                timer.Stop();
-                return null;
+                Debug.Log($"Start or End cell(s) did not exist...");
+                return new List<Vector3> {start};
             }
-            
-            startCell.pathInfo.Reset();
-            endCell.pathInfo.Reset();
-
             if (!endCell.buildable)
             {
-                Debug.Log("END POINT WAS NOT NAVIGABLE");
-                Debug.Log(timer.ElapsedMilliseconds);
-                timer.Stop();
-                return null;
+                Debug.Log("End tile was not navigable");
+                return new List<Vector3> {start};
             }
-
-            Debug.Log($"Start: {startCell.coords} End: {endCell.coords}");
             
-            var openList = new List<Cell> { startCell };
+            endCell.pathInfo.Reset();
+            startCell.pathInfo.Reset();
+            // Debug.Log($"Start: {startCell.coords} End: {endCell.coords}");
+            
+            var openList = new List<Cell> {startCell};
             var closedList = new List<Cell>();
-            
-            startCell.pathInfo.gCost = 0;
-            startCell.pathInfo.hCost = Distance(startCell, endCell);
 
-            while (openList.Count > 0)
+            var steps = 0;
+            startCell.pathInfo.gCost = 0;
+            var minimumDistance = startCell.pathInfo.hCost = DistanceBetween(startCell, endCell);
+
+            while (openList.Count > 0 || steps > minimumDistance * 2)
             {
                 var currentCell = openList.OrderBy(pc => pc.pathInfo.fCost).First();
                 if (!currentCell.buildable)
@@ -58,49 +48,46 @@ namespace ProcessControl.Pathfinding
                     openList.Remove(currentCell);
                     closedList.Add(currentCell);
                     currentCell.pathInfo.Reset();
-                    // Debug.Log("SKIP!");
                     continue;
                 }
 
                 if (currentCell == endCell)
                 {
-                    timer.Stop();
-                    // Debug.Log($"{timer.ElapsedMilliseconds} ms");
-                    var finalPath = CalculateFinalPath(endCell);
-                    if (finalPath is null) Debug.Log("PATH NOT FOUND");
-                    else Debug.Log($"{finalPath.Count} m path in {timer.ElapsedMilliseconds} ms");
+                    var finalPath = RetracePath(endCell);
+                    if (finalPath is null)
+                    {
+                        Debug.Log($"Path did not exist between {startCell.coords} and {endCell.coords}");
+                        return new List<Vector3> { start };
+                    }
+                    
+                    Debug.Log($"{finalPath.Count} m path in {timer.ElapsedMilliseconds} ms");
                     return finalPath;
                 }
 
-                openList.Remove(currentCell);
                 closedList.Add(currentCell);
-                // currentCell.pathInfo.Reset();
+                openList.Remove(currentCell);
 
-                foreach (var neighbourCell in currentCell.neighbours)
+                // add neighbours to open list
+                currentCell.neighbours.ForEach(neighbourCell =>
                 {
-                    if (neighbourCell is null || closedList.Contains(neighbourCell)) continue;
+                    if (neighbourCell is null || closedList.Contains(neighbourCell)) return;
 
                     neighbourCell.pathInfo.Reset();
-                    int gCost = currentCell.pathInfo.gCost + Distance(currentCell, neighbourCell);
-                    if (gCost < neighbourCell.pathInfo.gCost)
-                    {
-                        neighbourCell.pathInfo.previousInPath = currentCell;
-                        neighbourCell.pathInfo.gCost = gCost;
-                        neighbourCell.pathInfo.hCost = Distance(neighbourCell, endCell);
-                        
-                        if (!openList.Contains(neighbourCell)) openList.Add(neighbourCell);
-                    }
-                }
-                
+                    int gCost = currentCell.pathInfo.gCost + DistanceBetween(currentCell, neighbourCell);
+                    if (gCost >= neighbourCell.pathInfo.gCost) return;
+                    neighbourCell.pathInfo.previousInPath = currentCell;
+                    neighbourCell.pathInfo.gCost = gCost;
+                    neighbourCell.pathInfo.hCost = DistanceBetween(neighbourCell, endCell);
+                    if (!openList.Contains(neighbourCell)) openList.Add(neighbourCell);
+                });
             }
             
-            // NO OPEN NODES!
-            Debug.Log($"No path found in {timer.ElapsedMilliseconds} ms");
-            timer.Stop();
-            return null;
+            // no open nodes left
+            Debug.Log($"Open list emptied after {timer.ElapsedMilliseconds} ms");
+            return new List<Vector3> { start };
         }
 
-        private static List<Vector3> CalculateFinalPath(Cell endCell)
+        private static List<Vector3> RetracePath(Cell endCell)
         {
             var currentCell = endCell;
             var reversedPath = new List<Cell> { currentCell };
@@ -116,7 +103,7 @@ namespace ProcessControl.Pathfinding
             return reversedPath.ConvertAll(c => c.position);
         }
 
-        private static int Distance(Cell first, Cell second)
+        private static int DistanceBetween(Cell first, Cell second)
         {
             var vector = (second.position - first.position).Abs().CeilToInt();
             return 14 * Mathf.Min(vector.x, vector.y) + 10 * Mathf.Abs(vector.x - vector.y);

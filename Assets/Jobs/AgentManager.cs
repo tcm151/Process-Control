@@ -9,30 +9,36 @@ using ProcessControl.Tools;
 public class AgentManager : MonoBehaviour
 {
     public static Action<Job> QueueJob;
-    
-    private List<WorkerAgent> currentWorkers = new List<WorkerAgent>();
-    private List<Job> openJobs = new List<Job>();
+
+    [SerializeField] private List<WorkerAgent> busyWorkers = new List<WorkerAgent>();
+    [SerializeField] private List<WorkerAgent> openWorkers = new List<WorkerAgent>();
+    [SerializeField] private List<Job> openJobs = new List<Job>();
 
     private void Awake()
     {
-        QueueJob += OnQueueJob;
+        QueueJob += (job) => openJobs.Add(job);
         
-        currentWorkers = FindObjectsOfType<WorkerAgent>().ToList();
-    }
-
-    public void OnQueueJob(Job newJob)
-    {
-        Debug.Log("Job added to queue...");
-        openJobs.Add(newJob);
+        openWorkers = FindObjectsOfType<WorkerAgent>().ToList();
+        
+        openWorkers.ForEach(w =>
+        {
+            w.onJobCompleted += () =>
+            {
+                busyWorkers.Remove(w);
+                openWorkers.Add(w);
+            };
+        });
     }
     
     private void FixedUpdate()
     {
-        if (openJobs.Count >= 1 && currentWorkers.Count >= 1)
+        
+        if (openJobs.Count >= 1 && openWorkers.Count >= 1)
         {
-            var availableWorker = currentWorkers.FirstOrDefault(w => w.currentJob == null);
-            if (availableWorker is null) return;
-            availableWorker.AcceptJob(openJobs.TakeFirst());
+            // openWorkers = openWorkers.OrderBy(w => Vector3.Distance(w.transform.position, openJobs[0].destination.position)).ToList();
+            var worker = openWorkers.TakeFirst();
+            worker.TakeJob(openJobs.TakeFirst());
+            busyWorkers.Add(worker);
         }
     }
 }

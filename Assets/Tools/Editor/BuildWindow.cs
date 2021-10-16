@@ -12,6 +12,7 @@ namespace ProcessControl.Tools.Editor
     public class BuildWindow : EditorWindow
     {
         private static string version;
+        // private static string sceneNames;
         private static BuildWindow window;
         
         [MenuItem("Build/Build Window")]
@@ -26,9 +27,12 @@ namespace ProcessControl.Tools.Editor
 
         private void OnGUI()
         {
+            
             GUILayout.Label("Build Settings", EditorStyles.boldLabel);
             GUILayout.Space(4);
             version = EditorGUILayout.TextField("Version", version);
+            // EditorGUILayout.LabelField("Scenes In Build");
+            // sceneNames = EditorGUILayout.TextArea(sceneNames);
             GUILayout.Space(4);
             
             if (GUILayout.Button("Dev Build")) BuildGame(0);
@@ -41,7 +45,7 @@ namespace ProcessControl.Tools.Editor
         {
             var buildReport = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
-                scenes = new [] {"Assets/Conveyors.unity"},
+                scenes = new [] {$"Assets/Terrain Generation.unity"},
                 locationPathName = $"Builds/{version}/{PlayerSettings.productName}.exe",
                 target = BuildTarget.StandaloneWindows64,
                 options = BuildOptions.None,

@@ -8,16 +8,16 @@ using ProcessControl.Procedural;
 namespace ProcessControl.Tools.Editor
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(ProceduralGrid))]
+    [CustomEditor(typeof(TileGrid))]
     public class ProceduralGrid_Inspector : UnityEditor.Editor
     {
-        private ProceduralGrid grid;
+        private TileGrid grid;
         private bool autoUpdateChunks;
         private bool autoUpdateOre;
 
         private void OnEnable()
         {
-            grid = target as ProceduralGrid;
+            grid = target as TileGrid;
         }
 
         override public void OnInspectorGUI()

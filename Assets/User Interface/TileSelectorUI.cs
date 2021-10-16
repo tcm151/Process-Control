@@ -27,7 +27,7 @@ namespace ProcessControl
         {
             // if (!EventSystem.current.IsPointerOverGameObject()) return;
             
-            var cell = ProceduralGrid.GetCellUnderMouse();
+            var cell = TileGrid.GetCellUnderMouse();
             if (cell is { }) transform.position = cell.position;
         }
     }

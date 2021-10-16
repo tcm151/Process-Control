@@ -12,7 +12,12 @@ namespace ProcessControl.Industry.Machines
         //> FIXED CALCULATION INTERVAL
         override protected void FixedUpdate()
         {
-            base.FixedUpdate();
+            if (!machine.enabled || machine.sleeping) return;
+            if (machine.ticks >= machine.sleepThreshold)
+            {
+                machine.sleeping = true;
+                return;
+            }
             
             // sleep if ground is depleted
             if (parentCell.resourceDeposits.Count == 0 || parentCell.resourceDeposits[0].quantity <= 0)

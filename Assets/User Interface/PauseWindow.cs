@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 namespace ProcessControl.UI
@@ -33,6 +34,11 @@ namespace ProcessControl.UI
         {
             Time.timeScale = 0;
             Show();
+        }
+
+        public void Restart()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
         public void Resume()

@@ -15,6 +15,7 @@ namespace ProcessControl.Industry.Machines
         //> MACHINE DATA CONTAINER
         [Serializable] public class Data
         {
+            public bool enabled;
             public bool sleeping;
             public int ticks;
             public int sleepThreshold = 256;
@@ -39,6 +40,11 @@ namespace ProcessControl.Industry.Machines
         [SerializeField] internal Data machine;
 
         public Action onInventoryModified;
+
+        public void Build()
+        {
+            machine.enabled = true;
+        }
 
         //> IO INTERFACE
         override public IO Input => machine.currentInput;
@@ -121,7 +127,7 @@ namespace ProcessControl.Industry.Machines
         //> SLEEP IF IDLE
         virtual protected void FixedUpdate()
         {
-            if (machine.sleeping) return;
+            if (!machine.enabled || machine.sleeping) return;
             if (machine.ticks >= machine.sleepThreshold)
             {
                 machine.sleeping = true;

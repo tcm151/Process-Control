@@ -98,7 +98,7 @@ namespace ProcessControl.Controls
                     _ => acceleration,
                 };
                 
-                currentVelocity.MoveTowards(desiredVelocity, maxAcceleration * Time.deltaTime);
+                currentVelocity.MoveTowardsR(desiredVelocity, maxAcceleration * Time.deltaTime);
                 
                 // transform.position = Vector3.MoveTowards(cameraPosition, desiredPosition, acceleration);
                 rigidbody.velocity = currentVelocity;
