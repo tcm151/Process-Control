@@ -40,7 +40,7 @@ namespace ProcessControl.Pathfinding
             startCell.pathInfo.gCost = 0;
             var minimumDistance = startCell.pathInfo.hCost = DistanceBetween(startCell, endCell);
 
-            while (openList.Count > 0 || steps > minimumDistance * 2)
+            while (openList.Count > 0 && steps < minimumDistance * 4)
             {
                 var currentCell = openList.OrderBy(pc => pc.pathInfo.fCost).First();
                 if (!currentCell.buildable)

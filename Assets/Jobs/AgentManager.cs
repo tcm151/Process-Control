@@ -35,7 +35,8 @@ public class AgentManager : MonoBehaviour
         
         if (openJobs.Count >= 1 && openWorkers.Count >= 1)
         {
-            // openWorkers = openWorkers.OrderBy(w => Vector3.Distance(w.transform.position, openJobs[0].destination.position)).ToList();
+            //@ TODO get the closest worker by distance
+            
             var worker = openWorkers.TakeFirst();
             worker.TakeJob(openJobs.TakeFirst());
             busyWorkers.Add(worker);

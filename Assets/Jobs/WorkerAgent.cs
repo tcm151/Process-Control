@@ -20,7 +20,6 @@ namespace ProcessControl.Jobs
             base.Awake();
             onReachedDestination += () =>
             {
-                
                 currentJob.action();
                 currentJob.complete = true;
                 onJobCompleted?.Invoke();

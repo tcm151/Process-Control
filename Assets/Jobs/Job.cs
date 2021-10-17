@@ -10,6 +10,7 @@ namespace ProcessControl.Jobs
     {
         public Cell destination;
         public Action action;
+        
         public bool complete = false;
     }
 

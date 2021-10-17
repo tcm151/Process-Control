@@ -23,6 +23,8 @@ namespace ProcessControl.Tools
             this.max = max;
         }
 
+        override public string ToString() => $"[{min},{max}]";
+
         //> ADD VALID VALUE TO RANGE
         public void Add(float value)
         {

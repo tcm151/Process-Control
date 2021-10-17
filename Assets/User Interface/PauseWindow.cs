@@ -38,6 +38,7 @@ namespace ProcessControl.UI
 
         public void Restart()
         {
+            Resume();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 

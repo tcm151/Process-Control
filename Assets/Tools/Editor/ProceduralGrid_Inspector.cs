@@ -13,6 +13,7 @@ namespace ProcessControl.Tools.Editor
     {
         private TileGrid grid;
         private bool autoUpdateChunks;
+        private bool autoUpdateBiomes;
         private bool autoUpdateOre;
 
         private void OnEnable()
@@ -27,10 +28,12 @@ namespace ProcessControl.Tools.Editor
             base.OnInspectorGUI();
 
             autoUpdateChunks = EditorGUILayout.Toggle("Auto Update Chunks", autoUpdateChunks);
+            autoUpdateBiomes = EditorGUILayout.Toggle("Auto Update Biomes", autoUpdateBiomes);
             autoUpdateOre = EditorGUILayout.Toggle("Auto Update Ore", autoUpdateOre);
             if (check.changed)
             {
                 if (autoUpdateChunks) grid.GenerateAllChunks();
+                if (autoUpdateBiomes) grid.GenerateAllBiomes();
                 if (autoUpdateOre) grid.GenerateAllResources();
             }
 

@@ -7,6 +7,8 @@ using ProcessControl.Industry.Resources;
 
 namespace ProcessControl.Procedural
 {
+    public enum Biome { Empty, Grass, Forest, Ocean, Stone, Sand, Plains, Snow }
+    
     [Serializable] public class ResourceDeposit
     {
         [HideInInspector] public float noiseValue;
@@ -20,35 +22,20 @@ namespace ProcessControl.Procedural
     {
         internal Chunk parentChunk;
         
-        public enum Directions
-        {
-            UpLeft, Up, UpRight, Right,
-            DownRight, Down, DownLeft, Left,
-        }
-        
+        // might need to be converted to a bool
         public bool occupied => node is { };
         public bool buildable = true;
 
-        public Node node;
-        public float terrainValue;
-        public Cell[] neighbours = new Cell[8];
-
-        // public Cell upLeft;
-        // public Cell up;
-        // public Cell upRight;
-        // public Cell right;
-        // public Cell downRight;
-        // public Cell down;
-        // public Cell downLeft;
-        // public Cell left;
-
-        public List<ResourceDeposit> resourceDeposits = new List<ResourceDeposit>();
-
         public Vector3 position;
         public Vector2Int coords;
-        public Vector2Int indexes;
 
-        public PathInfo pathInfo = new PathInfo();
+        public Biome biome;
+        
+        public Node node;
+        public float terrainValue;
+        public readonly Cell[] neighbours = new Cell[8];
+        public readonly PathInfo pathInfo = new PathInfo();
+        public readonly List<ResourceDeposit> resourceDeposits = new List<ResourceDeposit>();
     }
 
     public class PathInfo

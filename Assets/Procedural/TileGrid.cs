@@ -34,7 +34,8 @@ namespace ProcessControl.Procedural
             [Header("Noise")]
             public Range noiseRange;
             public List<Noise.Layer> terrainNoise;
-            public List<ResourceNoiseLayer> resourceNoiseLayers;
+            [FormerlySerializedAs("resourceNoiseLayers")] public List<ResourceNoiseLayer> resourceNoise;
+            public List<Noise.Layer> biomeNoise;
 
             [Header("Cells & Chunks")]
             public Chunk[,] chunks;
@@ -42,6 +43,7 @@ namespace ProcessControl.Procedural
         }
         [SerializeField] internal Data grid;
 
+        public string seed;
         public bool showNeighbours = false;
         
         private Camera camera;
@@ -64,11 +66,14 @@ namespace ProcessControl.Procedural
             GenerateAllChunks();
             float chunkGen = timer.ElapsedMilliseconds;
             timer.Restart();
+            GenerateAllBiomes();
+            float biomeGen = timer.ElapsedMilliseconds;
+            timer.Restart();
             GenerateAllResources();
             float resourceGen = timer.ElapsedMilliseconds;
             timer.Reset();
             
-            Debug.Log($"{init} | {chunkGen} | {resourceGen} |= {init+chunkGen+resourceGen} ms");
+            Debug.Log($"{init} | {chunkGen} | {resourceGen} | {biomeGen} |= {init+chunkGen+resourceGen} ms");
         }
 
         //> CACHE LAST TOUCHED CELL
@@ -97,8 +102,10 @@ namespace ProcessControl.Procedural
             GetCellUnderMouse += () => GetCellFromCoordinates(camera.MousePosition2D().FloorToInt());
 
             //- random seed noise layers
+            if (seed != "") Random.InitState(seed.GetHashCode());
+            grid.biomeNoise.ForEach(b => b.offset = Random.insideUnitSphere * (Random.value * 5));
             grid.terrainNoise.ForEach(t => t.offset = Random.insideUnitSphere * (Random.value * 10));
-            grid.resourceNoiseLayers.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
+            grid.resourceNoise.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
 
             //- gather and clear tilemaps
             grid.tilemaps = GetComponentsInChildren<Tilemap>().ToList();
@@ -229,16 +236,45 @@ namespace ProcessControl.Procedural
             Task.WaitAll(tasks.ToArray());
             
             // apply triangulations on main thread
-            chunks.ForEach(c => UpdateTerrainTiles(0, c.cells));
+            // chunks.ForEach(c => UpdateTerrainTiles(0, c.cells));
         }
 
         //> GENERATE CELLS
         private void GenerateCells(Cell[,] cells) => cells.ForEach(c =>
         {
             var noiseValue = Noise.GenerateValue(grid.terrainNoise, c.position);
-            grid.noiseRange.Add(noiseValue);
+            // grid.noiseRange.Add(noiseValue);
             c.terrainValue = noiseValue;
         });
+
+        public void GenerateAllBiomes() => grid.chunks.ForEach(c => GenerateBiomes(c.cells));
+        private void GenerateBiomes(Cell[,] cells)
+        {
+            // var rainRange = new Range();
+            // var heatRange = new Range();
+            cells.ForEach(c =>
+            {
+                var rainValue = Noise.GenerateValue(grid.biomeNoise[0], c.position);
+                // rainRange.Add(rainValue);
+                var heatValue = Noise.GenerateValue(grid.biomeNoise[1], c.position);
+                // heatRange.Add(heatValue);
+                
+                if (heatValue < 0.25f && rainValue > 0.25f) c.biome = Biome.Snow;
+                if (heatValue < 0.50f && rainValue < 0.50f) c.biome = Biome.Stone;
+                if (heatValue > 0.60f && rainValue < 0.25f) c.biome = Biome.Sand;
+                if (heatValue < 0.60f && heatValue > 0.25f && rainValue < 0.25f) c.biome = Biome.Plains;
+                if (heatValue > 0.25f && rainValue > 0.25f && rainValue < 0.75f) c.biome = Biome.Grass;
+                if (heatValue > 0.50f && rainValue > 0.25f) c.biome = Biome.Forest;
+                
+                if (c.terrainValue < grid.terrainNoise[0].threshold) c.biome = Biome.Ocean;
+                // if (c.terrainValue < grid.terrainNoise[0].threshold) c.biome = Biome.Ocean;
+                // else c.biome = Biome.Stone;
+            });
+
+            // Debug.Log($"RAIN: {rainRange} | HEAT: {heatRange}");
+
+            UpdateTerrainTiles(0, cells);
+        }
 
         //> GENERATE RESOURCES
         // public void GenerateAllResources() => grid.chunks.ForEach(c => GenerateResources(c.cells));
@@ -249,7 +285,7 @@ namespace ProcessControl.Procedural
             {
                 cell.resourceDeposits.Clear();
                 
-                grid.resourceNoiseLayers.ForEach(rnl =>
+                grid.resourceNoise.ForEach(rnl =>
                 {
                     var noiseValue = Noise.GenerateValue(rnl, cell.position);
                     if (noiseValue >= rnl.threshold && cell.buildable)
@@ -290,30 +326,23 @@ namespace ProcessControl.Procedural
             {
                 if (cell.terrainValue < grid.terrainNoise[0].threshold) cell.buildable = false;
 
-                var tile = (cell.terrainValue >= grid.terrainNoise[0].threshold) ? grid.tiles[1] : grid.tiles[0];
+                var tile = (cell.biome) switch
+                {
+                    // Biome.Forest => ,
+                    Biome.Sand => grid.tiles[9],
+                    Biome.Grass => grid.tiles[5],
+                    Biome.Stone => grid.tiles[1],
+                    Biome.Forest => grid.tiles[10],
+                    Biome.Snow => grid.tiles[11],
+                    Biome.Plains => grid.tiles[12],
+                    Biome.Ocean => grid.tiles[0],
+                    _ => grid.tiles[3],
+                };
+                // var tile = (cell.terrainValue >= grid.terrainNoise[0].threshold) ? grid.tiles[1] : grid.tiles[0];
                 grid.tilemaps[map].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
             }
         }
         
-
-        // //> GET CELLS 
-        // private Cell OnGetCellUnderMouse()
-        // {
-        //     Vector2 position = camera.MousePosition2D();
-        //     return OnGetCellCoords(position.FloorToInt());
-        // }
-        // private Cell OnGetCellPosition(Vector3 worldPosition)
-        // {
-        //     var coords = new Vector2Int(worldPosition.x.FloorToInt(), worldPosition.y.FloorToInt());
-        //     return OnGetCellCoords(coords);
-        // }
-        // private Cell OnGetCellCoords(Vector2Int coordinates)
-        // {
-        // var cells = grid.chunkArray.ToList().SelectMany(c => c.cells.ToList());
-        //     var cell = cells.FirstOrDefault(cell => cell.coords == coordinates);
-        //
-        //     return cell;
-        // }
 
         //> DRAW HELPFUL GIZMOS
         private void OnDrawGizmos()
