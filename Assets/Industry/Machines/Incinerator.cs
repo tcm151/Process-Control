@@ -3,7 +3,7 @@
 
 namespace ProcessControl.Industry.Machines
 {
-    class Incinerator : Machine
+    public class Incinerator : Machine
     {
         override public void Deposit(Resource resource)
         {

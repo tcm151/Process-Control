@@ -26,13 +26,11 @@ namespace ProcessControl
         override protected void Awake()
         {
             base.Awake();
-
             ConstructionManager.OnBuildModeChanged += (isEnabled) => buildMode = isEnabled;
-            
             Hide();
         }
 
-        public void UpdateInventory()
+        private void UpdateInventory()
         {
             if (selectedMachine.machine.inputInventory.Count >= 1)
             {
@@ -66,11 +64,13 @@ namespace ProcessControl
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 var selectedCell = TileGrid.GetCellUnderMouse();
-                if (selectedCell is {occupied: true, node: Machine n})
+                if (selectedCell is {occupied: true, node: Machine machine})
                 {
-                    selectedMachine = n;
+                    selectedMachine = machine;
                     UpdateInventory();
                     selectedMachine.onInventoryModified += UpdateInventory;
+                    // selectedMachine.machine.inputInventoryTest.onModified += UpdateInventory;
+                    // selectedMachine.machine.outputInventoryTest.onModified += UpdateInventory;
                     Show();
                 }
             }

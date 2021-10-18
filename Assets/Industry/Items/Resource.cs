@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 
 namespace ProcessControl.Industry.Resources
 {
+    //@ TODO convert this to a generic conveyor object
     public class Resource : MonoBehaviour
     {
         public static int Count = 0;

@@ -31,8 +31,9 @@ namespace ProcessControl.Industry.Machines
             {
                 machine.ticks = 0;
                 if (machine.outputInventory.Count >= machine.inventorySize) return;
-                
-                Deposit(ExtractResource());
+
+                var resource = ExtractResource();
+                machine.outputInventory.Add(resource);
             }
         }
 
@@ -45,19 +46,13 @@ namespace ProcessControl.Industry.Machines
             resource.SetVisible(false);
         }
 
-        private int i;
-
         //> EXTRACT RESOURCE FROM THE GROUND
-        protected Resource ExtractResource()
+        private Resource ExtractResource()
         {
             parentCell.resourceDeposits[0].quantity--;
-            // var resource = Factory.Spawn("Resources", extractionResource, Position);
             var prefab = parentCell.resourceDeposits[0];
-            // Debug.Log(prefab.material);
-            // Debug.Log(prefab.type);
             var instance = ResourceFactory.SpawnResource(prefab.material, prefab.type, Position);
             if (instance is null) Debug.Log("NO PREFAB!");
-            // instance.name = $"{instance.resourceProperties.material} {instance.resourceProperties.form}.{i++:D4}";
             return instance;
         }
     }

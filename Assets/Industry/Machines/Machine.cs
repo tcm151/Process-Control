@@ -29,13 +29,15 @@ namespace ProcessControl.Industry.Machines
             public Edge currentInput;
             public List<Edge> inputs = new List<Edge>();
             public List<Resource> inputInventory = new List<Resource>();
-            
+            public Inventory<Resource> inputInventoryTest = new Inventory<Resource>(1, 16);
+
             [Header("IOutput")]
             public bool outputEnabled = true;
             public int maxOutputs = 1;
             public Edge currentOutput;
             public List<Edge> outputs = new List<Edge>();
             public List<Resource> outputInventory = new List<Resource>();
+            public Inventory<Resource> outputInventoryTest = new Inventory<Resource>(1, 16);
         }
         [SerializeField] internal Data machine;
 
@@ -105,8 +107,9 @@ namespace ProcessControl.Industry.Machines
         override public bool CanDeposit => machine.inputInventory.Count < machine.inventorySize;
         override public void Deposit(Resource resource)
         {
-            resource.position = Position;
+            resource.position = this.Position;
             resource.SetVisible(false);
+            // machine.inputInventoryTest.Deposit(resource);
             machine.inputInventory.Add(resource);
             onInventoryModified?.Invoke();
             NextInput();

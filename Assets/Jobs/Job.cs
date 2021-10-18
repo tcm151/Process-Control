@@ -6,14 +6,17 @@ using ProcessControl.Procedural;
 
 namespace ProcessControl.Jobs
 {
-    public class Job
+    [Serializable] public class Job
     {
+        // must do prerequisite before current job
+        public Job prerequisite;
+        
         public Cell destination;
         public Action action;
         
         public bool complete = false;
     }
-
+    
     public interface IWorker
     {
         public void TakeJob(Job newJob);
