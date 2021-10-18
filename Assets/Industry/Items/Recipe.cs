@@ -9,8 +9,8 @@ namespace ProcessControl.Industry.Resources
     {
         new public string name;
         
-        public List<ResourceProperties> requiredResources;
+        public List<Resource> requiredResources;
 
-        public ResourceProperties result;
+        public Resource result;
     }
 }

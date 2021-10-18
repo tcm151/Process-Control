@@ -317,11 +317,11 @@ namespace ProcessControl.Procedural
                 {
                     tile = (cell.resourceDeposits[0].material) switch
                     {
-                        ResourceProperties.Material.Iron     => grid.tiles[4],
-                        ResourceProperties.Material.Gold     => grid.tiles[6],
-                        ResourceProperties.Material.Coal     => grid.tiles[8],
-                        ResourceProperties.Material.Copper   => grid.tiles[2],
-                        ResourceProperties.Material.Platinum => grid.tiles[7],
+                        Resource.Material.Iron     => grid.tiles[4],
+                        Resource.Material.Gold     => grid.tiles[6],
+                        Resource.Material.Coal     => grid.tiles[8],
+                        Resource.Material.Copper   => grid.tiles[2],
+                        Resource.Material.Platinum => grid.tiles[7],
                                     _                        => grid.tiles[3],
                     };
                 }
@@ -383,6 +383,6 @@ namespace ProcessControl.Procedural
 
     [Serializable] public class ResourceNoiseLayer : Noise.Layer
     {
-        public ResourceProperties resource;
+        public Resource resource;
     }
 }

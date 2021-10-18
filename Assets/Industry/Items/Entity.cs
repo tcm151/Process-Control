@@ -13,12 +13,12 @@ namespace ProcessControl.Industry.Resources
         
         public int ticks;
         
-        internal ResourceProperties resourceProperties;
+        internal Item item;
 
         private SpriteRenderer renderer;
 
 
-        public Sprite sprite => resourceProperties.sprite;
+        public Sprite sprite => item.sprite;
         
         public Vector3 position
         {
@@ -29,11 +29,11 @@ namespace ProcessControl.Industry.Resources
         public void SetVisible(bool isVisible) => renderer.enabled = isVisible;
         public void ToggleVisible() => renderer.enabled = !renderer.enabled;
 
-        public void SetProperties(ResourceProperties newProperties)
+        public void SetProperties(Resource newResource)
         {
-            resourceProperties = newProperties;
-            renderer.sprite = resourceProperties.sprite;
-            gameObject.name = resourceProperties.name;
+            item = newResource;
+            renderer.sprite = item.sprite;
+            gameObject.name = item.name;
         }
         
         private void Awake()

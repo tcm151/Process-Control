@@ -23,6 +23,7 @@ namespace ProcessControl.Industry.Machines
                 // if (resource is Ore)
                 {
                     var ingot = Smelt(resource);
+                    if (ingot is null) return;
                     machine.outputInventory.Add(ingot);
                 }
 
@@ -33,13 +34,18 @@ namespace ProcessControl.Industry.Machines
 
         private Entity Smelt(Entity entity)
         {
-            var instance = ResourceFactory.SpawnResource(entity.resourceProperties.material, ResourceProperties.Form.Ingot, Position);
-            if (instance is null) Debug.Log("NO PREFAB!");
-            instance.name = $"{instance.resourceProperties.material} {instance.resourceProperties.form}.{++Entity.Count:D4}";
-            
-            Destroy(entity);
-            
-            return instance;
+            if (entity.item is Resource resource)
+            {
+                var instance = ResourceFactory.SpawnResource(resource.material, Resource.Form.Ingot, Position);
+                if (instance is null) Debug.Log("NO PREFAB!");
+                instance.name = $"{resource.material} {resource.form}.{++Entity.Count:D4}";
+                
+                Destroy(entity);
+                
+                return instance;
+            }
+
+            return null;
         }
     }
 }

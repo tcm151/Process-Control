@@ -21,19 +21,25 @@ namespace ProcessControl.Industry.Machines
                 
                 var resource = machine.inputInventory.TakeFirst();
                 var plate = EngagePress(resource);
+                if (plate is null) return;
                 machine.outputInventory.Add(plate);
             }
         }
 
         private Entity EngagePress(Entity entity)
         {
-            var instance = ResourceFactory.SpawnResource(entity.resourceProperties.material, ResourceProperties.Form.Plate, Position);
-            if (instance is null) Debug.Log("NO PREFAB!");
-            instance.name = $"{instance.resourceProperties.material} {instance.resourceProperties.form}.{++Entity.Count:D4}";
-            
-            Destroy(entity);
+            if (entity.item is Resource resource)
+            {
+                var instance = ResourceFactory.SpawnResource(resource.material, Resource.Form.Plate, Position);
+                if (instance is null) Debug.Log("NO PREFAB!");
+                instance.name = $"{resource.material} {resource.form}.{++Entity.Count:D4}";
+                
+                Destroy(entity);
 
-            return instance;
+                return instance;
+            }
+
+            return null;
         }
     }
 }

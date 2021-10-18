@@ -14,8 +14,8 @@ namespace ProcessControl.Procedural
         [HideInInspector] public float noiseValue;
         
         public int quantity;
-        public ResourceProperties.Material material;
-        public ResourceProperties.Form type;
+        public Resource.Material material;
+        public Resource.Form type;
     }
 
     public class Cell
