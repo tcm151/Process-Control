@@ -155,6 +155,18 @@ namespace ProcessControl.Tools
             z = 0f,
         };
         //------------------------------------------------------------------------------------------
+        public static Vector2 ToVector2(this Vector2Int v2) => new Vector2
+        {
+            x = v2.x,
+            y = v2.y,
+        };
+        //------------------------------------------------------------------------------------------
+        public static void RemapR(this ref Vector2 v2, float lower1, float upper1, float lower2, float upper2)
+        {
+            v2.x.Remap(lower1, upper1, lower2, upper2);
+            v2.y.Remap(lower1, upper1, lower2, upper2);
+        }
+        //------------------------------------------------------------------------------------------
 
         
         //> VECTOR3 ================================================================================
@@ -242,6 +254,12 @@ namespace ProcessControl.Tools
         //------------------------------------------------------------------------------------------
         public static int CeilToInt(this float value)
             => Mathf.CeilToInt(value);
+        //------------------------------------------------------------------------------------------
+        public static float Remap(this float value, float lower1, float upper1, float lower2, float upper2)
+            => (value - lower1) / (upper1 - lower1) * (upper2 - lower2) + lower2;
+        //------------------------------------------------------------------------------------------
+        public static float RemapR(this ref float value, float lower1, float upper1, float lower2, float upper2)
+            => value = (value - lower1) / (upper1 - lower1) * (upper2 - lower2) + lower2;
         //------------------------------------------------------------------------------------------
     }
 }

@@ -11,6 +11,8 @@ namespace ProcessControl.Pathfinding
 {
     public class Agent : MonoBehaviour
     {
+        public float speed = 2.5f;
+        
         public enum Movement { Idle, Moving }
         // public enum Task { DoingJob, AcceptingJob }
         
@@ -62,7 +64,7 @@ namespace ProcessControl.Pathfinding
                     return;
                 }
                 
-                currentPosition.MoveTowardsR(currentPath[0], 2.5f * Time.deltaTime);
+                currentPosition.MoveTowardsR(currentPath[0], speed * Time.deltaTime);
                 transform.up = -transform.position.DirectionTo(currentPath[0]);
                 transform.position = currentPosition;
             }

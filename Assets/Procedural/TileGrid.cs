@@ -93,10 +93,11 @@ namespace ProcessControl.Procedural
 
         private Chunk GetChunkFromCoordinates(Vector2Int coords)
         {
-            //! Need way to get the containing chunk based on coordinates given
-            Debug.Log(coords);
-            var x = (((coords.x + grid.size * grid.chunkSize) / (grid.size / 2f)) / grid.chunkSize).FloorToInt() - 1;
-            var y = (((coords.y + grid.size * grid.chunkSize) / (grid.size / 2f)) / grid.chunkSize).FloorToInt() - 1;
+            var floatCoords = coords.ToVector2();
+            float bounds = (grid.size * grid.chunkSize) / 2f;
+            var x = floatCoords.x.Remap(-bounds, bounds - 1, 0, grid.size - 0.0001f).FloorToInt();
+            var y = floatCoords.y.Remap(-bounds, bounds - 1, 0, grid.size - 0.0001f).FloorToInt();
+            
             Debug.Log($"{x},{y}");
             return grid.chunks[x,y];
         }
