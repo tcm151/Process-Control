@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 namespace ProcessControl.Industry.Resources
@@ -9,8 +11,13 @@ namespace ProcessControl.Industry.Resources
     {
         new public string name;
         
-        public List<Resource> requiredResources;
+        public List<Item> requiredItems;
+        public List<Item> resultingItems;
+    }
 
-        public Resource result;
+    [Serializable] public class RecipeItem
+    {
+        public int amount;
+        [FormerlySerializedAs("requiredItem")] public Item item;
     }
 }

@@ -29,9 +29,9 @@ namespace ProcessControl.Industry.Resources
         public void SetVisible(bool isVisible) => renderer.enabled = isVisible;
         public void ToggleVisible() => renderer.enabled = !renderer.enabled;
 
-        public void SetProperties(Resource newResource)
+        public void SetItem(Item newItem)
         {
-            item = newResource;
+            item = newItem;
             renderer.sprite = item.sprite;
             gameObject.name = item.name;
         }

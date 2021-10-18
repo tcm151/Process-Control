@@ -39,6 +39,10 @@ namespace ProcessControl.Graphs
         abstract public Entity Withdraw();
 
         //> DELETE THIS NODE
-        virtual public void OnDestroy() => Destroy(gameObject);
+        virtual public void OnDestroy()
+        {
+            parentCell.node = null;
+            Destroy(gameObject);
+        }
     }
 }

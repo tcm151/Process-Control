@@ -33,6 +33,7 @@ namespace ProcessControl.Industry.Machines
                 if (machine.outputInventory.Count >= machine.inventorySize) return;
 
                 var resource = ExtractResource();
+                onInventoryModified?.Invoke();
                 machine.outputInventory.Add(resource);
             }
         }

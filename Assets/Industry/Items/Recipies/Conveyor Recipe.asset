@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
   m_Name: Conveyor Recipe
   m_EditorClassIdentifier: 
-  name: 
-  requiredResources: []
-  result: {fileID: 0}
+  name: Conveyor
+  requiredItems:
+  - {fileID: 11400000, guid: e0fe1603f8c727b4a89208cc34e8afd2, type: 2}
+  - {fileID: 11400000, guid: 9a0c8c00f7f48bb459036ad2f0d220e0, type: 2}
+  resultingItems:
+  - {fileID: 11400000, guid: 04108836106950044b2243783a507520, type: 2}

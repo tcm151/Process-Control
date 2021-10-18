@@ -8,6 +8,8 @@ using ProcessControl.Industry.Conveyors;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Jobs;
 using ProcessControl.Procedural;
+using UnityEngine.WSA;
+
 #pragma warning disable 108,114
 
 
@@ -31,15 +33,12 @@ namespace ProcessControl.Construction
         //> EVENT SUBSCRIPTIONS
         public static Action<bool> OnBuildModeChanged;
         
+        
         public Node firstNode, secondNode;
         public Cell firstCell, secondCell;
         
-        private void OnSetConveyorMode(bool truth) => conveyorMode = truth;
-        private void OnSetNode(Node newSelection) => selectedNode = newSelection;
-        private void OnSetEdge(Edge newSelection) => selectedEdge = newSelection;
-        
         private Edge BuildEdgeBetween(Node firstNode, Node secondNode) => Factory.Spawn("Edges", selectedEdge, Node.Center(firstNode, secondNode));
-        private Node BuildNodeAt(Cell cell)
+        private Node BuildNodeOn(Cell cell)
         {
             if (selectedNode is Machine) return Factory.Spawn("Machines", selectedNode, cell.position);
             if (secondNode is Junction) return Factory.Spawn("Junctions", selectedNode, cell.position);
@@ -51,9 +50,9 @@ namespace ProcessControl.Construction
         {
             camera = Camera.main;
 
-            SetNode += OnSetNode;
-            SetEdge += OnSetEdge;
-            SetEdgeMode += OnSetConveyorMode;
+            SetNode += (newSelection) => selectedNode = newSelection;
+            SetEdge += (newSelection) => selectedEdge = newSelection;
+            SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
         }
 
         //> BUILD STUFF
@@ -70,8 +69,7 @@ namespace ProcessControl.Construction
                 OnBuildModeChanged?.Invoke(buildMode);
             }
             
-            // might be fixed lol
-            //! THIS EVENT SYSTEM CHECK DOES NOT WORK WITH MY UI SOLUTION, NEEDS TO BE FIXED!
+            //- ignore if over UI
             if (!buildMode || selectedNode is null || EventSystem.current.IsPointerOverGameObject()) return;
             
             //- handle conveyor building
@@ -91,7 +89,7 @@ namespace ProcessControl.Construction
                     
                     if (!firstCell.occupied)
                     {
-                        firstNode = firstCell.node = BuildNodeAt(firstCell);
+                        firstNode = firstCell.node = BuildNodeOn(firstCell);
                         firstNode.parentCell = firstCell;
                     }
                     else firstNode = firstCell.node;
@@ -107,7 +105,7 @@ namespace ProcessControl.Construction
                         
                         if (!secondCell.occupied)
                         {
-                            secondNode = secondCell.node = BuildNodeAt(secondCell);
+                            secondNode = secondCell.node = BuildNodeOn(secondCell);
                             secondNode.parentCell = secondCell;
                         }
                         else secondNode = secondCell.node;
@@ -132,7 +130,7 @@ namespace ProcessControl.Construction
                                 return;
                             }
 
-                            var junction = BuildNodeAt(bestCell);
+                            var junction = BuildNodeOn(bestCell);
                             bestCell.node = junction;
                             junction.parentCell = bestCell;
                             
@@ -156,6 +154,50 @@ namespace ProcessControl.Construction
                             conveyor.ConnectInput(firstNode);
                             conveyor.ConnectOutput(secondNode);
                             secondNode.ConnectInput(conveyor);
+
+                            // Job job1 = (firstNode) switch
+                            // {
+                            //     Machine m when !m.machine.enabled => new Job {
+                            //         destination = firstCell,
+                            //         action = m.Build,
+                            //     },
+                            //     
+                            //     MultiJunction j when !j.junction.enabled => new Job {
+                            //         destination = firstCell,
+                            //         action = j.Build,
+                            //     },
+                            //     
+                            //     _ => null,
+                            // };
+                            //
+                            // Job job2 = (secondNode) switch
+                            // {
+                            //     Machine m when !m.machine.enabled => new Job
+                            //     {
+                            //         destination = firstCell,
+                            //         action = m.Build,
+                            //     },
+                            //
+                            //     MultiJunction j when !j.junction.enabled => new Job
+                            //     {
+                            //         destination = firstCell,
+                            //         action = j.Build,
+                            //     },
+                            //
+                            //     _ => null,
+                            // };
+                            //
+                            // if (job1 is { }) AgentManager.QueueJob(job1);
+                            // if (job2 is { }) AgentManager.QueueJob(job2);
+                            //
+                            // if (conveyor is Conveyor c)
+                            // {
+                            //     AgentManager.QueueJob(new Job
+                            //     {
+                            //         destination = TileGrid.GetCellAtPosition(c.transform.position),
+                            //         action = c.Build,
+                            //     });
+                            // }
                         }
                     }
                 }
@@ -164,51 +206,63 @@ namespace ProcessControl.Construction
             //- regular node building
             else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                
-                firstCell = TileGrid.GetCellUnderMouse();
-
-                if (firstCell is null) Debug.Log("Placement cell is null!");
-                else if (!firstCell.buildable) Debug.Log("Placement cell is not buildable");
-                else
+                var cell = TileGrid.GetCellUnderMouse();
+                if (cell is null)
                 {
-                    firstNode = (firstCell.occupied) ? firstCell.node : BuildNodeAt(firstCell);
-                    firstNode.parentCell = firstCell;
-                    firstCell.node = firstNode;
+                    Debug.Log("Cell did not exist!");
+                    return;
+                }
+                if (!cell.buildable)
+                {
+                    Debug.Log("Not valid cell to build on...");
+                    return;
+                }
+                if (cell.occupied)
+                {
+                    Debug.Log("Cell is already occupied.");
+                    return;
+                }
+                
+                
+                var node = BuildNodeOn(cell);
+                node.parentCell = cell;
+                cell.node = node;
 
-                    if (firstNode is Junction )
-                    {
-                        //@ replace junctions with machines when applicable
-                    }
+                // if (node is Junction )
+                // {
+                    //@ replace junctions with machines when applicable
+                // }
 
-                    if (firstNode is Machine machine)
+                if (node is Machine machine)
+                {
+                    AgentManager.QueueJob(new Job
                     {
-                        machine.machine.enabled = false;
-                        
-                        AgentManager.QueueJob(new Job
-                        {
-                            destination = firstCell,
-                            action = machine.Build,
-                            complete = false,
-                        });
-                        
-                    }
-                    
+                        location = cell.position,
+                        action = machine.Build,
+                    });
                 }
             }
-            
-            
             
             //- right click delete
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 var cell = TileGrid.GetCellUnderMouse();
-                if (cell is null) Debug.Log("NO CELL FOUND!");
-                else if (cell.occupied)
+                if (cell is null)
                 {
-                    Debug.Log("Deleting Cell...");
-                    Destroy(cell.node);
-                    cell.node = null;
+                    Debug.Log("Cell did not exist!");
+                    return;
                 }
+                if (!cell.occupied)
+                {
+                    Debug.Log("Nothing present on selected cell.");
+                    return;
+                }
+                
+                AgentManager.QueueJob(new Job
+                {
+                    location = cell.position,
+                    action = () => Destroy(cell.node),
+                });
             }
         }
     }

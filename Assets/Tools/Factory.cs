@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 namespace ProcessControl.Tools
 {
     // [CreateAssetMenu(fileName = "Factory", menuName = "Tools/Factory")]
-    abstract public class Factory : ScriptableObject
+    abstract public class Factory : MonoScriptableObject
     {
         //> CREATE AND INSTANCE ON PREFAB
         public static T Spawn<T>(string sceneName, T prefab, Vector3 position) where T : MonoBehaviour

@@ -9,6 +9,7 @@ using ProcessControl.Tools;
 public class AgentManager : MonoBehaviour
 {
     public static Action<Job> QueueJob;
+    public static Action<List<Job>> QueueJobs;
 
     [SerializeField] private List<WorkerAgent> busyWorkers = new List<WorkerAgent>();
     [SerializeField] private List<WorkerAgent> openWorkers = new List<WorkerAgent>();
@@ -16,10 +17,14 @@ public class AgentManager : MonoBehaviour
 
     private void Awake()
     {
-        QueueJob += (job) => openJobs.Add(job);
+        QueueJob += (job) =>
+        {
+            Debug.Log("Queuing new job...");
+            openJobs.Add(job);
+        };
+        QueueJobs += jobList => jobList.ForEach(j => openJobs.Add(j));
         
         openWorkers = FindObjectsOfType<WorkerAgent>().ToList();
-        
         openWorkers.ForEach(w =>
         {
             w.onJobCompleted += () =>

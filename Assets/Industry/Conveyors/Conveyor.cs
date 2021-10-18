@@ -18,11 +18,11 @@ namespace ProcessControl.Industry.Conveyors
         //> CONVEYOR DATA CONTAINER
         [Serializable] public class Data
         {
+            public bool enabled;
             public bool sleeping;
             public int ticks;
             public int sleepThreshold = 256;
             
-            [FormerlySerializedAs("itemsPerSecond")]
             [Header("Conveyor Speed")]
             public int itemsPerMinute = 8;
 
@@ -47,36 +47,39 @@ namespace ProcessControl.Industry.Conveyors
         }}
 
         //> ADD AND REMOVE RESOURCES
+        override public void Deposit(Entity entity) => conveyor.inventory.Add(entity);
         override public bool CanDeposit
             => conveyor.inventory.Count == 0
             || conveyor.inventory.Count < conveyor.inventorySize
             && conveyor.inventory.Count >= 1
             && conveyor.inventory.Last().ticks >= 2 * TicksPerSecond / conveyor.itemsPerMinute;
         
-        override public void Deposit(Entity entity) => conveyor.inventory.Add(entity);
-        override public bool CanWithdraw => conveyor.inventory.Count >= 1 && conveyor.inventory[0].ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerMinute;
         override public Entity Withdraw() => conveyor.inventory.TakeFirst();
+        override public bool CanWithdraw
+            => conveyor.inventory.Count >= 1
+             && conveyor.inventory[0].ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerMinute;
         
-        //> EVENTS
-        public event Action onConnection;
-
         override public IO Input => conveyor.input;
         override public IO Output => conveyor.output;
+
+        public void Build()
+        {
+            conveyor.enabled = true;
+        }
 
         //> CONNECT INPUT
         override public bool ConnectInput(IO input)
         {
             if (conveyor.input == input as Node) return false;
             conveyor.input = input as Node;
-            onConnection?.Invoke();
+            ManageConnection();
             return true;
         }
-
         override public bool DisconnectInput(IO input)
         {
             if (conveyor.input != input as Node) return false;
             conveyor.input = null;
-            onConnection?.Invoke();
+            ManageConnection();
             return true;
         }
 
@@ -85,15 +88,14 @@ namespace ProcessControl.Industry.Conveyors
         {
             if (conveyor.output == output as Node) return false;
             conveyor.output = output as Node;
-            onConnection?.Invoke();
+            ManageConnection();
             return true;
         }
-        
         override public bool DisconnectOutput(IO output)
         {
             if (conveyor.output != output as Node) return false;
             conveyor.output = null;
-            onConnection?.Invoke();
+            ManageConnection();
             return true;
         }
 
@@ -101,7 +103,6 @@ namespace ProcessControl.Industry.Conveyors
         private void Awake()
         {
             renderer = GetComponent<SpriteRenderer>();
-            onConnection += ManageConnection;
         }
 
         //> MODIFY PROPERTIES ON CONNECTION
@@ -125,8 +126,7 @@ namespace ProcessControl.Industry.Conveyors
         //> FIXED CALCULATION INTERVAL
         protected void FixedUpdate()
         {
-            // if (conveyor.sleeping) return;
-            // if (conveyor.ticks >= conveyor.sleepThreshold) conveyor.sleeping = true;
+            // if (!conveyor.enabled) return;
             
             //> EVERY INTERVAL PULL FROM INPUT IF CAPABLE
             if (++conveyor.ticks > (TicksPerMinute / (conveyor.itemsPerMinute * 2)))

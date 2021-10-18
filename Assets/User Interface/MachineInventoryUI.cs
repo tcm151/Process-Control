@@ -21,6 +21,8 @@ namespace ProcessControl
         [SerializeField] private TextMeshProUGUI outputCount;
         [SerializeField] private Image outputIcon;
 
+        [SerializeField] private TMP_Dropdown recipeDropdown;
+
         private bool buildMode;
 
         override protected void Awake()
@@ -32,6 +34,14 @@ namespace ProcessControl
 
         private void UpdateInventory()
         {
+
+            recipeDropdown.transform.parent.gameObject.SetActive(selectedMachine.machine.recipes.Count >= 1);      
+            
+            recipeDropdown.ClearOptions();
+            var dropdownOptions = selectedMachine.machine.recipes.ConvertAll(r => r.name);
+            recipeDropdown.AddOptions(dropdownOptions);
+            
+
             if (selectedMachine.machine.inputInventory.Count >= 1)
             {
                 inputIcon.enabled = true;

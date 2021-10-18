@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4718324324168246930}
   - component: {fileID: 8361632907144066225}
   m_Layer: 0
-  m_Name: Smelter
+  m_Name: Smelter.0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,17 +95,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a22f90544544164a80b952779c85cd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentCell:
-    buildable: 1
-    node: {fileID: 0}
-    terrainValue: 0
-    resourceDeposits: []
-    position: {x: 0, y: 0, z: 0}
-    coordinates: {x: 0, y: 0}
   machine:
+    enabled: 0
     sleeping: 0
     ticks: 0
     sleepThreshold: 2048
+    recipes:
+    - {fileID: 11400000, guid: a3cc2b6a077d2294ba8b1f4b9344421a, type: 2}
+    - {fileID: 11400000, guid: 62d3c3956594a174b87ff47cfcc4ed20, type: 2}
+    - {fileID: 11400000, guid: 8facd055e581123498015be89ad05bb9, type: 2}
+    - {fileID: 11400000, guid: dd98e2c96a6b3954f8aeb8bc14954100, type: 2}
     inventorySize: 16
     inputEnabled: 1
     maxInputs: 1

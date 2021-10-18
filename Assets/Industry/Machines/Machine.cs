@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
-using ProcessControl.Procedural;
 using ProcessControl.Industry.Resources;
 
 
@@ -20,6 +19,10 @@ namespace ProcessControl.Industry.Machines
             public int ticks;
             public int sleepThreshold = 256;
 
+            [Header("Recipes")]
+            public Recipe currentRecipe;
+            public List<Recipe> recipes;
+
             [Header("Inventory")]
             public int inventorySize = 8;
             
@@ -29,7 +32,7 @@ namespace ProcessControl.Industry.Machines
             public Edge currentInput;
             public List<Edge> inputs = new List<Edge>();
             public List<Entity> inputInventory = new List<Entity>();
-            public Inventory<Entity> inputInventoryTest = new Inventory<Entity>(1, 16);
+            // public Inventory<Entity> inputInventoryTest = new Inventory<Entity>(1, 16);
 
             [Header("IOutput")]
             public bool outputEnabled = true;
@@ -37,7 +40,7 @@ namespace ProcessControl.Industry.Machines
             public Edge currentOutput;
             public List<Edge> outputs = new List<Edge>();
             public List<Entity> outputInventory = new List<Entity>();
-            public Inventory<Entity> outputInventoryTest = new Inventory<Entity>(1, 16);
+            // public Inventory<Entity> outputInventoryTest = new Inventory<Entity>(1, 16);
         }
         [SerializeField] internal Data machine;
 
@@ -145,7 +148,8 @@ namespace ProcessControl.Industry.Machines
             machine.outputs.ForEach(Destroy);
             machine.inputInventory.ForEach(Destroy);
             machine.outputInventory.ForEach(Destroy);
-            Destroy(gameObject);
+            // Destroy(gameObject);
+            base.OnDestroy();
         }
     }
 }

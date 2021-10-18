@@ -23,10 +23,9 @@ namespace ProcessControl.Procedural
         [Serializable]
         public class Data
         {
-            [FormerlySerializedAs("chunkResolution")]
             [Header("Resolution")]
             public int chunkSize = 64;
-            [FormerlySerializedAs("gridSize")][FormerlySerializedAs("gridResolution")] public int size = 4;
+            public int size = 4;
             
             public List<Tilemap> tilemaps;
             public List<TileBase> tiles;
@@ -34,7 +33,7 @@ namespace ProcessControl.Procedural
             [Header("Noise")]
             public Range noiseRange;
             public List<Noise.Layer> terrainNoise;
-            [FormerlySerializedAs("resourceNoiseLayers")] public List<ResourceNoiseLayer> resourceNoise;
+            public List<ResourceNoiseLayer> resourceNoise;
             public List<Noise.Layer> biomeNoise;
 
             [Header("Cells & Chunks")]
@@ -50,7 +49,7 @@ namespace ProcessControl.Procedural
         private readonly Stopwatch timer = new Stopwatch();
 
         //> EXTERNAL CALLS
-        public static Func<Chunk[,]> GetChunks;
+        // public static Func<Chunk[,]> GetChunks;
         public static Func<Cell> GetCellUnderMouse;
         public static Func<Vector3, Cell> GetCellAtPosition;
         public static Func<Vector2Int, Cell> GetCellAtCoordinates;
@@ -97,8 +96,6 @@ namespace ProcessControl.Procedural
             float bounds = (grid.size * grid.chunkSize) / 2f;
             var x = floatCoords.x.Remap(-bounds, bounds - 1, 0, grid.size - 0.0001f).FloorToInt();
             var y = floatCoords.y.Remap(-bounds, bounds - 1, 0, grid.size - 0.0001f).FloorToInt();
-            
-            Debug.Log($"{x},{y}");
             return grid.chunks[x,y];
         }
 
@@ -107,7 +104,7 @@ namespace ProcessControl.Procedural
             camera = Camera.main;
 
             //- register events
-            GetChunks += () => grid.chunks;
+            // GetChunks += () => grid.chunks;
             GetCellAtCoordinates += GetCellFromCoordinates;
             GetCellAtPosition += (position) => GetCellFromCoordinates(position.ToVector2().FloorToInt());
             GetCellUnderMouse += () => GetCellFromCoordinates(camera.MousePosition2D().FloorToInt());

@@ -17,6 +17,13 @@ namespace ProcessControl.Tools
             return item;
         }
         //------------------------------------------------------------------------------------------
+        public static List<T> TakeRange<T>(this List<T> list, int start, int end)
+        {
+            var items = new List<T>();
+            for (int i = start; i <= end; i++) items.Add(list[i]);
+            return items;
+        }
+        //------------------------------------------------------------------------------------------
         //- Remove and return the first item in the list
         public static T TakeFirst<T>(this List<T> list)
         {

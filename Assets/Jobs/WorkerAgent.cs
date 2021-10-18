@@ -10,7 +10,7 @@ namespace ProcessControl.Jobs
         public void TakeJob(Job newJob)
         {
             currentJob = newJob;
-            currentPath = AStar.FindPath(transform.position, currentJob.destination.position);
+            currentPath = AStar.FindPath(transform.position, currentJob.location);
         }
 
         public event Action onJobCompleted;

@@ -17,8 +17,13 @@ namespace ProcessControl.Tools
 
         //> PUBLIC EVENT 
         public static Func<Resource.Material, Resource.Form, Vector3, Entity> SpawnResource;
-        public void OnEnable() => SpawnResource += OnSpawnResource;
-        
+        override protected void OnBegin() => SpawnResource += OnSpawnResource;
+
+        private void Awake()
+        {
+            SpawnResource += OnSpawnResource;
+        }
+
         //> SPAWN A RESOURCE OF MATCHING MATERIAL AND TYPE
         private Entity OnSpawnResource(Resource.Material material, Resource.Form type, Vector3 position)
         {
@@ -30,7 +35,7 @@ namespace ProcessControl.Tools
             }
             
             var instance = Spawn(sceneName, prefab, position);
-            instance.SetProperties(properties);
+            instance.SetItem(properties);
             return instance;
         }
     }

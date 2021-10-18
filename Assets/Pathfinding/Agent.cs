@@ -55,8 +55,7 @@ namespace ProcessControl.Pathfinding
             if (currentPath is { } && currentPath.Count >= 1)
             {
                 var currentPosition = transform.position;
-                if (currentPosition.DistanceTo(currentPath[0]) < 0.5f) currentPath.RemoveAt(0);
-                // if (currentPosition == currentPath[0]) 
+                if (currentPosition.DistanceTo(currentPath[0]) < 1.5f) currentPath.RemoveAt(0);
                 if (currentPath.Count == 0)
                 {
                     onReachedDestination?.Invoke();

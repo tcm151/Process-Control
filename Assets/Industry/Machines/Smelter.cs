@@ -1,6 +1,7 @@
-﻿using ProcessControl.Industry.Resources;
-using ProcessControl.Tools;
+﻿using System.Linq;
 using UnityEngine;
+using ProcessControl.Tools;
+using ProcessControl.Industry.Resources;
 
 
 namespace ProcessControl.Industry.Machines
@@ -18,17 +19,20 @@ namespace ProcessControl.Industry.Machines
                 machine.ticks = 0;
                 if (machine.inputInventory.Count == 0) return;
                 
-
-                var resource = machine.inputInventory.TakeFirst();
-                // if (resource is Ore)
+                if (machine.currentRecipe.requiredItems.TrueForAll(requiredItem => machine.inputInventory.Count(e => e.item == requiredItem) > 2f))
                 {
-                    var ingot = Smelt(resource);
-                    if (ingot is null) return;
-                    machine.outputInventory.Add(ingot);
-                }
+                    var resources = machine.inputInventory.TakeRange(0, 1);
+                    var newResources = ItemFactory.Instance.SpawnItems(machine.currentRecipe.resultingItems, Position);
+                    newResources.ForEach(r => machine.outputInventory.Add(r));
+                    onInventoryModified?.Invoke();
+                    
+                    resources.ForEach(Destroy);
 
-                // var newResource = Smelt(machine.inputInventory.TakeFirst());
-                // Deposit(newResource);
+                    // var ingot = Smelt(resource);
+                    // if (ingot is null) return;
+                    // machine.outputInventory.Add(ingot);
+                    // onInventoryModified?.Invoke();
+                }
             }
         }
 

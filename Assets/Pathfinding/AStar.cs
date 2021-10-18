@@ -40,17 +40,9 @@ namespace ProcessControl.Pathfinding
             startCell.pathInfo.gCost = 0;
             var minimumDistance = startCell.pathInfo.hCost = DistanceBetween(startCell, endCell);
 
-            while (openList.Count > 0 && steps < minimumDistance * 4)
+            while (openList.Count > 0 && ++steps < minimumDistance * 4)
             {
                 var currentCell = openList.OrderBy(pc => pc.pathInfo.fCost).First();
-                if (!currentCell.buildable)
-                {
-                    openList.Remove(currentCell);
-                    closedList.Add(currentCell);
-                    currentCell.pathInfo.Reset();
-                    continue;
-                }
-
                 if (currentCell == endCell)
                 {
                     var finalPath = RetracePath(endCell);
@@ -63,6 +55,15 @@ namespace ProcessControl.Pathfinding
                     Debug.Log($"{finalPath.Count} m path in {timer.ElapsedMilliseconds} ms");
                     return finalPath;
                 }
+                
+                if (!currentCell.buildable || currentCell.occupied)
+                {
+                    openList.Remove(currentCell);
+                    closedList.Add(currentCell);
+                    currentCell.pathInfo.Reset();
+                    continue;
+                }
+
 
                 closedList.Add(currentCell);
                 openList.Remove(currentCell);

@@ -13,6 +13,7 @@ namespace ProcessControl.Industry.Conveyors
     {
         [Serializable] public class Data
         {
+            public bool enabled;
             public bool sleeping;
             public int ticks;
             public int sleepThreshold = 256;
@@ -36,6 +37,11 @@ namespace ProcessControl.Industry.Conveyors
 
         override public IO Input => junction.currentInput;
         override public IO Output => junction.currentOutput;
+
+        public void Build()
+        {
+            junction.enabled = true;
+        }
         
         //> CONNECT INPUT
         override public bool ConnectInput(IO input)
@@ -104,7 +110,7 @@ namespace ProcessControl.Industry.Conveyors
 
         private void FixedUpdate()
         {
-            //@ add sleeping when idle
+            // if (!junction.enabled) return;
             
             if (++junction.ticks % (TicksPerSecond / 16) == 0)
             {
