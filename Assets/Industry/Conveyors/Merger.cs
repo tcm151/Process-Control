@@ -5,9 +5,9 @@ namespace ProcessControl.Industry.Conveyors
 {
     public class Merger : MultiJunction
     {
-        override public void Deposit(Resource resource)
+        override public void Deposit(Entity entity)
         {
-            base.Deposit(resource);
+            base.Deposit(entity);
             NextInput();
             
             if (!Input.CanWithdraw) NextInput();

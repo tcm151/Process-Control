@@ -16,10 +16,10 @@ namespace ProcessControl.Industry.Conveyors
         abstract override public bool DisconnectOutput(IO output);
         
         abstract override public bool CanDeposit {get;}
-        abstract override public void Deposit(Resource resource);
+        abstract override public void Deposit(Entity entity);
         
         abstract override public bool CanWithdraw {get;}
-        abstract override public Resource Withdraw();
+        abstract override public Entity Withdraw();
 
         abstract override public void OnDestroy();
     }

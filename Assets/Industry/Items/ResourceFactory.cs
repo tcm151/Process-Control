@@ -12,15 +12,15 @@ namespace ProcessControl.Tools
     public class ResourceFactory : Factory
     {
         public string sceneName = "Resources";
-        public Resource prefab;
+        public Entity prefab;
         [FormerlySerializedAs("resourcePrefabs")] public List<ResourceProperties> resources;
 
         //> PUBLIC EVENT 
-        public static Func<ResourceProperties.Material, ResourceProperties.Form, Vector3, Resource> SpawnResource;
+        public static Func<ResourceProperties.Material, ResourceProperties.Form, Vector3, Entity> SpawnResource;
         public void OnEnable() => SpawnResource += OnSpawnResource;
         
         //> SPAWN A RESOURCE OF MATCHING MATERIAL AND TYPE
-        private Resource OnSpawnResource(ResourceProperties.Material material, ResourceProperties.Form type, Vector3 position)
+        private Entity OnSpawnResource(ResourceProperties.Material material, ResourceProperties.Form type, Vector3 position)
         {
             var properties = resources.FirstOrDefault(o => o.material == material && o.form == type);
             if (properties is null)

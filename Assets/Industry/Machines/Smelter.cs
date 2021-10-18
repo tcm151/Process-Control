@@ -31,13 +31,13 @@ namespace ProcessControl.Industry.Machines
             }
         }
 
-        private Resource Smelt(Resource resource)
+        private Entity Smelt(Entity entity)
         {
-            var instance = ResourceFactory.SpawnResource(resource.resourceProperties.material, ResourceProperties.Form.Ingot, Position);
+            var instance = ResourceFactory.SpawnResource(entity.resourceProperties.material, ResourceProperties.Form.Ingot, Position);
             if (instance is null) Debug.Log("NO PREFAB!");
-            instance.name = $"{instance.resourceProperties.material} {instance.resourceProperties.form}.{++Resource.Count:D4}";
+            instance.name = $"{instance.resourceProperties.material} {instance.resourceProperties.form}.{++Entity.Count:D4}";
             
-            Destroy(resource);
+            Destroy(entity);
             
             return instance;
         }

@@ -10,7 +10,7 @@ public class Storage : Node
     private Conveyor input;
     private Conveyor output;
 
-    private Inventory<Resource> inventory = new Inventory<Resource>(16, 16 * 64);
+    private Inventory<Entity> inventory = new Inventory<Entity>(16, 16 * 64);
 
     override public IO Input => input;
     override public IO Output => output;
@@ -44,7 +44,7 @@ public class Storage : Node
     }
 
     override public bool CanWithdraw => !inventory.Empty;
-    override public Resource Withdraw()
+    override public Entity Withdraw()
     {
         var resource = inventory.Withdraw();
         if (resource is null) Debug.Log("Inventory empty.");
@@ -53,8 +53,8 @@ public class Storage : Node
     }
 
     override public bool CanDeposit => !inventory.Full;
-    override public void Deposit(Resource resource)
+    override public void Deposit(Entity entity)
     {
-        inventory.Deposit(resource);
+        inventory.Deposit(entity);
     }
 }

@@ -7,13 +7,13 @@ using UnityEngine.Serialization;
 namespace ProcessControl.Industry.Resources
 {
     //@ TODO convert this to a generic conveyor object
-    public class Resource : MonoBehaviour
+    public class Entity : MonoBehaviour
     {
         public static int Count = 0;
         
         public int ticks;
         
-        [FormerlySerializedAs("properties")][FormerlySerializedAs("data")][SerializeField] internal ResourceProperties resourceProperties;
+        internal ResourceProperties resourceProperties;
 
         private SpriteRenderer renderer;
 
