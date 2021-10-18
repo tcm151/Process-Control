@@ -51,6 +51,14 @@ namespace ProcessControl.Industry.Machines
             machine.enabled = true;
         }
 
+        private void Awake()
+        {
+            if (machine.recipes.Count >= 1)
+            {
+                machine.currentRecipe = machine.recipes[0];
+            }
+        }
+
         //> IO INTERFACE
         override public IO Input => machine.currentInput;
         override public IO Output => machine.currentOutput;

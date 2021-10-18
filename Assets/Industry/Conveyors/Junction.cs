@@ -20,7 +20,5 @@ namespace ProcessControl.Industry.Conveyors
         
         abstract override public bool CanWithdraw {get;}
         abstract override public Entity Withdraw();
-
-        abstract override public void OnDestroy();
     }
 }

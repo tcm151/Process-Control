@@ -172,7 +172,7 @@ namespace ProcessControl.Industry.Conveyors
             conveyor.input.DisconnectOutput(this);
             conveyor.output.DisconnectInput(this);
             conveyor.inventory.ForEach(Destroy);
-            Destroy(gameObject);
+            base.OnDestroy();
         }
     }
 }

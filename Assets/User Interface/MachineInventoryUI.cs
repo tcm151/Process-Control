@@ -30,18 +30,18 @@ namespace ProcessControl
             base.Awake();
             ConstructionManager.OnBuildModeChanged += (isEnabled) => buildMode = isEnabled;
             Hide();
+
+            recipeDropdown.onValueChanged.AddListener(value =>
+            {
+                var machine = selectedMachine.machine;
+                machine.currentRecipe = machine.recipes[value];
+            });
         }
+        
+        
 
         private void UpdateInventory()
         {
-
-            recipeDropdown.transform.parent.gameObject.SetActive(selectedMachine.machine.recipes.Count >= 1);      
-            
-            recipeDropdown.ClearOptions();
-            var dropdownOptions = selectedMachine.machine.recipes.ConvertAll(r => r.name);
-            recipeDropdown.AddOptions(dropdownOptions);
-            
-
             if (selectedMachine.machine.inputInventory.Count >= 1)
             {
                 inputIcon.enabled = true;
@@ -77,10 +77,17 @@ namespace ProcessControl
                 if (selectedCell is {occupied: true, node: Machine machine})
                 {
                     selectedMachine = machine;
-                    UpdateInventory();
                     selectedMachine.onInventoryModified += UpdateInventory;
-                    // selectedMachine.machine.inputInventoryTest.onModified += UpdateInventory;
-                    // selectedMachine.machine.outputInventoryTest.onModified += UpdateInventory;
+                    
+                    recipeDropdown.ClearOptions();
+                    var dropdownOptions = selectedMachine.machine.recipes.ConvertAll(r => r.name);
+                    recipeDropdown.AddOptions(dropdownOptions);
+                    
+                    recipeDropdown.transform.parent.gameObject.SetActive(selectedMachine.machine.recipes.Count >= 1);
+
+                    recipeDropdown.value = selectedMachine.machine.recipes.IndexOf(selectedMachine.machine.currentRecipe);
+                    
+                    UpdateInventory();
                     Show();
                 }
             }

@@ -124,7 +124,8 @@ namespace ProcessControl.Industry.Conveyors
             junction.inputs.ForEach(Destroy);
             junction.outputs.ForEach(Destroy);
             Destroy(junction.inventory);
-            Destroy(gameObject);
+            // Destroy(gameObject);
+            base.OnDestroy();
         }
     }
 }
