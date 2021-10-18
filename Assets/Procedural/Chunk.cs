@@ -10,7 +10,6 @@ namespace ProcessControl.Procedural
     {
         public Vector2Int chunkOffset;
         public Cell[,] cells;
-        public Range coordinateRange = new Range();
         
         public Chunk[] neighbours = new Chunk[8];
     }

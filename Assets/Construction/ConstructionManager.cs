@@ -167,7 +167,8 @@ namespace ProcessControl.Construction
                 
                 firstCell = TileGrid.GetCellUnderMouse();
 
-                if (firstCell is null || !firstCell.buildable) Debug.Log("Invalid parentCell!");
+                if (firstCell is null) Debug.Log("Placement cell is null!");
+                else if (!firstCell.buildable) Debug.Log("Placement cell is not buildable");
                 else
                 {
                     firstNode = (firstCell.occupied) ? firstCell.node : BuildNodeAt(firstCell);

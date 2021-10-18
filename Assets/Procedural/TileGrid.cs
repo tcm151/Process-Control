@@ -87,8 +87,18 @@ namespace ProcessControl.Procedural
 
         private Cell GetCellFromCoordinates(Vector2Int coords)
         {
-            var cells = grid.chunks.SelectMany(chunk => chunk.cells);
+            var cells = GetChunkFromCoordinates(coords).cells.ToList();
             return cells.FirstOrDefault(cell => cell.coords == coords);
+        }
+
+        private Chunk GetChunkFromCoordinates(Vector2Int coords)
+        {
+            //! Need way to get the containing chunk based on coordinates given
+            Debug.Log(coords);
+            var x = (((coords.x + grid.size * grid.chunkSize) / (grid.size / 2f)) / grid.chunkSize).FloorToInt() - 1;
+            var y = (((coords.y + grid.size * grid.chunkSize) / (grid.size / 2f)) / grid.chunkSize).FloorToInt() - 1;
+            Debug.Log($"{x},{y}");
+            return grid.chunks[x,y];
         }
 
         public void Initialize()
@@ -324,7 +334,7 @@ namespace ProcessControl.Procedural
         {
             foreach (var cell in cells)
             {
-                if (cell.terrainValue < grid.terrainNoise[0].threshold) cell.buildable = false;
+                if (cell.biome == Biome.Ocean) cell.buildable = false;
 
                 var tile = (cell.biome) switch
                 {
