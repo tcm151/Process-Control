@@ -140,11 +140,11 @@ namespace ProcessControl.Tools
         }
         //------------------------------------------------------------------------------------------
         //- Move a vector2 towards another vector2 by a maximum delta [modified by reference]
-        public static void MoveTowardsR(this ref Vector2 current, Vector2 target, float maxDelta)
+        public static Vector2 MoveTowardsR(this ref Vector2 current, Vector2 target, float maxDelta)
             => current = Vector2.MoveTowards(current, target, maxDelta);
         //------------------------------------------------------------------------------------------
         //- Lerp a vector2 towards another vector2 by a maximum delta [modified by reference]
-        public static void LerpR(this ref Vector2 current, Vector2 target, float maxDelta)
+        public static Vector2 LerpR(this ref Vector2 current, Vector2 target, float maxDelta)
             => current = Vector2.Lerp(current, target, maxDelta);
         //------------------------------------------------------------------------------------------
         //- Convert a vector2 into a vector2int
@@ -168,14 +168,18 @@ namespace ProcessControl.Tools
             y = v2.y,
         };
         //------------------------------------------------------------------------------------------
-        public static void RemapR(this ref Vector2 v2, float lower1, float upper1, float lower2, float upper2)
+        public static Vector2 RemapR(this ref Vector2 v2, float lower1, float upper1, float lower2, float upper2)
         {
             v2.x.Remap(lower1, upper1, lower2, upper2);
             v2.y.Remap(lower1, upper1, lower2, upper2);
+            return v2;
         }
         //------------------------------------------------------------------------------------------
+        public static Vector2 ClampMagnitude(this ref Vector2 vector2, float maxLength)
+            => vector2 = Vector2.ClampMagnitude(vector2, maxLength);
+        //------------------------------------------------------------------------------------------
 
-        
+
         //> VECTOR3 ================================================================================
         //- Return the angle represented by the normalized vector2 direction
         public static float Angle(this Vector3 direction)
@@ -187,7 +191,7 @@ namespace ProcessControl.Tools
         }
         //------------------------------------------------------------------------------------------
         //- Move a vector3 towards another vector3 by a maximum delta [modified by reference]
-        public static void MoveTowardsR(this ref Vector3 current, Vector3 target, float maxDelta)
+        public static Vector3 MoveTowardsR(this ref Vector3 current, Vector3 target, float maxDelta)
             => current = Vector3.MoveTowards(current, target, maxDelta);
         //------------------------------------------------------------------------------------------
         //- Calculate the vector from the first vector to the second vector

@@ -111,6 +111,7 @@ namespace ProcessControl.Procedural
 
             //- random seed noise layers
             if (seed != "") Random.InitState(seed.GetHashCode());
+            // else Debug.Log($"Seed: [{Random.state}]");
             grid.biomeNoise.ForEach(b => b.offset = Random.insideUnitSphere * (Random.value * 5));
             grid.terrainNoise.ForEach(t => t.offset = Random.insideUnitSphere * (Random.value * 10));
             grid.resourceNoise.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
