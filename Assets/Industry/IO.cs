@@ -23,6 +23,7 @@ namespace ProcessControl.Industry
     public interface IInput
     {
         public bool ConnectOutput(IOutput newOutput);
+        public bool DisconnectOutput(IOutput oldOutput);
         
         public bool CanDeposit {get;}
         public void Deposit(Container container);
@@ -31,6 +32,7 @@ namespace ProcessControl.Industry
     public interface IOutput
     {
         public bool ConnectInput(IInput newInput);
+        public bool DisconnectInput(IInput oldInput);
         
         public bool CanWithdraw {get;}
         public Container Withdraw();
