@@ -19,7 +19,7 @@ public class AgentManager : MonoBehaviour
     {
         QueueJob += (job) =>
         {
-            Debug.Log("Queuing new job...");
+            // Debug.Log("Queuing new job...");
             openJobs.Add(job);
         };
         QueueJobs += jobList => jobList.ForEach(j => openJobs.Add(j));

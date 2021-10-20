@@ -5,7 +5,7 @@ namespace ProcessControl.Industry.Conveyors
 {
     public class Splitter : MultiJunction
     {
-        override public Entity Withdraw()
+        override public Container Withdraw()
         {
             var resource = base.Withdraw();
             NextOutput();

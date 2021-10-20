@@ -33,7 +33,7 @@ namespace ProcessControl.Industry.Conveyors
 
             [Header("Inventory")]
             public int inventorySize = 8;
-            public List<Entity> inventory = new List<Entity>();
+            public List<Container> inventory = new List<Container>();
         }
         [SerializeField] internal Data conveyor;
 
@@ -47,14 +47,14 @@ namespace ProcessControl.Industry.Conveyors
         }}
 
         //> ADD AND REMOVE RESOURCES
-        override public void Deposit(Entity entity) => conveyor.inventory.Add(entity);
+        override public void Deposit(Container container) => conveyor.inventory.Add(container);
         override public bool CanDeposit
             => conveyor.inventory.Count == 0
             || conveyor.inventory.Count < conveyor.inventorySize
             && conveyor.inventory.Count >= 1
             && conveyor.inventory.Last().ticks >= 2 * TicksPerSecond / conveyor.itemsPerMinute;
         
-        override public Entity Withdraw() => conveyor.inventory.TakeFirst();
+        override public Container Withdraw() => conveyor.inventory.TakeFirst();
         override public bool CanWithdraw
             => conveyor.inventory.Count >= 1
              && conveyor.inventory[0].ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerMinute;

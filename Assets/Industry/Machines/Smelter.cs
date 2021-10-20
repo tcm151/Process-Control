@@ -36,15 +36,15 @@ namespace ProcessControl.Industry.Machines
             }
         }
 
-        private Entity Smelt(Entity entity)
+        private Container Smelt(Container container)
         {
-            if (entity.item is Resource resource)
+            if (container.item is Resource resource)
             {
                 var instance = ResourceFactory.SpawnResource(resource.material, Resource.Form.Ingot, Position);
                 if (instance is null) Debug.Log("NO PREFAB!");
-                instance.name = $"{resource.material} {resource.form}.{++Entity.Count:D4}";
+                instance.name = $"{resource.material} {resource.form}.{++Container.Count:D4}";
                 
-                Destroy(entity);
+                Destroy(container);
                 
                 return instance;
             }

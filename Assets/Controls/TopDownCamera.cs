@@ -1,5 +1,7 @@
 using UnityEngine;
 using ProcessControl.Tools;
+using UnityEngine.Serialization;
+
 #pragma warning disable 108,114
 
 
@@ -13,7 +15,8 @@ namespace ProcessControl.Controls
         [Header("Zoom")]
         public float minZoom;
         public float maxZoom;
-        public float zoomSensitivity = 5;
+        public float zoomKeySensitivity = 5;
+        public float scrollWheelSensitivity = 5;
 
         [Header("Dragging")]
         public float dragSpeed = 1;
@@ -54,7 +57,7 @@ namespace ProcessControl.Controls
 
             // zoom in and out
             var scrollWheelInput = Input.GetAxisRaw("Mouse ScrollWheel");
-            camera.orthographicSize -= ((scrollWheelInput == 0f) ? zoomKeysInput : scrollWheelInput) * zoomSensitivity * Time.deltaTime;
+            camera.orthographicSize -= ((scrollWheelInput == 0f) ? zoomKeysInput * zoomKeySensitivity : scrollWheelInput * scrollWheelSensitivity) * camera.orthographicSize * Time.deltaTime;
             camera.orthographicSize = camera.orthographicSize.Clamp(minZoom, maxZoom);
 
             // if release, stop dragging
@@ -103,7 +106,7 @@ namespace ProcessControl.Controls
                 }
 
                 currentVelocity.MoveTowardsR(desiredVelocity, acceleration * Time.deltaTime);
-                rigidbody.velocity = currentVelocity.ClampMagnitude(maxPanSpeed);
+                rigidbody.velocity = currentVelocity.ClampMagnitudeR(maxPanSpeed);
             }
         }
 

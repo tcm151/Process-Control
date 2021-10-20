@@ -153,9 +153,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minZoom: 1
   maxZoom: 120
-  zoomSensitivity: 5
-  panSpeed: 250
+  zoomKeySensitivity: 5
+  scrollWheelSensitivity: 5
   dragSpeed: 0.05
-  acceleration: 50
-  deceleration: 250
+  maxPanSpeed: 80
+  maxAcceleration: 80
+  maxDeceleration: 150
   initialTarget: {fileID: 0}

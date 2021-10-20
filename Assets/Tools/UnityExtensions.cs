@@ -175,8 +175,15 @@ namespace ProcessControl.Tools
             return v2;
         }
         //------------------------------------------------------------------------------------------
-        public static Vector2 ClampMagnitude(this ref Vector2 vector2, float maxLength)
+        public static Vector2 ClampMagnitudeR(this ref Vector2 vector2, float maxLength)
             => vector2 = Vector2.ClampMagnitude(vector2, maxLength);
+        //------------------------------------------------------------------------------------------
+        public static Vector2 AbsR(this ref Vector2 v2)
+        {
+            v2.x.Abs();
+            v2.y.Abs();
+            return v2;
+        }
         //------------------------------------------------------------------------------------------
 
 
@@ -271,6 +278,9 @@ namespace ProcessControl.Tools
         //------------------------------------------------------------------------------------------
         public static float RemapR(this ref float value, float lower1, float upper1, float lower2, float upper2)
             => value = (value - lower1) / (upper1 - lower1) * (upper2 - lower2) + lower2;
+        //------------------------------------------------------------------------------------------
+        public static float Abs(this ref float value)
+            => value = Mathf.Abs(value);
         //------------------------------------------------------------------------------------------
     }
 }

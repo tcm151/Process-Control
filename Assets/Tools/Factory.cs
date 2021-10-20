@@ -1,12 +1,13 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 
 namespace ProcessControl.Tools
 {
     // [CreateAssetMenu(fileName = "Factory", menuName = "Tools/Factory")]
-    abstract public class Factory : MonoScriptableObject
+    abstract public class Factory : MonoBehaviour
     {
         //> CREATE AND INSTANCE ON PREFAB
         public static T Spawn<T>(string sceneName, T prefab, Vector3 position) where T : MonoBehaviour
@@ -20,13 +21,13 @@ namespace ProcessControl.Tools
             return instance;
         }
 
-        public static T Spawn<T>(T prefab, Vector3 position, Quaternion rotation) where T : MonoBehaviour
+        public static T Spawn<T>(T prefab, Vector3 position, Quaternion rotation) where T : Object
             => Instantiate(prefab, position, rotation);
 
-        public static T Spawn<T>(T prefab, Vector3 position) where T : MonoBehaviour
+        public static T Spawn<T>(T prefab, Vector3 position) where T : Object
             => Spawn(prefab, position, Quaternion.identity);
         
-        public static T Spawn<T>(T prefab) where T : MonoBehaviour
+        public static T Spawn<T>(T prefab) where T : Object
             => Spawn(prefab, Vector3.zero, Quaternion.identity);
     }
 }

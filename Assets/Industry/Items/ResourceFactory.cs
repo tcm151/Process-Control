@@ -8,16 +8,16 @@ using UnityEngine.Serialization;
 
 namespace ProcessControl.Tools
 {
-    [CreateAssetMenu(menuName = "Resources/Factory")]
+    // [CreateAssetMenu(menuName = "Resources/Factory")]
     public class ResourceFactory : Factory
     {
         public string sceneName = "Resources";
-        public Entity prefab;
-        [FormerlySerializedAs("resourcePrefabs")] public List<Resource> resources;
+        public Container prefab;
+        public List<Resource> resources;
 
         //> PUBLIC EVENT 
-        public static Func<Resource.Material, Resource.Form, Vector3, Entity> SpawnResource;
-        override protected void OnBegin() => SpawnResource += OnSpawnResource;
+        public static Func<Resource.Material, Resource.Form, Vector3, Container> SpawnResource;
+        // private void Aw() => SpawnResource += OnSpawnResource;
 
         private void Awake()
         {
@@ -25,7 +25,7 @@ namespace ProcessControl.Tools
         }
 
         //> SPAWN A RESOURCE OF MATCHING MATERIAL AND TYPE
-        private Entity OnSpawnResource(Resource.Material material, Resource.Form type, Vector3 position)
+        private Container OnSpawnResource(Resource.Material material, Resource.Form type, Vector3 position)
         {
             var properties = resources.FirstOrDefault(o => o.material == material && o.form == type);
             if (properties is null)

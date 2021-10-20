@@ -39,16 +39,16 @@ namespace ProcessControl.Industry.Machines
         }
 
         //> DEPOSIT RESOURCE INTO INVENTORY
-        override public void Deposit(Entity entity)
+        override public void Deposit(Container container)
         {
-            entity.position = Position;
-            machine.outputInventory.Add(entity);
+            container.position = Position;
+            machine.outputInventory.Add(container);
             onInventoryModified?.Invoke();
-            entity.SetVisible(false);
+            container.SetVisible(false);
         }
 
         //> EXTRACT RESOURCE FROM THE GROUND
-        private Entity ExtractResource()
+        private Container ExtractResource()
         {
             parentCell.resourceDeposits[0].quantity--;
             var prefab = parentCell.resourceDeposits[0];

@@ -31,7 +31,7 @@ namespace ProcessControl.Industry.Conveyors
             public List<Edge> outputs = new List<Edge>();
 
             [Header("Inventory")]
-            public Entity inventory;
+            public Container inventory;
         }
         [SerializeField] internal Data junction;
 
@@ -92,16 +92,16 @@ namespace ProcessControl.Industry.Conveyors
 
         //> DEPOSIT RESOURCES
         override public bool CanDeposit => junction.inventory is null;
-        override public void Deposit(Entity entity)
+        override public void Deposit(Container container)
         {
-            entity.position = Position;
-            junction.inventory = entity;
+            container.position = Position;
+            junction.inventory = container;
         }
 
 
         //> WITHDRAW RESOURCES
         override public bool CanWithdraw => junction.inventory is { };
-        override public Entity Withdraw()
+        override public Container Withdraw()
         {
             var resource = junction.inventory;
             junction.inventory = null;

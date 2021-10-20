@@ -14,10 +14,10 @@ namespace ProcessControl.Industry
         public bool DisconnectOutput(IO newOutput);
         
         public bool CanWithdraw {get;}
-        public Entity Withdraw();
+        public Container Withdraw();
         
         public bool CanDeposit {get;}
-        public void Deposit(Entity entity);
+        public void Deposit(Container container);
     }
     
     public interface IInput
@@ -25,7 +25,7 @@ namespace ProcessControl.Industry
         public bool ConnectOutput(IOutput newOutput);
         
         public bool CanDeposit {get;}
-        public void Deposit(Entity entity);
+        public void Deposit(Container container);
     }
     
     public interface IOutput
@@ -33,6 +33,6 @@ namespace ProcessControl.Industry
         public bool ConnectInput(IInput newInput);
         
         public bool CanWithdraw {get;}
-        public Entity Withdraw();
+        public Container Withdraw();
     }
 }

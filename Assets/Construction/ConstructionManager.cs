@@ -2,13 +2,12 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Input = UnityEngine.Input;
+using ProcessControl.Jobs;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
-using ProcessControl.Industry.Conveyors;
-using ProcessControl.Industry.Machines;
-using ProcessControl.Jobs;
 using ProcessControl.Procedural;
-using UnityEngine.WSA;
+using ProcessControl.Industry.Machines;
+using ProcessControl.Industry.Conveyors;
 
 #pragma warning disable 108,114
 

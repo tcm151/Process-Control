@@ -26,15 +26,15 @@ namespace ProcessControl.Industry.Machines
             }
         }
 
-        private Entity EngagePress(Entity entity)
+        private Container EngagePress(Container container)
         {
-            if (entity.item is Resource resource)
+            if (container.item is Resource resource)
             {
                 var instance = ResourceFactory.SpawnResource(resource.material, Resource.Form.Plate, Position);
                 if (instance is null) Debug.Log("NO PREFAB!");
-                instance.name = $"{resource.material} {resource.form}.{++Entity.Count:D4}";
+                instance.name = $"{resource.material} {resource.form}.{++Container.Count:D4}";
                 
-                Destroy(entity);
+                Destroy(container);
 
                 return instance;
             }

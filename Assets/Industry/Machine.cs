@@ -31,7 +31,7 @@ namespace ProcessControl.Industry.Machines
             public int maxInputs = 1;
             public Edge currentInput;
             public List<Edge> inputs = new List<Edge>();
-            public List<Entity> inputInventory = new List<Entity>();
+            public List<Container> inputInventory = new List<Container>();
             // public Inventory<Entity> inputInventoryTest = new Inventory<Entity>(1, 16);
 
             [Header("IOutput")]
@@ -39,7 +39,7 @@ namespace ProcessControl.Industry.Machines
             public int maxOutputs = 1;
             public Edge currentOutput;
             public List<Edge> outputs = new List<Edge>();
-            public List<Entity> outputInventory = new List<Entity>();
+            public List<Container> outputInventory = new List<Container>();
             // public Inventory<Entity> outputInventoryTest = new Inventory<Entity>(1, 16);
         }
         [SerializeField] internal Data machine;
@@ -116,12 +116,12 @@ namespace ProcessControl.Industry.Machines
 
         //> DEPOSIT RESOURCES
         override public bool CanDeposit => machine.inputInventory.Count < machine.inventorySize;
-        override public void Deposit(Entity entity)
+        override public void Deposit(Container container)
         {
-            entity.position = this.Position;
-            entity.SetVisible(false);
+            container.position = this.Position;
+            container.SetVisible(false);
             // machine.inputInventoryTest.Deposit(resource);
-            machine.inputInventory.Add(entity);
+            machine.inputInventory.Add(container);
             onInventoryModified?.Invoke();
             NextInput();
         }
@@ -129,7 +129,7 @@ namespace ProcessControl.Industry.Machines
 
         //> WITHDRAW RESOURCES
         override public bool CanWithdraw => machine.outputInventory.Count >= 1;
-        override public Entity Withdraw()
+        override public Container Withdraw()
         {
             var resource = machine.outputInventory.TakeFirst();
             onInventoryModified?.Invoke();
