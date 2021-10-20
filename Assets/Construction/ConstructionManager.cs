@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Input = UnityEngine.Input;
@@ -237,7 +238,7 @@ namespace ProcessControl.Construction
                     AgentManager.QueueJob(new Job
                     {
                         location = cell.position,
-                        action = machine.Build,
+                        order = () => machine.Build(1000),
                     });
                 }
             }
@@ -260,7 +261,11 @@ namespace ProcessControl.Construction
                 AgentManager.QueueJob(new Job
                 {
                     location = cell.position,
-                    action = () => Destroy(cell.node),
+                    order = () =>
+                    {
+                        Destroy(cell.node);
+                        return Task.CompletedTask;
+                    },
                 });
             }
         }

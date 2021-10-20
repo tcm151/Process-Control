@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ProcessControl.Procedural;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -13,9 +14,8 @@ namespace ProcessControl.Jobs
         // must do prerequisite before current job
         public Job prerequisite;
         
-        // public Cell destination;
-        [FormerlySerializedAs("destination")] public Vector3 location;
-        public Action action;
+        public Vector3 location;
+        public Func<Task> order;
         
         public bool complete;
     }

@@ -45,12 +45,10 @@ namespace ProcessControl.Industry.Machines
         [SerializeField] internal Data machine;
 
 
-        public async void Build()
+        public async Task Build(int buildTime)
         {
             machine.enabled = true;
-            Debug.Log("Starting to build machine...");
-            await Task.Delay(2500);
-            Debug.Log("Machine built.");
+            await Task.Delay(buildTime);
         }
 
         private void Awake()

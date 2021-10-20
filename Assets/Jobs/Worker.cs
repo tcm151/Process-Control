@@ -19,26 +19,14 @@ namespace ProcessControl.Jobs
         override protected void Awake()
         {
             base.Awake();
-            onReachedDestination += () =>
-            {
-                
-            };
+            onReachedDestination += CompleteJob;
         }
 
         private async void CompleteJob()
         {
-            Debug.Log("Job location reached.");
-            Debug.Log("Starting job.");
-            // await currentJob.action();
-            currentJob.action();
-            Debug.Log("Job complete.");
+            await currentJob.order();
             currentJob.complete = true;
             onJobCompleted?.Invoke();
-        }
-
-        private void Update()
-        {
-            
         }
     }
 }
