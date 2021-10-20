@@ -308,6 +308,23 @@ namespace ProcessControl.Procedural
                         });
                     }
                 });
+
+                switch (cell.biome)
+                {
+                    case Biome.Sand: cell.resourceDeposits.Add(new ResourceDeposit
+                    {
+                        material = Resource.Material.Sand,
+                        type = Resource.Form.Raw,
+                        quantity = 10000,
+                    }); break;
+                    
+                    case Biome.Stone: cell.resourceDeposits.Add(new ResourceDeposit
+                    {
+                        material = Resource.Material.Stone,
+                        type = Resource.Form.Raw,
+                        quantity = 10000,
+                    }); break;
+                }
                 
                 TileBase tile;
                 if (cell.resourceDeposits.Count == 0) tile = grid.tiles[3];
@@ -320,7 +337,7 @@ namespace ProcessControl.Procedural
                         Resource.Material.Coal     => grid.tiles[8],
                         Resource.Material.Copper   => grid.tiles[2],
                         Resource.Material.Platinum => grid.tiles[7],
-                                    _                        => grid.tiles[3],
+                                    _              => grid.tiles[3],
                     };
                 }
                 grid.tilemaps[1].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
