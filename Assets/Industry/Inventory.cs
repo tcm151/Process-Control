@@ -1,39 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+using Object = UnityEngine.Object;
 using ProcessControl.Industry.Resources;
 using ProcessControl.Tools;
-using UnityEngine;
-using Object = UnityEngine.Object;
 
 
 namespace ProcessControl.Industry.Machines
 {
     public class Inventory
     {
-        public Inventory(int slots, int maxItems)
+        public Inventory(int maxItems)
         {
-            this.slots = slots;
             this.maxItems = maxItems;
         }
 
-        public int Count => items.Count;
-
-        private readonly int slots;
         private readonly int maxItems;
-
         private readonly List<Container> items = new List<Container>();
 
-        public bool Empty => items.Count == 0;
+
+        public int Count => items.Count;
         public bool Full => items.Count >= maxItems;
+        public bool Empty => items.Count == 0;
+        public Container FirstItem => items[0];
 
         public event Action onModified;
-
-        public Container FirstItem => items[0];
         
+        public void Clear() => items.ForEach(Object.Destroy);
         public bool Has(Item match, int amount) => items.Count(e => e.item == match) > 2f;
 
-        // items.Count()
         public void Deposit(Container newItem)
         {
             items.Add(newItem);
@@ -55,6 +50,5 @@ namespace ProcessControl.Industry.Machines
             return withdrawnItems;
         }
 
-        public void Clear() => items.ForEach(Object.Destroy);
     }
 }
