@@ -53,8 +53,8 @@ namespace ProcessControl.Industry.Machines
 
         private void Awake()
         {
-            machine.inputInventoryTest = new Inventory(machine.maxInputs, machine.inventorySize);
-            machine.outputInventoryTest = new Inventory(machine.maxOutputs, machine.inventorySize);
+            machine.inputInventoryTest = new Inventory(machine.inventorySize);
+            machine.outputInventoryTest = new Inventory(machine.inventorySize);
             
             if (machine.recipes.Count >= 1)
             {

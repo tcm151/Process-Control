@@ -10,7 +10,7 @@ public class Storage : Node
     private Conveyor input;
     private Conveyor output;
 
-    private Inventory inventory = new Inventory(16, 16 * 64);
+    private Inventory inventory = new Inventory(16 * 64);
 
     override public IO Input => input;
     override public IO Output => output;
