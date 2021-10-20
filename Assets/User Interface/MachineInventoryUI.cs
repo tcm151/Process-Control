@@ -44,11 +44,11 @@ namespace ProcessControl
         {
             // Debug.Log("UPDATING INVENTORY!>>>");
             
-            if (selectedMachine.machine.inputInventoryTest.Count >= 1)
+            if (selectedMachine.machine.inputInventory.Count >= 1)
             {
                 inputIcon.enabled = true;
-                inputIcon.sprite = selectedMachine.machine.inputInventoryTest.FirstItem.sprite;
-                inputCount.text = selectedMachine.machine.inputInventoryTest.Count.ToString();
+                inputIcon.sprite = selectedMachine.machine.inputInventory.FirstItem.sprite;
+                inputCount.text = selectedMachine.machine.inputInventory.Count.ToString();
             }
             else
             {
@@ -56,11 +56,11 @@ namespace ProcessControl
                 inputCount.text = "";
             }
 
-            if (selectedMachine.machine.outputInventoryTest.Count >= 1)
+            if (selectedMachine.machine.outputInventory.Count >= 1)
             {
                 outputIcon.enabled = true;
-                outputIcon.sprite = selectedMachine.machine.outputInventoryTest.FirstItem.sprite;
-                outputCount.text = selectedMachine.machine.outputInventoryTest.Count.ToString();
+                outputIcon.sprite = selectedMachine.machine.outputInventory.FirstItem.sprite;
+                outputCount.text = selectedMachine.machine.outputInventory.Count.ToString();
             }
             else
             {
@@ -79,8 +79,8 @@ namespace ProcessControl
                 if (selectedCell is {occupied: true, node: Machine machine})
                 {
                     selectedMachine = machine;
-                    selectedMachine.machine.inputInventoryTest.onModified += UpdateInventory;
-                    selectedMachine.machine.outputInventoryTest.onModified += UpdateInventory;
+                    selectedMachine.machine.inputInventory.onModified += UpdateInventory;
+                    selectedMachine.machine.outputInventory.onModified += UpdateInventory;
                     
                     recipeDropdown.ClearOptions();
                     var dropdownOptions = selectedMachine.machine.recipes.ConvertAll(r => r.name);

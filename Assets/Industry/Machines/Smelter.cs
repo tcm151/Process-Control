@@ -17,13 +17,13 @@ namespace ProcessControl.Industry.Machines
             if (++machine.ticks % (TicksPerMinute / smeltingSpeed) == 0)
             {
                 machine.ticks = 0;
-                if (machine.inputInventoryTest.Count == 0) return;
+                if (machine.inputInventory.Count == 0) return;
                 
-                if (machine.currentRecipe.requiredItems.TrueForAll(requiredItem => machine.inputInventoryTest.Has(requiredItem, 2)))
+                if (machine.currentRecipe.requiredItems.TrueForAll(requiredItem => machine.inputInventory.Has(requiredItem, 2)))
                 {
-                    var resources = machine.inputInventoryTest.Withdraw(2);
+                    var resources = machine.inputInventory.Withdraw(2);
                     var newResources = ItemFactory.Instance.SpawnItems(machine.currentRecipe.resultingItems, Position);
-                    newResources.ForEach(r => machine.outputInventoryTest.Deposit(r));
+                    newResources.ForEach(r => machine.outputInventory.Deposit(r));
                     // onInventoryModified?.Invoke();
                     
                     resources.ForEach(Destroy);

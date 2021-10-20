@@ -31,10 +31,10 @@ namespace ProcessControl.Industry.Machines
             {
                 machine.ticks = 0;
                 // if (machine.outputInventory.Count >= machine.inventorySize) return;
-                if (machine.outputInventoryTest.Count >= machine.inventorySize) return;
+                if (machine.outputInventory.Count >= machine.inventorySize) return;
 
                 var resource = ExtractResource();
-                machine.outputInventoryTest.Deposit(resource);
+                machine.outputInventory.Deposit(resource);
                 // machine.outputInventory.Add(resource);
                 // onInventoryModified?.Invoke();
             }
@@ -45,7 +45,7 @@ namespace ProcessControl.Industry.Machines
         {
             container.position = Position;
             // machine.outputInventory.Add(container);
-            machine.outputInventoryTest.Deposit(container);
+            machine.outputInventory.Deposit(container);
             // onInventoryModified?.Invoke();
             container.SetVisible(false);
         }

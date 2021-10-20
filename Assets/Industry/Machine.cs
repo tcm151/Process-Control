@@ -33,14 +33,14 @@ namespace ProcessControl.Industry.Machines
             public int maxInputs = 1;
             public Conveyor currentInput;
             public List<Conveyor> inputs = new List<Conveyor>();
-            public Inventory inputInventoryTest;
+            public Inventory inputInventory;
 
             [Header("IOutput")]
             public bool outputEnabled = true;
             public int maxOutputs = 1;
             public Conveyor currentOutput;
             public List<Conveyor> outputs = new List<Conveyor>();
-            public Inventory outputInventoryTest;
+            public Inventory outputInventory;
         }
         [SerializeField] internal Data machine;
 
@@ -53,8 +53,8 @@ namespace ProcessControl.Industry.Machines
 
         private void Awake()
         {
-            machine.inputInventoryTest = new Inventory(machine.inventorySize);
-            machine.outputInventoryTest = new Inventory(machine.inventorySize);
+            machine.inputInventory = new Inventory(machine.inventorySize);
+            machine.outputInventory = new Inventory(machine.inventorySize);
             
             if (machine.recipes.Count >= 1)
             {
@@ -119,14 +119,14 @@ namespace ProcessControl.Industry.Machines
 
         //> DEPOSIT RESOURCES
         // override public bool CanDeposit => machine.inputInventory.Count < machine.inventorySize;
-        override public bool CanDeposit => machine.inputInventoryTest.Count < machine.inventorySize;
+        override public bool CanDeposit => machine.inputInventory.Count < machine.inventorySize;
         override public void Deposit(Container container)
         {
             container.position = this.Position;
             container.SetVisible(false);
-            // machine.inputInventoryTest.Deposit(resource);
+            // machine.inputInventory.Deposit(resource);
             // machine.inputInventory.Add(container);
-            machine.inputInventoryTest.Deposit(container);
+            machine.inputInventory.Deposit(container);
             // onInventoryModified?.Invoke();
             NextInput();
         }
@@ -134,11 +134,11 @@ namespace ProcessControl.Industry.Machines
 
         //> WITHDRAW RESOURCES
         // override public bool CanWithdraw => machine.outputInventory.Count >= 1;
-        override public bool CanWithdraw => machine.outputInventoryTest.Count >= 1;
+        override public bool CanWithdraw => machine.outputInventory.Count >= 1;
         override public Container Withdraw()
         {
             // var resource = machine.outputInventory.TakeFirst();
-            var resource = machine.outputInventoryTest.Withdraw();
+            var resource = machine.outputInventory.Withdraw();
             // onInventoryModified?.Invoke();
             resource.SetVisible(true);
             NextOutput();
@@ -163,8 +163,8 @@ namespace ProcessControl.Industry.Machines
             machine.outputs.ForEach(Destroy);
             // machine.inputInventory.ForEach(Destroy);
             // machine.outputInventory.ForEach(Destroy);
-            machine.inputInventoryTest.Clear();
-            machine.outputInventoryTest.Clear();
+            machine.inputInventory.Clear();
+            machine.outputInventory.Clear();
             // Destroy(gameObject);
             base.OnDestroy();
         }

@@ -16,13 +16,13 @@ namespace ProcessControl.Industry.Machines
             if ((++machine.ticks % (TicksPerMinute / speed)) == 0)
             {
                 machine.ticks = 0;
-                if (machine.inputInventoryTest.Count == 0) return;
+                if (machine.inputInventory.Count == 0) return;
                 
                 
-                var resource = machine.inputInventoryTest.Withdraw();
+                var resource = machine.inputInventory.Withdraw();
                 var plate = EngagePress(resource);
                 if (plate is null) return;
-                machine.outputInventoryTest.Deposit(plate);
+                machine.outputInventory.Deposit(plate);
             }
         }
 
