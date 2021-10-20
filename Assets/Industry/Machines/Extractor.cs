@@ -30,11 +30,13 @@ namespace ProcessControl.Industry.Machines
             if (++machine.ticks > (TicksPerMinute / extractionSpeed))
             {
                 machine.ticks = 0;
-                if (machine.outputInventory.Count >= machine.inventorySize) return;
+                // if (machine.outputInventory.Count >= machine.inventorySize) return;
+                if (machine.outputInventoryTest.Count >= machine.inventorySize) return;
 
                 var resource = ExtractResource();
-                onInventoryModified?.Invoke();
-                machine.outputInventory.Add(resource);
+                machine.outputInventoryTest.Deposit(resource);
+                // machine.outputInventory.Add(resource);
+                // onInventoryModified?.Invoke();
             }
         }
 
@@ -42,8 +44,9 @@ namespace ProcessControl.Industry.Machines
         override public void Deposit(Container container)
         {
             container.position = Position;
-            machine.outputInventory.Add(container);
-            onInventoryModified?.Invoke();
+            // machine.outputInventory.Add(container);
+            machine.outputInventoryTest.Deposit(container);
+            // onInventoryModified?.Invoke();
             container.SetVisible(false);
         }
 

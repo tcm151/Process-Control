@@ -11,8 +11,8 @@ public class AgentManager : MonoBehaviour
     public static Action<Job> QueueJob;
     public static Action<List<Job>> QueueJobs;
 
-    [SerializeField] private List<WorkerAgent> busyWorkers = new List<WorkerAgent>();
-    [SerializeField] private List<WorkerAgent> openWorkers = new List<WorkerAgent>();
+    [SerializeField] private List<Worker> busyWorkers = new List<Worker>();
+    [SerializeField] private List<Worker> openWorkers = new List<Worker>();
     [SerializeField] private List<Job> openJobs = new List<Job>();
 
     private void Awake()
@@ -24,7 +24,7 @@ public class AgentManager : MonoBehaviour
         };
         QueueJobs += jobList => jobList.ForEach(j => openJobs.Add(j));
         
-        openWorkers = FindObjectsOfType<WorkerAgent>().ToList();
+        openWorkers = FindObjectsOfType<Worker>().ToList();
         openWorkers.ForEach(w =>
         {
             w.onJobCompleted += () =>

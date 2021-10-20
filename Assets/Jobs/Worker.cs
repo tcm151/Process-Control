@@ -1,10 +1,11 @@
 ﻿using System;
 using ProcessControl.Pathfinding;
+using UnityEngine;
 
 
 namespace ProcessControl.Jobs
 {
-    public class WorkerAgent : Agent, IWorker
+    public class Worker : Agent, IWorker
     {
         public Job currentJob {get; private set;}
         public void TakeJob(Job newJob)
@@ -20,10 +21,19 @@ namespace ProcessControl.Jobs
             base.Awake();
             onReachedDestination += () =>
             {
-                currentJob.action();
-                currentJob.complete = true;
-                onJobCompleted?.Invoke();
+                
             };
+        }
+
+        private async void CompleteJob()
+        {
+            Debug.Log("Job location reached.");
+            Debug.Log("Starting job.");
+            // await currentJob.action();
+            currentJob.action();
+            Debug.Log("Job complete.");
+            currentJob.complete = true;
+            onJobCompleted?.Invoke();
         }
 
         private void Update()

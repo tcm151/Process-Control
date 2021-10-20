@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
+using ProcessControl.Industry.Conveyors;
 using ProcessControl.Industry.Resources;
 
 
@@ -29,30 +31,33 @@ namespace ProcessControl.Industry.Machines
             [Header("Input")]
             public bool inputEnabled = true;
             public int maxInputs = 1;
-            public Edge currentInput;
-            public List<Edge> inputs = new List<Edge>();
-            public List<Container> inputInventory = new List<Container>();
-            // public Inventory<Entity> inputInventoryTest = new Inventory<Entity>(1, 16);
+            public Conveyor currentInput;
+            public List<Conveyor> inputs = new List<Conveyor>();
+            public Inventory inputInventoryTest;
 
             [Header("IOutput")]
             public bool outputEnabled = true;
             public int maxOutputs = 1;
-            public Edge currentOutput;
-            public List<Edge> outputs = new List<Edge>();
-            public List<Container> outputInventory = new List<Container>();
-            // public Inventory<Entity> outputInventoryTest = new Inventory<Entity>(1, 16);
+            public Conveyor currentOutput;
+            public List<Conveyor> outputs = new List<Conveyor>();
+            public Inventory outputInventoryTest;
         }
         [SerializeField] internal Data machine;
 
-        public Action onInventoryModified;
 
-        public void Build()
+        public async void Build()
         {
             machine.enabled = true;
+            Debug.Log("Starting to build machine...");
+            await Task.Delay(2500);
+            Debug.Log("Machine built.");
         }
 
         private void Awake()
         {
+            machine.inputInventoryTest = new Inventory(machine.maxInputs, machine.inventorySize);
+            machine.outputInventoryTest = new Inventory(machine.maxOutputs, machine.inventorySize);
+            
             if (machine.recipes.Count >= 1)
             {
                 machine.currentRecipe = machine.recipes[0];
@@ -66,8 +71,8 @@ namespace ProcessControl.Industry.Machines
         //> CONNECT INPUT
         override public bool ConnectInput(IO input)
         {
-            if (machine.inputs.Contains(input as Edge)) return false;
-            machine.inputs.Add(input as Edge);
+            if (machine.inputs.Contains(input as Conveyor)) return false;
+            machine.inputs.Add(input as Conveyor);
             machine.currentInput = machine.inputs[0];
             return true;
         }
@@ -75,8 +80,8 @@ namespace ProcessControl.Industry.Machines
         //> DISCONNECT INPUT
         override public bool DisconnectInput(IO input)
         {
-            if (!machine.inputs.Contains(input as Edge)) return false;
-            machine.inputs.Remove(input as Edge);
+            if (!machine.inputs.Contains(input as Conveyor)) return false;
+            machine.inputs.Remove(input as Conveyor);
             machine.currentInput = (machine.inputs.Count >= 1) ? machine.inputs[0] : null;
             return true;
         }
@@ -91,8 +96,8 @@ namespace ProcessControl.Industry.Machines
         //> CONNECT OUTPUT
         override public bool ConnectOutput(IO output)
         {
-            if (machine.outputs.Contains(output as Edge)) return false;
-            machine.outputs.Add(output as Edge);
+            if (machine.outputs.Contains(output as Conveyor)) return false;
+            machine.outputs.Add(output as Conveyor);
             machine.currentOutput = machine.outputs[0];
             return true;
         }
@@ -100,8 +105,8 @@ namespace ProcessControl.Industry.Machines
         //> DISCONNECT OUTPUT
         override public bool DisconnectOutput(IO output)
         {
-            if (!machine.outputs.Contains(output as Edge)) return false;
-            machine.outputs.Remove(output as Edge);
+            if (!machine.outputs.Contains(output as Conveyor)) return false;
+            machine.outputs.Remove(output as Conveyor);
             machine.currentOutput = (machine.outputs.Count >= 1) ? machine.outputs[0] : null;
             return true;
         }
@@ -115,24 +120,28 @@ namespace ProcessControl.Industry.Machines
 
 
         //> DEPOSIT RESOURCES
-        override public bool CanDeposit => machine.inputInventory.Count < machine.inventorySize;
+        // override public bool CanDeposit => machine.inputInventory.Count < machine.inventorySize;
+        override public bool CanDeposit => machine.inputInventoryTest.Count < machine.inventorySize;
         override public void Deposit(Container container)
         {
             container.position = this.Position;
             container.SetVisible(false);
             // machine.inputInventoryTest.Deposit(resource);
-            machine.inputInventory.Add(container);
-            onInventoryModified?.Invoke();
+            // machine.inputInventory.Add(container);
+            machine.inputInventoryTest.Deposit(container);
+            // onInventoryModified?.Invoke();
             NextInput();
         }
 
 
         //> WITHDRAW RESOURCES
-        override public bool CanWithdraw => machine.outputInventory.Count >= 1;
+        // override public bool CanWithdraw => machine.outputInventory.Count >= 1;
+        override public bool CanWithdraw => machine.outputInventoryTest.Count >= 1;
         override public Container Withdraw()
         {
-            var resource = machine.outputInventory.TakeFirst();
-            onInventoryModified?.Invoke();
+            // var resource = machine.outputInventory.TakeFirst();
+            var resource = machine.outputInventoryTest.Withdraw();
+            // onInventoryModified?.Invoke();
             resource.SetVisible(true);
             NextOutput();
             return resource;
@@ -154,8 +163,10 @@ namespace ProcessControl.Industry.Machines
         {
             machine.inputs.ForEach(Destroy);
             machine.outputs.ForEach(Destroy);
-            machine.inputInventory.ForEach(Destroy);
-            machine.outputInventory.ForEach(Destroy);
+            // machine.inputInventory.ForEach(Destroy);
+            // machine.outputInventory.ForEach(Destroy);
+            machine.inputInventoryTest.Clear();
+            machine.outputInventoryTest.Clear();
             // Destroy(gameObject);
             base.OnDestroy();
         }
