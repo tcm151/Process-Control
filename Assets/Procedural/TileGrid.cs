@@ -243,7 +243,8 @@ namespace ProcessControl.Procedural
             var tasks = new List<Task>();
             chunks.ForEach(c => tasks.Add(Task.Factory.StartNew(() => GenerateCells(c.cells))));
             Task.WaitAll(tasks.ToArray());
-            
+
+
             // apply triangulations on main thread
             // chunks.ForEach(c => UpdateTerrainTiles(0, c.cells));
         }
@@ -355,13 +356,13 @@ namespace ProcessControl.Procedural
                 var tile = (cell.biome) switch
                 {
                     // Biome.Forest => ,
-                    Biome.Sand => grid.tiles[9],
-                    Biome.Grass => grid.tiles[5],
-                    Biome.Stone => grid.tiles[1],
+                    Biome.Sand   => grid.tiles[9],
+                    Biome.Grass  => grid.tiles[5],
+                    Biome.Stone  => grid.tiles[1],
                     Biome.Forest => grid.tiles[10],
-                    Biome.Snow => grid.tiles[11],
+                    Biome.Snow   => grid.tiles[11],
                     Biome.Plains => grid.tiles[12],
-                    Biome.Ocean => grid.tiles[0],
+                    Biome.Ocean  => grid.tiles[0],
                     _ => grid.tiles[3],
                 };
                 // var tile = (cell.terrainValue >= grid.terrainNoise[0].threshold) ? grid.tiles[1] : grid.tiles[0];

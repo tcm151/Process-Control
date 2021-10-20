@@ -24,7 +24,6 @@ namespace ProcessControl.Industry.Machines
                     var resources = machine.inputInventory.Withdraw(2);
                     var newResources = ItemFactory.Instance.SpawnItems(machine.currentRecipe.resultingItems, Position);
                     newResources.ForEach(r => machine.outputInventory.Deposit(r));
-                    // onInventoryModified?.Invoke();
                     
                     resources.ForEach(Destroy);
 

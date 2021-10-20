@@ -35,7 +35,7 @@ namespace ProcessControl.Industry.Machines
             public List<Conveyor> inputs = new List<Conveyor>();
             public Inventory inputInventory;
 
-            [Header("IOutput")]
+            [Header("Output")]
             public bool outputEnabled = true;
             public int maxOutputs = 1;
             public Conveyor currentOutput;

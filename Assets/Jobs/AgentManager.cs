@@ -17,12 +17,8 @@ public class AgentManager : MonoBehaviour
 
     private void Awake()
     {
-        QueueJob += (job) =>
-        {
-            // Debug.Log("Queuing new job...");
-            openJobs.Add(job);
-        };
-        QueueJobs += jobList => jobList.ForEach(j => openJobs.Add(j));
+        QueueJob += (job) => openJobs.Add(job);
+        QueueJobs += (jobList) => jobList.ForEach(j => openJobs.Add(j));
         
         openWorkers = FindObjectsOfType<Worker>().ToList();
         openWorkers.ForEach(w =>
