@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   conveyor:
+    enabled: 0
     sleeping: 0
     ticks: 0
     sleepThreshold: 256

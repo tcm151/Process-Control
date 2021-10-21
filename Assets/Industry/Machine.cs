@@ -55,11 +55,7 @@ namespace ProcessControl.Industry.Machines
         {
             machine.inputInventory = new Inventory(machine.inventorySize);
             machine.outputInventory = new Inventory(machine.inventorySize);
-            
-            if (machine.recipes.Count >= 1)
-            {
-                machine.currentRecipe = machine.recipes[0];
-            }
+            if (machine.recipes.Count >= 1) machine.currentRecipe = machine.recipes[0];
         }
 
         //> IO INTERFACE
@@ -69,6 +65,7 @@ namespace ProcessControl.Industry.Machines
         //> CONNECT INPUT
         override public bool ConnectInput(IO input)
         {
+            if (machine.inputs.Count >= machine.maxInputs) return false;
             if (machine.inputs.Contains(input as Conveyor)) return false;
             machine.inputs.Add(input as Conveyor);
             machine.currentInput = machine.inputs[0];
@@ -94,6 +91,7 @@ namespace ProcessControl.Industry.Machines
         //> CONNECT OUTPUT
         override public bool ConnectOutput(IO output)
         {
+            if (machine.outputs.Count >= machine.maxOutputs) return false;
             if (machine.outputs.Contains(output as Conveyor)) return false;
             machine.outputs.Add(output as Conveyor);
             machine.currentOutput = machine.outputs[0];
@@ -124,10 +122,8 @@ namespace ProcessControl.Industry.Machines
         {
             container.position = this.Position;
             container.SetVisible(false);
-            // machine.inputInventory.Deposit(resource);
-            // machine.inputInventory.Add(container);
-            machine.inputInventory.Deposit(container);
-            // onInventoryModified?.Invoke();
+            machine.inputInventory.Deposit(container.item);
+            Destroy(container);
             NextInput();
         }
 
@@ -137,12 +133,11 @@ namespace ProcessControl.Industry.Machines
         override public bool CanWithdraw => machine.outputInventory.Count >= 1;
         override public Container Withdraw()
         {
-            // var resource = machine.outputInventory.TakeFirst();
-            var resource = machine.outputInventory.Withdraw();
-            // onInventoryModified?.Invoke();
-            resource.SetVisible(true);
+            var item = machine.outputInventory.Withdraw();
+            var container = ItemFactory.Instance.SpawnItem(item, this.Position);
+            container.SetVisible(true);
             NextOutput();
-            return resource;
+            return container;
         }
 
         //> SLEEP IF IDLE

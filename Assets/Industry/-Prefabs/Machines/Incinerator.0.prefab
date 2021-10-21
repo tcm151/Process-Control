@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2145074843609341925}
   - component: {fileID: 2145074843609341928}
   m_Layer: 0
-  m_Name: Incinerator
+  m_Name: Incinerator.0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,25 +95,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aa262bfb5344ab68c502d80c3076b22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentCell:
-    buildable: 1
-    node: {fileID: 0}
-    terrainValue: 0
-    resourceDeposits: []
-    position: {x: 0, y: 0, z: 0}
-    coordinates: {x: 0, y: 0}
   machine:
+    enabled: 0
     sleeping: 0
     ticks: 0
     sleepThreshold: 256
+    currentRecipe: {fileID: 0}
+    recipes: []
     inventorySize: 16
     inputEnabled: 1
     maxInputs: 1
     currentInput: {fileID: 0}
     inputs: []
-    inputInventory: []
     outputEnabled: 0
     maxOutputs: 0
     currentOutput: {fileID: 0}
     outputs: []
-    outputInventory: []

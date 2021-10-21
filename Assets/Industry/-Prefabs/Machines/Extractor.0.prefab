@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4533327719062287312}
   - component: {fileID: 4533327719062287313}
   m_Layer: 0
-  m_Name: Extractor
+  m_Name: Extractor.0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,26 +95,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38c4e781df9de0a45ac9252fd27289aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentCell:
-    buildable: 1
-    node: {fileID: 0}
-    terrainValue: 0
-    resourceDeposits: []
-    position: {x: 0, y: 0, z: 0}
-    coordinates: {x: 0, y: 0}
   machine:
+    enabled: 0
     sleeping: 0
     ticks: 0
     sleepThreshold: 256
+    currentRecipe: {fileID: 0}
+    recipes: []
     inventorySize: 8
     inputEnabled: 0
     maxInputs: 0
     currentInput: {fileID: 0}
     inputs: []
-    inputInventory: []
     outputEnabled: 1
     maxOutputs: 1
     currentOutput: {fileID: 0}
     outputs: []
-    outputInventory: []
   extractionSpeed: 16

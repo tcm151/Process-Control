@@ -19,36 +19,25 @@ namespace ProcessControl.Industry.Machines
                 machine.ticks = 0;
                 if (machine.inputInventory.Count == 0) return;
                 
-                if (machine.currentRecipe.requiredItems.TrueForAll(requiredItem => machine.inputInventory.Has(requiredItem, 2)))
-                {
-                    var resources = machine.inputInventory.Withdraw(2);
-                    var newResources = ItemFactory.Instance.SpawnItems(machine.currentRecipe.resultingItems, Position);
-                    newResources.ForEach(r => machine.outputInventory.Deposit(r));
-                    
-                    resources.ForEach(Destroy);
-
-                    // var ingot = Smelt(resource);
-                    // if (ingot is null) return;
-                    // machine.outputInventory.Add(ingot);
-                    // onInventoryModified?.Invoke();
-                }
+                Smelt();
             }
         }
 
-        private Container Smelt(Container container)
+        private void Smelt()
         {
-            if (container.item is Resource resource)
+            if (machine.currentRecipe.requiredItems.TrueForAll(requiredItem => machine.inputInventory.Has(requiredItem, 1)))
             {
-                var instance = ResourceFactory.SpawnResource(resource.material, Resource.Form.Ingot, Position);
-                if (instance is null) Debug.Log("NO PREFAB!");
-                instance.name = $"{resource.material} {resource.form}.{++Container.Count:D4}";
-                
-                Destroy(container);
-                
-                return instance;
-            }
+                var inputItems = machine.inputInventory.Withdraw(2);
+                // var newResources = ItemFactory.Instance.SpawnItems(machine.currentRecipe.resultingItems, Position);
+                machine.currentRecipe.resultingItems.ForEach(r => machine.outputInventory.Deposit(r));
+                    
+                // inputItems.ForEach(Destroy);
 
-            return null;
+                // var ingot = Smelt(resource);
+                // if (ingot is null) return;
+                // machine.outputInventory.Add(ingot);
+                // onInventoryModified?.Invoke();
+            }
         }
     }
 }

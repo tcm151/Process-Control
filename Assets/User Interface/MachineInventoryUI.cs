@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ProcessControl.Construction;
 using ProcessControl.UI;
 using ProcessControl.Industry.Machines;
@@ -21,9 +22,15 @@ namespace ProcessControl
         [SerializeField] private TextMeshProUGUI outputCount;
         [SerializeField] private Image outputIcon;
 
+        public Transform inputSlotsContainer;
+        public Transform outputSlotsContainer;
+        
+        [SerializeField] private InventorySlotUI inventorySlotPrefab;
+
         [SerializeField] private TMP_Dropdown recipeDropdown;
 
         private bool buildMode;
+        private List<InventorySlotUI> activeInventorySlots = new List<InventorySlotUI>();
 
         override protected void Awake()
         {
@@ -42,31 +49,42 @@ namespace ProcessControl
 
         private void UpdateInventory()
         {
-            // Debug.Log("UPDATING INVENTORY!>>>");
+            Debug.Log("UPDATING INVENTORY!");
             
-            if (selectedMachine.machine.inputInventory.Count >= 1)
+            Debug.Log(selectedMachine.machine.inputInventory.items.Count);
+            for (int i = 0; i < selectedMachine.machine.inputInventory.Count; i++)
             {
-                inputIcon.enabled = true;
-                inputIcon.sprite = selectedMachine.machine.inputInventory.FirstItem.sprite;
-                inputCount.text = selectedMachine.machine.inputInventory.Count.ToString();
+                var slot = Instantiate(inventorySlotPrefab, inputSlotsContainer, true);
+                // slot.Set(items[i]);
             }
-            else
-            {
-                inputIcon.enabled = false;
-                inputCount.text = "";
-            }
-
-            if (selectedMachine.machine.outputInventory.Count >= 1)
-            {
-                outputIcon.enabled = true;
-                outputIcon.sprite = selectedMachine.machine.outputInventory.FirstItem.sprite;
-                outputCount.text = selectedMachine.machine.outputInventory.Count.ToString();
-            }
-            else
-            {
-                outputIcon.enabled = false;
-                outputCount.text = "";
-            }
+            
+            
+            
+            
+            
+            // if (selectedMachine.machine.inputInventory.Count >= 1)
+            // {
+            //     inputIcon.enabled = true;
+            //     inputIcon.sprite = selectedMachine.machine.inputInventory.Items[0].sprite;
+            //     inputCount.text = selectedMachine.machine.inputInventory.Count.ToString();
+            // }
+            // else
+            // {
+            //     inputIcon.enabled = false;
+            //     inputCount.text = "";
+            // }
+            //
+            // if (selectedMachine.machine.outputInventory.Count >= 1)
+            // {
+            //     outputIcon.enabled = true;
+            //     outputIcon.sprite = selectedMachine.machine.outputInventory.Items[0].sprite;
+            //     outputCount.text = selectedMachine.machine.outputInventory.Count.ToString();
+            // }
+            // else
+            // {
+            //     outputIcon.enabled = false;
+            //     outputCount.text = "";
+            // }
         }
 
         private void Update()

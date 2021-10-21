@@ -282,5 +282,8 @@ namespace ProcessControl.Tools
         public static float Abs(this ref float value)
             => value = Mathf.Abs(value);
         //------------------------------------------------------------------------------------------
+        public static float Sqrt(this ref float value)
+            => value = Mathf.Sqrt(value);
+        //------------------------------------------------------------------------------------------
     }
 }

@@ -100,6 +100,7 @@ MonoBehaviour:
     sleeping: 0
     ticks: 0
     sleepThreshold: 2048
+    currentRecipe: {fileID: 0}
     recipes:
     - {fileID: 11400000, guid: a3cc2b6a077d2294ba8b1f4b9344421a, type: 2}
     - {fileID: 11400000, guid: 62d3c3956594a174b87ff47cfcc4ed20, type: 2}
@@ -110,10 +111,8 @@ MonoBehaviour:
     maxInputs: 1
     currentInput: {fileID: 0}
     inputs: []
-    inputInventory: []
     outputEnabled: 1
     maxOutputs: 1
     currentOutput: {fileID: 0}
     outputs: []
-    outputInventory: []
   smeltingSpeed: 8

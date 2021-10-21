@@ -44,6 +44,8 @@ namespace ProcessControl.Procedural
 
         public string seed;
         public bool showNeighbours = false;
+
+        public Resource sandResource, stoneResource;
         
         private Camera camera;
         private readonly Stopwatch timer = new Stopwatch();
@@ -304,8 +306,9 @@ namespace ProcessControl.Procedural
                         {
                             noiseValue = noiseValue,
                             quantity = (noiseValue * 16484f).FloorToInt(),
-                            material = rnl.resource.material,
-                            type = rnl.resource.form,
+                            // material = rnl.resource.material,
+                            // type = rnl.resource.form,
+                            resource = rnl.resource,
                         });
                     }
                 });
@@ -314,15 +317,17 @@ namespace ProcessControl.Procedural
                 {
                     case Biome.Sand: cell.resourceDeposits.Add(new ResourceDeposit
                     {
-                        material = Resource.Material.Sand,
-                        type = Resource.Form.Raw,
+                        // material = Resource.Material.Sand,
+                        // type = Resource.Form.Raw,
+                        resource = sandResource,
                         quantity = 10000,
                     }); break;
                     
                     case Biome.Stone: cell.resourceDeposits.Add(new ResourceDeposit
                     {
-                        material = Resource.Material.Stone,
-                        type = Resource.Form.Raw,
+                        // material = Resource.Material.Stone,
+                        // type = Resource.Form.Raw,
+                        resource = stoneResource,
                         quantity = 10000,
                     }); break;
                 }
@@ -331,7 +336,7 @@ namespace ProcessControl.Procedural
                 if (cell.resourceDeposits.Count == 0) tile = grid.tiles[3];
                 else
                 {
-                    tile = (cell.resourceDeposits[0].material) switch
+                    tile = (cell.resourceDeposits[0].resource.material) switch
                     {
                         Resource.Material.Iron     => grid.tiles[4],
                         Resource.Material.Gold     => grid.tiles[6],

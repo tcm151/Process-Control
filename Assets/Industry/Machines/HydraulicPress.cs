@@ -19,24 +19,29 @@ namespace ProcessControl.Industry.Machines
                 if (machine.inputInventory.Count == 0) return;
                 
                 
-                var resource = machine.inputInventory.Withdraw();
-                var plate = EngagePress(resource);
-                if (plate is null) return;
-                machine.outputInventory.Deposit(plate);
+                // var resource = machine.inputInventory.Withdraw();
+                EngagePress();
+                // if (plate is null) return;
+                // machine.outputInventory.Deposit(plate);
             }
         }
 
-        private Container EngagePress(Container container)
+        private Container EngagePress()
         {
-            if (container.item is Resource resource)
+            if (machine.currentRecipe.requiredItems.TrueForAll(requiredItem => machine.inputInventory.Has(requiredItem, 1)))
+            // if (container.item is Resource resource)
             {
-                var instance = ResourceFactory.SpawnResource(resource.material, Resource.Form.Plate, Position);
-                if (instance is null) Debug.Log("NO PREFAB!");
-                instance.name = $"{resource.material} {resource.form}.{++Container.Count:D4}";
+                var inputItems = machine.inputInventory.Withdraw(1);
+                // var instance = ResourceFactory.SpawnResource(resource.material, Resource.Form.Plate, Position);
+                // if (instance is null) Debug.Log("NO PREFAB!");
+                // instance.name = $"{resource.material} {resource.form}.{++Container.Count:D4}";
+                machine.currentRecipe.resultingItems.ForEach(r => machine.outputInventory.Deposit(r));
                 
-                Destroy(container);
+                
+                // inputItems.ForEach(Destroy);
+                // Destroy(container);
 
-                return instance;
+                // return instance;
             }
 
             return null;

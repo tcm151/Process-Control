@@ -3,6 +3,7 @@ using ProcessControl.Industry;
 using ProcessControl.Industry.Conveyors;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Industry.Resources;
+using ProcessControl.Tools;
 using UnityEngine;
 
 public class Storage : Node
@@ -48,13 +49,15 @@ public class Storage : Node
     {
         var resource = inventory.Withdraw();
         if (resource is null) Debug.Log("Inventory empty.");
-        return resource;
+        var container = ItemFactory.Instance.SpawnItem(resource, this.Position);
+        return container;
 
     }
 
     override public bool CanDeposit => !inventory.Full;
     override public void Deposit(Container container)
     {
-        inventory.Deposit(container);
+        inventory.Deposit(container.item);
+        Destroy(container);
     }
 }

@@ -30,34 +30,35 @@ namespace ProcessControl.Industry.Machines
             if (++machine.ticks > (TicksPerMinute / extractionSpeed))
             {
                 machine.ticks = 0;
-                // if (machine.outputInventory.Count >= machine.inventorySize) return;
                 if (machine.outputInventory.Count >= machine.inventorySize) return;
 
-                var resource = ExtractResource();
-                machine.outputInventory.Deposit(resource);
+                ExtractResource();
+                // machine.outputInventory.Deposit(resource);
                 // machine.outputInventory.Add(resource);
                 // onInventoryModified?.Invoke();
             }
         }
 
         //> DEPOSIT RESOURCE INTO INVENTORY
-        override public void Deposit(Container container)
-        {
-            container.position = Position;
-            // machine.outputInventory.Add(container);
-            machine.outputInventory.Deposit(container);
-            // onInventoryModified?.Invoke();
-            container.SetVisible(false);
-        }
+        // override public void Deposit(Container container)
+        // {
+        //     // container.position = Position;
+        //     // machine.outputInventory.Add(container);
+        //     machine.outputInventory.Deposit(container.item);
+        //     Destroy(container);
+        //     // onInventoryModified?.Invoke();
+        //     // container.SetVisible(false);
+        // }
 
         //> EXTRACT RESOURCE FROM THE GROUND
-        private Container ExtractResource()
+        private void ExtractResource()
         {
             parentCell.resourceDeposits[0].quantity--;
-            var prefab = parentCell.resourceDeposits[0];
-            var instance = ResourceFactory.SpawnResource(prefab.material, prefab.type, Position);
-            if (instance is null) Debug.Log("NO PREFAB!");
-            return instance;
+            var resourceDeposit = parentCell.resourceDeposits[0];
+            machine.outputInventory.Deposit(resourceDeposit.resource);
+            // var instance = ResourceFactory.SpawnResource(resourceDeposit.material, resourceDeposit.type, Position);
+            // if (instance is null) Debug.Log("NO PREFAB!");
+            // return instance;
         }
     }
 }
