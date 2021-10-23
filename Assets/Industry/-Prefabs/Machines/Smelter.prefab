@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4718324324168246930}
   - component: {fileID: 8361632907144066225}
   m_Layer: 0
-  m_Name: Smelter.0
+  m_Name: Smelter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,9 +106,9 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 62d3c3956594a174b87ff47cfcc4ed20, type: 2}
     - {fileID: 11400000, guid: 8facd055e581123498015be89ad05bb9, type: 2}
     - {fileID: 11400000, guid: dd98e2c96a6b3954f8aeb8bc14954100, type: 2}
-    inventorySize: 16
+    inventorySize: 64
     inputEnabled: 1
-    maxInputs: 1
+    maxInputs: 2
     currentInput: {fileID: 0}
     inputs: []
     outputEnabled: 1

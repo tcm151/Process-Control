@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3464152779150093709}
   - component: {fileID: 163049205698065749}
   m_Layer: 0
-  m_Name: Hydraulic Press.0
+  m_Name: Hydraulic Press
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
