@@ -168,6 +168,13 @@ namespace ProcessControl.Tools
             y = v2.y,
         };
         //------------------------------------------------------------------------------------------
+        public static Vector3 ToVector3(this Vector2 v2) => new Vector3
+        {
+            x = v2.x,
+            y = v2.y,
+            z = 0f,
+        };
+        //------------------------------------------------------------------------------------------
         public static Vector2 RemapR(this ref Vector2 v2, float lower1, float upper1, float lower2, float upper2)
         {
             v2.x.Remap(lower1, upper1, lower2, upper2);
