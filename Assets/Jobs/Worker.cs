@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using ProcessControl.Pathfinding;
+using ProcessControl.Tools;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 namespace ProcessControl.Jobs
@@ -22,11 +25,30 @@ namespace ProcessControl.Jobs
             onReachedDestination += CompleteJob;
         }
 
+        private void Start()
+        {
+            Roam();
+        }
+
         private async void CompleteJob()
         {
+            if (currentJob is null)
+            {
+                await Task.Delay(2000);
+                Roam();
+                return;
+            }
+            
             await currentJob.order();
             currentJob.complete = true;
+            currentJob = null;
             onJobCompleted?.Invoke();
+            if (currentJob is null) Roam();
+        }
+
+        private void Roam()
+        {
+            currentPath = AStar.FindPath(transform.position, transform.position + Random.insideUnitCircle.ToVector3() * 5f);
         }
     }
 }
