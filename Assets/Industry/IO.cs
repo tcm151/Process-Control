@@ -1,4 +1,5 @@
-﻿using ProcessControl.Industry.Resources;
+﻿using ProcessControl.Industry.Conveyors;
+using ProcessControl.Industry.Resources;
 
 
 namespace ProcessControl.Industry
@@ -12,11 +13,11 @@ namespace ProcessControl.Industry
         public bool DisconnectInput(IO newInput);
         public bool ConnectOutput(IO newOutput);
         public bool DisconnectOutput(IO newOutput);
-        
-        public bool CanWithdraw {get;}
+
+        public bool CanWithdraw();
         public Container Withdraw();
-        
-        public bool CanDeposit {get;}
+
+        public bool CanDeposit(Item item);
         public void Deposit(Container container);
     }
     
@@ -24,8 +25,8 @@ namespace ProcessControl.Industry
     {
         public bool ConnectOutput(IOutput newOutput);
         public bool DisconnectOutput(IOutput oldOutput);
-        
-        public bool CanDeposit {get;}
+
+        public bool CanDeposit(Container container);
         public void Deposit(Container container);
     }
     
@@ -33,8 +34,8 @@ namespace ProcessControl.Industry
     {
         public bool ConnectInput(IInput newInput);
         public bool DisconnectInput(IInput oldInput);
-        
-        public bool CanWithdraw {get;}
+
+        public bool CanWithdraw();
         public Container Withdraw();
     }
 }

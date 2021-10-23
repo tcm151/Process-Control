@@ -14,11 +14,11 @@ namespace ProcessControl.Industry.Conveyors
         abstract override public bool DisconnectInput(IO input);
         abstract override public bool ConnectOutput(IO output);
         abstract override public bool DisconnectOutput(IO output);
-        
-        abstract override public bool CanDeposit {get;}
+
+        abstract override public bool CanDeposit(Item item);
         abstract override public void Deposit(Container container);
-        
-        abstract override public bool CanWithdraw {get;}
+
+        abstract override public bool CanWithdraw();
         abstract override public Container Withdraw();
     }
 }

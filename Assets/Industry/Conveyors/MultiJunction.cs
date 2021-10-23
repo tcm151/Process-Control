@@ -91,7 +91,7 @@ namespace ProcessControl.Industry.Conveyors
 
 
         //> DEPOSIT RESOURCES
-        override public bool CanDeposit => junction.inventory is null;
+        override public bool CanDeposit(Item item) => junction.inventory is null;
         override public void Deposit(Container container)
         {
             container.position = Position;
@@ -100,7 +100,7 @@ namespace ProcessControl.Industry.Conveyors
 
 
         //> WITHDRAW RESOURCES
-        override public bool CanWithdraw => junction.inventory is { };
+        override public bool CanWithdraw() => junction.inventory is { };
         override public Container Withdraw()
         {
             var resource = junction.inventory;
@@ -114,8 +114,8 @@ namespace ProcessControl.Industry.Conveyors
             
             if (++junction.ticks % (TicksPerSecond / 16) == 0)
             {
-                if (Input is {CanWithdraw: false}) NextInput();
-                if (Output is {CanDeposit: false}) NextOutput();
+                if (Input is {} && !CanWithdraw()) NextInput();
+                if (Output is {} && junction.inventory is {} && !CanDeposit(junction.inventory.item)) NextOutput();
             }
         }
 

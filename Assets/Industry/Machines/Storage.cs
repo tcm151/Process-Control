@@ -1,4 +1,5 @@
-﻿using ProcessControl.Graphs;
+﻿using ProcessControl;
+using ProcessControl.Graphs;
 using ProcessControl.Industry;
 using ProcessControl.Industry.Conveyors;
 using ProcessControl.Industry.Machines;
@@ -11,7 +12,7 @@ public class Storage : Node
     private Conveyor input;
     private Conveyor output;
 
-    private Inventory inventory = new Inventory(16 * 64);
+    private Inventory inventory = new Inventory(16, 16 * 64);
 
     override public IO Input => input;
     override public IO Output => output;
@@ -44,17 +45,17 @@ public class Storage : Node
         return true;
     }
 
-    override public bool CanWithdraw => !inventory.Empty;
+    override public bool CanWithdraw() => !inventory.Empty;
     override public Container Withdraw()
     {
-        var resource = inventory.Withdraw();
+        var resource = inventory.Withdraw(null);
         if (resource is null) Debug.Log("Inventory empty.");
         var container = ItemFactory.Instance.SpawnItem(resource, this.Position);
         return container;
 
     }
 
-    override public bool CanDeposit => !inventory.Full;
+    override public bool CanDeposit(Item item) => !inventory.Full;
     override public void Deposit(Container container)
     {
         inventory.Deposit(container.item);

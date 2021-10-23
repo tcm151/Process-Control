@@ -25,18 +25,10 @@ namespace ProcessControl.Industry.Machines
 
         private void Smelt()
         {
-            if (machine.currentRecipe.requiredItems.TrueForAll(requiredItem => machine.inputInventory.Has(requiredItem, 1)))
+            if (machine.currentRecipe.requiredItems.TrueForAll(requiredItem => machine.inputInventory.Contains(requiredItem)))
             {
-                var inputItems = machine.inputInventory.Withdraw(2);
-                // var newResources = ItemFactory.Instance.SpawnItems(machine.currentRecipe.resultingItems, Position);
+                machine.currentRecipe.requiredItems.ForEach(i => machine.inputInventory.Withdraw(i));
                 machine.currentRecipe.resultingItems.ForEach(r => machine.outputInventory.Deposit(r));
-                    
-                // inputItems.ForEach(Destroy);
-
-                // var ingot = Smelt(resource);
-                // if (ingot is null) return;
-                // machine.outputInventory.Add(ingot);
-                // onInventoryModified?.Invoke();
             }
         }
     }

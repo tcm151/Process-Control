@@ -20,10 +20,10 @@ namespace ProcessControl.Graphs
         abstract public bool ConnectOutput(IO output);
         abstract public bool DisconnectOutput(IO output);
 
-        abstract public bool CanDeposit {get;}
+        abstract public bool CanDeposit(Item item);
         abstract public void Deposit(Container container);
-        
-        abstract public bool CanWithdraw {get;}
+
+        abstract public bool CanWithdraw();
         abstract public Container Withdraw();
         
         virtual public void OnDestroy() => Destroy(gameObject);

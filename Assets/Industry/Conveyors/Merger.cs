@@ -10,8 +10,8 @@ namespace ProcessControl.Industry.Conveyors
             base.Deposit(container);
             NextInput();
             
-            if (!Input.CanWithdraw) NextInput();
-            if (!Input.CanWithdraw) NextInput();
+            if (!Input.CanWithdraw()) NextInput();
+            if (!Input.CanWithdraw()) NextInput();
             
         }
     }

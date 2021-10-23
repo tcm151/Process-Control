@@ -48,14 +48,14 @@ namespace ProcessControl.Industry.Conveyors
 
         //> ADD AND REMOVE RESOURCES
         override public void Deposit(Container container) => conveyor.inventory.Add(container);
-        override public bool CanDeposit
+        override public bool CanDeposit(Item item)
             => conveyor.inventory.Count == 0
             || conveyor.inventory.Count < conveyor.inventorySize
             && conveyor.inventory.Count >= 1
             && conveyor.inventory.Last().ticks >= 2 * TicksPerSecond / conveyor.itemsPerMinute;
         
         override public Container Withdraw() => conveyor.inventory.TakeFirst();
-        override public bool CanWithdraw
+        override public bool CanWithdraw()
             => conveyor.inventory.Count >= 1
              && conveyor.inventory[0].ticks > conveyor.distanceBetweenIO * TicksPerSecond / conveyor.itemsPerMinute;
         
@@ -131,7 +131,8 @@ namespace ProcessControl.Industry.Conveyors
             //> EVERY INTERVAL PULL FROM INPUT IF CAPABLE
             if (++conveyor.ticks > (TicksPerMinute / (conveyor.itemsPerMinute * 2)))
             {
-                if (CanDeposit && conveyor.input.CanWithdraw && conveyor.input.Output as Conveyor == this)
+                // if (conveyor.inventory.Count <= 0) return;
+                if (CanDeposit(null) && conveyor.input.CanWithdraw() && conveyor.input.Output as Conveyor == this)
                 {
                     conveyor.ticks = 0;
                     var resource = conveyor.input.Withdraw();
@@ -154,9 +155,9 @@ namespace ProcessControl.Industry.Conveyors
 
 
             //> DEPOSIT FIRST ITEM IN OUTPUT
-            if (!CanWithdraw || !conveyor.output.CanDeposit || conveyor.output.Input as Conveyor != this) return;
+            if (!CanWithdraw() || !conveyor.output.CanDeposit(conveyor.inventory[0].item)) return;
             {
-                if (conveyor.output.Input as Conveyor != this) return;
+                if (conveyor.output is Junction && conveyor.output.Input as Conveyor != this) return;
                 
                 if (conveyor.inventory[0].ticks >= conveyor.distanceBetweenIO * (TicksPerMinute / (float) conveyor.itemsPerMinute))
                 {

@@ -53,8 +53,8 @@ namespace ProcessControl.Industry.Machines
 
         private void Awake()
         {
-            machine.inputInventory = new Inventory(machine.inventorySize);
-            machine.outputInventory = new Inventory(machine.inventorySize);
+            machine.inputInventory = new Inventory(machine.maxInputs, machine.inventorySize);
+            machine.outputInventory = new Inventory(machine.maxOutputs, machine.inventorySize);
             if (machine.recipes.Count >= 1) machine.currentRecipe = machine.recipes[0];
         }
 
@@ -116,8 +116,7 @@ namespace ProcessControl.Industry.Machines
 
 
         //> DEPOSIT RESOURCES
-        // override public bool CanDeposit => machine.inputInventory.Count < machine.inventorySize;
-        override public bool CanDeposit => machine.inputInventory.Count < machine.inventorySize;
+        override public bool CanDeposit(Item item) => machine.inputInventory.CanDeposit(item);
         override public void Deposit(Container container)
         {
             container.position = this.Position;
@@ -130,7 +129,7 @@ namespace ProcessControl.Industry.Machines
 
         //> WITHDRAW RESOURCES
         // override public bool CanWithdraw => machine.outputInventory.Count >= 1;
-        override public bool CanWithdraw => machine.outputInventory.Count >= 1;
+        override public bool CanWithdraw() => machine.outputInventory.Count >= 1;
         override public Container Withdraw()
         {
             var item = machine.outputInventory.Withdraw();

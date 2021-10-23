@@ -31,11 +31,11 @@ namespace ProcessControl.Graphs
         abstract public bool DisconnectInput(IO input);
         abstract public bool ConnectOutput(IO output);
         abstract public bool DisconnectOutput(IO output);
-        
-        abstract public bool CanDeposit {get;}
+
+        abstract public bool CanDeposit(Item item);
         abstract public void Deposit(Container container);
-        
-        abstract public bool CanWithdraw {get;}
+
+        abstract public bool CanWithdraw();
         abstract public Container Withdraw();
 
         //> DELETE THIS NODE
