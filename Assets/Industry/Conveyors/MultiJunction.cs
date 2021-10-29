@@ -13,7 +13,7 @@ namespace ProcessControl.Industry.Conveyors
     {
         // [Serializable] public class Data
         // {
-            public bool enabled;
+            new public bool enabled;
             public bool sleeping;
             public int ticks;
             public int sleepThreshold = 256;

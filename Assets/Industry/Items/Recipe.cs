@@ -9,15 +9,15 @@ namespace ProcessControl.Industry.Resources
     [CreateAssetMenu(menuName = "Resources/Recipe")]
     public class Recipe : ScriptableObject
     {
-        new public string name;
+        // new public string name;
         
-        public List<Item> requiredItems;
-        public List<Item> resultingItems;
+        [FormerlySerializedAs("requiredItems")] public List<ItemAmount> inputItems;
+        [FormerlySerializedAs("resultingItems")] public List<ItemAmount> outputItems;
     }
 
-    [Serializable] public class RecipeItem
+    [Serializable] public class ItemAmount
     {
+        public Item item;
         public int amount;
-        [FormerlySerializedAs("requiredItem")] public Item item;
     }
 }

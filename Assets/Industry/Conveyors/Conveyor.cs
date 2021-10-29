@@ -68,32 +68,32 @@ namespace ProcessControl.Industry.Conveyors
         }
 
         //> CONNECT INPUT
-        override public bool ConnectInput(IO input)
+        override public bool ConnectInput(IO newInput)
         {
-            if (input == input as Node) return false;
-            input = input as Node;
+            if (input == newInput as Node) return false;
+            input = newInput as Node;
             ManageConnection();
             return true;
         }
-        override public bool DisconnectInput(IO input)
+        override public bool DisconnectInput(IO oldInput)
         {
-            if (input != input as Node) return false;
+            if (input != oldInput as Node) return false;
             input = null;
             ManageConnection();
             return true;
         }
 
         //> CONNECT OUTPUT
-        override public bool ConnectOutput(IO output)
+        override public bool ConnectOutput(IO newOutput)
         {
-            if (output == output as Node) return false;
-            output = output as Node;
+            if (output == newOutput as Node) return false;
+            output = newOutput as Node;
             ManageConnection();
             return true;
         }
-        override public bool DisconnectOutput(IO output)
+        override public bool DisconnectOutput(IO oldOutput)
         {
-            if (output != output as Node) return false;
+            if (output != oldOutput as Node) return false;
             output = null;
             ManageConnection();
             return true;

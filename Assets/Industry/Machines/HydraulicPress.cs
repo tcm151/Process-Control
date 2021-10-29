@@ -25,10 +25,10 @@ namespace ProcessControl.Industry.Machines
 
         private Container EngagePress()
         {
-            if (currentRecipe.requiredItems.TrueForAll(requiredItem => inputInventory.Contains(requiredItem)))
+            if (currentRecipe.inputItems.TrueForAll(recipeItem => inputInventory.Contains(recipeItem.item, recipeItem.amount)))
             {
-                currentRecipe.requiredItems.ForEach(i => inputInventory.Withdraw(i));
-                currentRecipe.resultingItems.ForEach(r => outputInventory.Deposit(r));
+                currentRecipe.inputItems.ForEach(i => inputInventory.Withdraw(i.item, i.amount));
+                currentRecipe.outputItems.ForEach(r => outputInventory.Deposit(r.item, r.amount));
                 
                 
             }
