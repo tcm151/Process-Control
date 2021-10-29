@@ -12,29 +12,29 @@ namespace ProcessControl.Industry.Machines
         //> FIXED CALCULATION INTERVAL
         override protected void FixedUpdate()
         {
-            if (!machine.enabled || machine.sleeping) return;
-            if (machine.ticks >= machine.sleepThreshold)
+            if (!enabled || sleeping) return;
+            if (ticks >= sleepThreshold)
             {
-                machine.sleeping = true;
+                sleeping = true;
                 return;
             }
             
             // sleep if ground is depleted
             if (parentCell.resourceDeposits.Count == 0 || parentCell.resourceDeposits[0].quantity <= 0)
             {
-                machine.sleeping = true;
+                sleeping = true;
                 return;
             }
             
             // extraction interval check
-            if (++machine.ticks > (TicksPerMinute / extractionSpeed))
+            if (++ticks > (TicksPerMinute / extractionSpeed))
             {
-                machine.ticks = 0;
-                if (machine.outputInventory.Count >= machine.inventorySize) return;
+                ticks = 0;
+                if (outputInventory.Count >= inventorySize) return;
 
                 ExtractResource();
-                // machine.outputInventory.Deposit(resource);
-                // machine.outputInventory.Add(resource);
+                // outputInventory.Deposit(resource);
+                // outputInventory.Add(resource);
                 // onInventoryModified?.Invoke();
             }
         }
@@ -43,8 +43,8 @@ namespace ProcessControl.Industry.Machines
         // override public void Deposit(Container container)
         // {
         //     // container.position = Position;
-        //     // machine.outputInventory.Add(container);
-        //     machine.outputInventory.Deposit(container.item);
+        //     // outputInventory.Add(container);
+        //     outputInventory.Deposit(container.item);
         //     Destroy(container);
         //     // onInventoryModified?.Invoke();
         //     // container.SetVisible(false);
@@ -55,7 +55,7 @@ namespace ProcessControl.Industry.Machines
         {
             parentCell.resourceDeposits[0].quantity--;
             var resourceDeposit = parentCell.resourceDeposits[0];
-            machine.outputInventory.Deposit(resourceDeposit.resource);
+            outputInventory.Deposit(resourceDeposit.resource);
             // var instance = ResourceFactory.SpawnResource(resourceDeposit.material, resourceDeposit.type, Position);
             // if (instance is null) Debug.Log("NO PREFAB!");
             // return instance;

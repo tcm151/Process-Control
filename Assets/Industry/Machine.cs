@@ -13,10 +13,10 @@ namespace ProcessControl.Industry.Machines
     [SelectionBase]
     public class Machine : Node
     {
-        //> MACHINE DATA CONTAINER
-        [Serializable] public class Data
-        {
-            public bool enabled;
+        // //> MACHINE DATA CONTAINER
+        // [Serializable] public class Data
+        // {
+            new public bool enabled;
             public bool sleeping;
             public int ticks;
             public int sleepThreshold = 256;
@@ -41,87 +41,87 @@ namespace ProcessControl.Industry.Machines
             public Conveyor currentOutput;
             public List<Conveyor> outputs = new List<Conveyor>();
             public Inventory outputInventory;
-        }
-        [SerializeField] internal Data machine;
+        // }
+        // [SerializeField] internal Data machine;
 
 
         public async Task Build(int buildTime)
         {
-            machine.enabled = true;
+            enabled = true;
             await Task.Delay(buildTime);
         }
 
         private void Awake()
         {
-            machine.inputInventory = new Inventory(machine.maxInputs, machine.inventorySize);
-            machine.outputInventory = new Inventory(machine.maxOutputs, machine.inventorySize);
-            if (machine.recipes.Count >= 1) machine.currentRecipe = machine.recipes[0];
+            inputInventory = new Inventory(maxInputs, inventorySize);
+            outputInventory = new Inventory(maxOutputs, inventorySize);
+            if (recipes.Count >= 1) currentRecipe = recipes[0];
         }
 
         //> IO INTERFACE
-        override public IO Input => machine.currentInput;
-        override public IO Output => machine.currentOutput;
+        override public IO Input => currentInput;
+        override public IO Output => currentOutput;
         
         //> CONNECT INPUT
         override public bool ConnectInput(IO input)
         {
-            if (machine.inputs.Count >= machine.maxInputs) return false;
-            if (machine.inputs.Contains(input as Conveyor)) return false;
-            machine.inputs.Add(input as Conveyor);
-            machine.currentInput = machine.inputs[0];
+            if (inputs.Count >= maxInputs) return false;
+            if (inputs.Contains(input as Conveyor)) return false;
+            inputs.Add(input as Conveyor);
+            currentInput = inputs[0];
             return true;
         }
         
         //> DISCONNECT INPUT
         override public bool DisconnectInput(IO input)
         {
-            if (!machine.inputs.Contains(input as Conveyor)) return false;
-            machine.inputs.Remove(input as Conveyor);
-            machine.currentInput = (machine.inputs.Count >= 1) ? machine.inputs[0] : null;
+            if (!inputs.Contains(input as Conveyor)) return false;
+            inputs.Remove(input as Conveyor);
+            currentInput = (inputs.Count >= 1) ? inputs[0] : null;
             return true;
         }
 
         //> SWITCH TO NEXT VALID INPUT
         protected void NextInput()
         {
-            if (!machine.inputEnabled || machine.currentInput is null || machine.maxInputs == 1) return;
-            machine.currentInput = machine.inputs.ItemAfter(machine.currentInput);
+            if (!inputEnabled || currentInput is null || maxInputs == 1) return;
+            currentInput = inputs.ItemAfter(currentInput);
         }
         
         //> CONNECT OUTPUT
         override public bool ConnectOutput(IO output)
         {
-            if (machine.outputs.Count >= machine.maxOutputs) return false;
-            if (machine.outputs.Contains(output as Conveyor)) return false;
-            machine.outputs.Add(output as Conveyor);
-            machine.currentOutput = machine.outputs[0];
+            if (outputs.Count >= maxOutputs) return false;
+            if (outputs.Contains(output as Conveyor)) return false;
+            outputs.Add(output as Conveyor);
+            currentOutput = outputs[0];
             return true;
         }
         
         //> DISCONNECT OUTPUT
         override public bool DisconnectOutput(IO output)
         {
-            if (!machine.outputs.Contains(output as Conveyor)) return false;
-            machine.outputs.Remove(output as Conveyor);
-            machine.currentOutput = (machine.outputs.Count >= 1) ? machine.outputs[0] : null;
+            if (!outputs.Contains(output as Conveyor)) return false;
+            outputs.Remove(output as Conveyor);
+            currentOutput = (outputs.Count >= 1) ? outputs[0] : null;
             return true;
         }
 
         //> SWITCH TO NEXT VALID OUTPUT
         protected void NextOutput()
         {
-            if (!machine.outputEnabled || machine.currentOutput is null || machine.maxOutputs == 1) return;
-            machine.currentOutput = machine.outputs.ItemAfter(machine.currentOutput);
+            if (!outputEnabled || currentOutput is null || maxOutputs == 1) return;
+            currentOutput = outputs.ItemAfter(currentOutput);
         }
 
 
         //> DEPOSIT RESOURCES
-        override public bool CanDeposit(Item item) => machine.inputInventory.CanDeposit(item);
+        override public bool CanDeposit(Item item) => inputInventory.CanDeposit(item);
         override public void Deposit(Container container)
         {
             container.position = this.Position;
             container.SetVisible(false);
-            machine.inputInventory.Deposit(container.item);
+            inputInventory.Deposit(container.item);
             Destroy(container);
             NextInput();
         }
@@ -129,10 +129,10 @@ namespace ProcessControl.Industry.Machines
 
         //> WITHDRAW RESOURCES
         // override public bool CanWithdraw => machine.outputInventory.Count >= 1;
-        override public bool CanWithdraw() => machine.outputInventory.Count >= 1;
+        override public bool CanWithdraw() => outputInventory.Count >= 1;
         override public Container Withdraw()
         {
-            var item = machine.outputInventory.Withdraw();
+            var item = outputInventory.Withdraw();
             var container = ItemFactory.Instance.SpawnItem(item, this.Position);
             container.SetVisible(true);
             NextOutput();
@@ -142,10 +142,10 @@ namespace ProcessControl.Industry.Machines
         //> SLEEP IF IDLE
         virtual protected void FixedUpdate()
         {
-            if (!machine.enabled || machine.sleeping) return;
-            if (machine.ticks >= machine.sleepThreshold)
+            if (!enabled || sleeping) return;
+            if (ticks >= sleepThreshold)
             {
-                machine.sleeping = true;
+                sleeping = true;
                 return;
             }
         }
@@ -153,12 +153,12 @@ namespace ProcessControl.Industry.Machines
         //> DESTROY AND CLEANUP MACHINE
         override public void OnDestroy()
         {
-            machine.inputs.ForEach(Destroy);
-            machine.outputs.ForEach(Destroy);
+            inputs.ForEach(Destroy);
+            outputs.ForEach(Destroy);
             // machine.inputInventory.ForEach(Destroy);
             // machine.outputInventory.ForEach(Destroy);
-            machine.inputInventory.Clear();
-            machine.outputInventory.Clear();
+            inputInventory.Clear();
+            outputInventory.Clear();
             // Destroy(gameObject);
             base.OnDestroy();
         }

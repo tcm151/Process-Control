@@ -13,10 +13,10 @@ namespace ProcessControl.Industry.Machines
         {
             base.FixedUpdate();
 
-            if ((++machine.ticks % (TicksPerMinute / speed)) == 0)
+            if ((++ticks % (TicksPerMinute / speed)) == 0)
             {
-                machine.ticks = 0;
-                if (machine.inputInventory.Count == 0) return;
+                ticks = 0;
+                if (inputInventory.Count == 0) return;
                 
                 
                 EngagePress();
@@ -25,10 +25,10 @@ namespace ProcessControl.Industry.Machines
 
         private Container EngagePress()
         {
-            if (machine.currentRecipe.requiredItems.TrueForAll(requiredItem => machine.inputInventory.Contains(requiredItem)))
+            if (currentRecipe.requiredItems.TrueForAll(requiredItem => inputInventory.Contains(requiredItem)))
             {
-                machine.currentRecipe.requiredItems.ForEach(i => machine.inputInventory.Withdraw(i));
-                machine.currentRecipe.resultingItems.ForEach(r => machine.outputInventory.Deposit(r));
+                currentRecipe.requiredItems.ForEach(i => inputInventory.Withdraw(i));
+                currentRecipe.resultingItems.ForEach(r => outputInventory.Deposit(r));
                 
                 
             }

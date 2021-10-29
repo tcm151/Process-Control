@@ -43,8 +43,7 @@ namespace ProcessControl
 
             recipeDropdown.onValueChanged.AddListener(value =>
             {
-                var machine = selectedMachine.machine;
-                machine.currentRecipe = machine.recipes[value];
+                selectedMachine.currentRecipe = selectedMachine.recipes[value];
             });
 
             inputSlots = inputSlotsContainer.GetComponentsInChildren<InventorySlotUI>();
@@ -55,13 +54,13 @@ namespace ProcessControl
 
         private void UpdateInventory()
         {
-            var inputItems = selectedMachine.machine.inputInventory.GetItems();
+            var inputItems = selectedMachine.inputInventory.GetItems();
             for (int i = 0; i < inputSlots.Length; i++)
             {
                 inputSlots[i].Set((i < inputItems.Count) ? inputItems[i] : new KeyValuePair<Item, int>(null, 0));
             }
 
-            var outputItems = selectedMachine.machine.outputInventory.GetItems();
+            var outputItems = selectedMachine.outputInventory.GetItems();
             for (int i = 0; i < outputSlots.Length; i++)
             {
                 outputSlots[i].Set((i < outputItems.Count) ? outputItems[i] : new KeyValuePair<Item, int>(null, 0));
@@ -78,16 +77,16 @@ namespace ProcessControl
                 if (selectedCell is {occupied: true, node: Machine machine})
                 {
                     selectedMachine = machine;
-                    selectedMachine.machine.inputInventory.onModified += UpdateInventory;
-                    selectedMachine.machine.outputInventory.onModified += UpdateInventory;
+                    selectedMachine.inputInventory.onModified += UpdateInventory;
+                    selectedMachine.outputInventory.onModified += UpdateInventory;
                     
                     recipeDropdown.ClearOptions();
-                    var dropdownOptions = selectedMachine.machine.recipes.ConvertAll(r => r.name);
+                    var dropdownOptions = selectedMachine.recipes.ConvertAll(r => r.name);
                     recipeDropdown.AddOptions(dropdownOptions);
                     
-                    recipeDropdown.transform.parent.gameObject.SetActive(selectedMachine.machine.recipes.Count >= 1);
+                    recipeDropdown.transform.parent.gameObject.SetActive(selectedMachine.recipes.Count >= 1);
 
-                    recipeDropdown.value = selectedMachine.machine.recipes.IndexOf(selectedMachine.machine.currentRecipe);
+                    recipeDropdown.value = selectedMachine.recipes.IndexOf(selectedMachine.currentRecipe);
                     
                     UpdateInventory();
                     Show();

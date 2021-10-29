@@ -11,8 +11,8 @@ namespace ProcessControl.Industry.Conveyors
 {
     public class MultiJunction : Junction
     {
-        [Serializable] public class Data
-        {
+        // [Serializable] public class Data
+        // {
             public bool enabled;
             public bool sleeping;
             public int ticks;
@@ -32,98 +32,98 @@ namespace ProcessControl.Industry.Conveyors
 
             [Header("Inventory")]
             public Container inventory;
-        }
-        [SerializeField] internal Data junction;
+        // }
+        // [SerializeField] internal Data junction;
 
-        override public IO Input => junction.currentInput;
-        override public IO Output => junction.currentOutput;
+        override public IO Input => currentInput;
+        override public IO Output => currentOutput;
 
         public void Build()
         {
-            junction.enabled = true;
+            enabled = true;
         }
         
         //> CONNECT INPUT
         override public bool ConnectInput(IO input)
         {
-            if (junction.inputs.Contains(input as Edge)) return false;
-            junction.inputs.Add(input as Edge);
-            junction.currentInput = junction.inputs[0];
+            if (inputs.Contains(input as Edge)) return false;
+            inputs.Add(input as Edge);
+            currentInput = inputs[0];
             return true;
         }
 
         override public bool DisconnectInput(IO input)
         {
-            if (!junction.inputs.Contains(input as Edge)) return false;
-            junction.inputs.Remove(input as Edge);
-            junction.currentInput = (junction.inputs.Count >= 1) ? junction.inputs[0] : null;
+            if (!inputs.Contains(input as Edge)) return false;
+            inputs.Remove(input as Edge);
+            currentInput = (inputs.Count >= 1) ? inputs[0] : null;
             return true;
         }
         
         protected void NextInput()
         {
-            if (!junction.inputEnabled || junction.currentInput is null || junction.maxInputs == 1) return;
-            junction.currentInput = junction.inputs.ItemAfter(junction.currentInput);
+            if (!inputEnabled || currentInput is null || maxInputs == 1) return;
+            currentInput = inputs.ItemAfter(currentInput);
         }
         
         //> CONNECT OUTPUT
         override public bool ConnectOutput(IO output)
         {
-            if (junction.outputs.Contains(output as Edge)) return false;
-            junction.outputs.Add(output as Edge);
-            junction.currentOutput = junction.outputs[0];
+            if (outputs.Contains(output as Edge)) return false;
+            outputs.Add(output as Edge);
+            currentOutput = outputs[0];
             return true;
         }
         
         override public bool DisconnectOutput(IO output)
         {
-            if (!junction.outputs.Contains(output as Edge)) return false;
-            junction.outputs.Remove(output as Edge);
-            junction.currentOutput = (junction.outputs.Count >= 1) ? junction.outputs[0] : null;
+            if (!outputs.Contains(output as Edge)) return false;
+            outputs.Remove(output as Edge);
+            currentOutput = (outputs.Count >= 1) ? outputs[0] : null;
             return true;
         }
         
         protected void NextOutput()
         {
-            if (!junction.outputEnabled || junction.currentOutput is null || junction.maxOutputs == 1) return;
-            junction.currentOutput = junction.outputs.ItemAfter(junction.currentOutput);
+            if (!outputEnabled || currentOutput is null || maxOutputs == 1) return;
+            currentOutput = outputs.ItemAfter(currentOutput);
         }
 
 
         //> DEPOSIT RESOURCES
-        override public bool CanDeposit(Item item) => junction.inventory is null;
+        override public bool CanDeposit(Item item) => inventory is null;
         override public void Deposit(Container container)
         {
             container.position = Position;
-            junction.inventory = container;
+            inventory = container;
         }
 
 
         //> WITHDRAW RESOURCES
-        override public bool CanWithdraw() => junction.inventory is { };
+        override public bool CanWithdraw() => inventory is { };
         override public Container Withdraw()
         {
-            var resource = junction.inventory;
-            junction.inventory = null;
+            var resource = inventory;
+            inventory = null;
             return resource;
         }
 
         private void FixedUpdate()
         {
-            // if (!junction.enabled) return;
+            // if (!enabled) return;
             
-            if (++junction.ticks % (TicksPerSecond / 16) == 0)
+            if (++ticks % (TicksPerSecond / 16) == 0)
             {
                 if (Input is {} && !CanWithdraw()) NextInput();
-                if (Output is {} && junction.inventory is {} && !CanDeposit(junction.inventory.item)) NextOutput();
+                if (Output is {} && inventory is {} && !CanDeposit(inventory.item)) NextOutput();
             }
         }
 
         override public void OnDestroy()
         {
-            junction.inputs.ForEach(Destroy);
-            junction.outputs.ForEach(Destroy);
-            Destroy(junction.inventory);
+            inputs.ForEach(Destroy);
+            outputs.ForEach(Destroy);
+            Destroy(inventory);
             // Destroy(gameObject);
             base.OnDestroy();
         }
