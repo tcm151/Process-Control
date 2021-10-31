@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
   m_Name: Iron Raw
   m_EditorClassIdentifier: 
+  name: Iron Ore
+  recipe: {fileID: 0}
+  sprite: {fileID: 2107215887564933441, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
+  description: A strong and versatile metal. Used for fabrication and construction.
   material: 1
   form: 0
-  sprite: {fileID: 2107215887564933441, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
-  description: 

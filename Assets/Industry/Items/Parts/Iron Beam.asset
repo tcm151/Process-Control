@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Iron Beam
   m_EditorClassIdentifier: 
   name: Iron Beam
-  recipe: {fileID: 0}
+  recipe: {fileID: 11400000, guid: b2ae93b40f8c4534eb2cb2ff71ad7b56, type: 2}
   sprite: {fileID: 7871495015514009198, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
   description: 
   prefab: {fileID: 0}

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
   m_Name: Machine Frame
   m_EditorClassIdentifier: 
-  name: 
+  name: Machine Frame
   recipe: {fileID: 0}
   sprite: {fileID: 0}
-  description: 
+  description: A generic building block for machines and other more advanced components.
   prefab: {fileID: 0}

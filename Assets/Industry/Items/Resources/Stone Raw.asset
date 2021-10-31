@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
   m_Name: Stone Raw
   m_EditorClassIdentifier: 
-  name: 
+  name: Stone
+  recipe: {fileID: 0}
   sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  description: 
+  description: Stone excavated directly from the ground.
   material: 5
   form: 0

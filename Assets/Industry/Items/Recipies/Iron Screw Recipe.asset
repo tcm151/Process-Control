@@ -12,5 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
   m_Name: Iron Screw Recipe
   m_EditorClassIdentifier: 
-  inputItems: []
-  outputItems: []
+  inputItems:
+  - item: {fileID: 11400000, guid: e0fe1603f8c727b4a89208cc34e8afd2, type: 2}
+    amount: 1
+  outputItems:
+  - item: {fileID: 11400000, guid: 4b0a0abbbf796d64ebdc08130c604530, type: 2}
+    amount: 16

@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
   m_Name: Sand Raw
   m_EditorClassIdentifier: 
-  name: 
+  name: Sand
+  recipe: {fileID: 0}
   sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  description: 
+  description: A fine grain of small rocks.
   material: 6
   form: 0

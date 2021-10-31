@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
   m_Name: Gold Raw
   m_EditorClassIdentifier: Assembly-CSharp:ProcessControl.Industry.Resources:Resource/Properties
+  name: Gold Ore
+  recipe: {fileID: 0}
+  sprite: {fileID: -1419259163969335966, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
+  description: A precious metal. Very valuable.
   material: 2
   form: 0
-  sprite: {fileID: -1419259163969335966, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
-  description: 
