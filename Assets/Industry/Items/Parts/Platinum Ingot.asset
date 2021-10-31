@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
   m_Name: Platinum Ingot
   m_EditorClassIdentifier: Assembly-CSharp:ProcessControl.Industry.Resources:Resource/Properties
-  material: 3
-  form: 1
+  name: 
+  recipe: {fileID: 11400000, guid: dd98e2c96a6b3954f8aeb8bc14954100, type: 2}
   sprite: {fileID: -8937251575758773851, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
   description: 
+  material: 3
+  form: 1

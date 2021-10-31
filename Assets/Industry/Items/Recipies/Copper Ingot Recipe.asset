@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
   m_Name: Copper Ingot Recipe
   m_EditorClassIdentifier: 
-  name: Copper Ingot
-  requiredItems:
-  - {fileID: 11400000, guid: a28bb1276cb93fe4c8476d39d6d16d00, type: 2}
-  - {fileID: 11400000, guid: a28bb1276cb93fe4c8476d39d6d16d00, type: 2}
-  resultingItems:
-  - {fileID: 11400000, guid: aec6421ffede95943bdaf89919ff66b4, type: 2}
+  inputItems:
+  - item: {fileID: 11400000, guid: a28bb1276cb93fe4c8476d39d6d16d00, type: 2}
+    amount: 2
+  outputItems:
+  - item: {fileID: 11400000, guid: aec6421ffede95943bdaf89919ff66b4, type: 2}
+    amount: 1

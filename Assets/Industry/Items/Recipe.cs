@@ -18,6 +18,6 @@ namespace ProcessControl.Industry.Resources
     [Serializable] public class ItemAmount
     {
         public Item item;
-        public int amount;
+        public int amount = 1;
     }
 }

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
-  m_Name: Copper Plate
+  m_Name: Wood
   m_EditorClassIdentifier: 
-  name: 
-  recipe: {fileID: 11400000, guid: 1c61227c2c18f9a4f92478c58af39a50, type: 2}
-  sprite: {fileID: -6291728694041167770, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
-  description: 
-  material: 0
-  form: 2
+  name: Wood
+  recipe: {fileID: 0}
+  sprite: {fileID: 0}
+  description: A strong organic fiberous material.
+  material: 7
+  form: 0

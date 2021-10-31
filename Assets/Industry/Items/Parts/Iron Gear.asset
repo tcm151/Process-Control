@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Iron Gear
   m_EditorClassIdentifier: 
   name: 
+  recipe: {fileID: 11400000, guid: ca5d21e42df1b474e8d2004dcd88615c, type: 2}
   sprite: {fileID: -4446887906909828161, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
   description: 
   material: 1

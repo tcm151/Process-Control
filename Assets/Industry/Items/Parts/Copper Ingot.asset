@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
   m_Name: Copper Ingot
   m_EditorClassIdentifier: 
-  material: 0
-  form: 1
+  name: Copper Ingot
+  recipe: {fileID: 11400000, guid: a3cc2b6a077d2294ba8b1f4b9344421a, type: 2}
   sprite: {fileID: -2190828563271380868, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
   description: 
+  material: 0
+  form: 1

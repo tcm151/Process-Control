@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
   m_Name: Iron Ingot
   m_EditorClassIdentifier: Assembly-CSharp:ProcessControl.Industry.Resources:Resource/Properties
-  material: 1
-  form: 1
+  name: 
+  recipe: {fileID: 11400000, guid: 8facd055e581123498015be89ad05bb9, type: 2}
   sprite: {fileID: 7871495015514009198, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
   description: 
+  material: 1
+  form: 1

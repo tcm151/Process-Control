@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
   m_Name: Conveyor
   m_EditorClassIdentifier: 
-  name: Conveyor
+  name: Conveyor x64
+  recipe: {fileID: 11400000, guid: 783f1129ffa52984cb578895c1712cfa, type: 2}
   sprite: {fileID: 6068227909245428731, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
   description: 
   prefab: {fileID: 5607184206472440130, guid: 79ef1de90a4a6a847aed0fafbeea4a9e, type: 3}
