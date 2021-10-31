@@ -6,12 +6,13 @@ using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Industry.Conveyors;
 using ProcessControl.Industry.Resources;
+using ProcessControl.Jobs;
 
 
 namespace ProcessControl.Industry.Machines
 {
     [SelectionBase]
-    public class Machine : Node
+    public class Machine : Node , IBuildable
     {
         // //> MACHINE DATA CONTAINER
         // [Serializable] public class Data

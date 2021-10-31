@@ -11,38 +11,9 @@ namespace ProcessControl.Industry.Conveyors
 {
     public class MultiJunction : Junction
     {
-        // [Serializable] public class Data
-        // {
-            new public bool enabled;
-            public bool sleeping;
-            public int ticks;
-            public int sleepThreshold = 256;
-            
-            [Header("Input")]
-            public bool inputEnabled = true;
-            public int maxInputs = 1;
-            public Edge currentInput;
-            public List<Edge> inputs = new List<Edge>();
-            
-            [Header("Output")]
-            public bool outputEnabled = true;
-            public int maxOutputs = 1;
-            public Edge currentOutput;
-            public List<Edge> outputs = new List<Edge>();
+        override public IO Input => junction.currentInput;
+        override public IO Output => junction.currentOutput;
 
-            [Header("Inventory")]
-            public Container inventory;
-        // }
-        // [SerializeField] internal Data junction;
-
-        override public IO Input => currentInput;
-        override public IO Output => currentOutput;
-
-        public void Build()
-        {
-            enabled = true;
-        }
-        
         //> CONNECT INPUT
         override public bool ConnectInput(IO input)
         {

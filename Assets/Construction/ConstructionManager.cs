@@ -37,12 +37,49 @@ namespace ProcessControl.Construction
         public Node firstNode, secondNode;
         public Cell firstCell, secondCell;
         
-        private Edge BuildEdgeBetween(Node firstNode, Node secondNode) => Factory.Spawn("Edges", selectedEdge, Node.Center(firstNode, secondNode));
+        private void BuildEdgeBetween(Node firstNode, Node secondNode)
+        {
+            if ((firstNode.parentCell.coords.x == secondNode.parentCell.coords.x) == (firstNode.parentCell.coords.y == secondNode.parentCell.coords.y))
+            {
+                Debug.Log("Conveyors node not in straight line...");
+                return;
+            }
+
+            if (firstNode.parentCell.coords.x == secondNode.parentCell.coords.x)
+            {
+                var currentNode = firstNode;
+                var direction = firstNode.DirectionTo(secondNode);
+                for (int i = 0; i < firstNode.DistanceTo(secondNode); i++)
+                {
+                }
+            }
+
+            var conveyor = Factory.Spawn("Edges", selectedEdge, Node.Center(firstNode, secondNode));
+            firstNode.ConnectOutput(conveyor);
+            conveyor.ConnectInput(firstNode);
+            conveyor.ConnectOutput(secondNode);
+            secondNode.ConnectInput(conveyor);
+            
+            //@ add job for creation
+        }
+
         private Node BuildNodeOn(Cell cell)
         {
-            if (selectedNode is Machine) return Factory.Spawn("Machines", selectedNode, cell.position);
-            if (secondNode is Junction) return Factory.Spawn("Junctions", selectedNode, cell.position);
-            return Factory.Spawn("Nodes", selectedNode, cell.position);
+            Node node;
+            if (selectedNode is Machine) node = Factory.Spawn("Machines", selectedNode, cell.position);
+            else if (secondNode is Junction) node = Factory.Spawn("Junctions", selectedNode, cell.position);
+            else node = Factory.Spawn("Nodes", selectedNode, cell.position);
+            
+            if (node is IBuildable buildable)
+            {
+                AgentManager.QueueJob(new Job
+                {
+                    location = cell.position,
+                    order = () => buildable.Build(1000),
+                });
+            }
+
+            return node;
         }
         
         //> INITIALIZATION
@@ -86,7 +123,6 @@ namespace ProcessControl.Construction
                         Debug.Log("Invalid parentCell!");
                         return;
                     }
-                    
                     if (!firstCell.occupied)
                     {
                         firstNode = firstCell.node = BuildNodeOn(firstCell);
@@ -134,70 +170,12 @@ namespace ProcessControl.Construction
                             bestCell.node = junction;
                             junction.parentCell = bestCell;
                             
-                            var conveyor1 = BuildEdgeBetween(firstNode, junction);
-                            var conveyor2 = BuildEdgeBetween(junction, secondNode);
-                            
-                            firstNode.ConnectOutput(conveyor1);
-                            conveyor1.ConnectInput(firstNode);
-                            conveyor1.ConnectOutput(junction);
-                            junction.ConnectInput(conveyor1);
-                            junction.ConnectOutput(conveyor2);
-                            conveyor2.ConnectInput(junction);
-                            conveyor2.ConnectOutput(secondNode);
-                            secondNode.ConnectInput(conveyor2);
+                            BuildEdgeBetween(firstNode, junction);
+                            BuildEdgeBetween(junction, secondNode);
                         }
                         else
                         {
-                            var conveyor = BuildEdgeBetween(firstNode, secondNode);
-
-                            firstNode.ConnectOutput(conveyor);
-                            conveyor.ConnectInput(firstNode);
-                            conveyor.ConnectOutput(secondNode);
-                            secondNode.ConnectInput(conveyor);
-
-                            // Job job1 = (firstNode) switch
-                            // {
-                            //     Machine m when !m.machine.enabled => new Job {
-                            //         destination = firstCell,
-                            //         action = m.Build,
-                            //     },
-                            //     
-                            //     MultiJunction j when !j.junction.enabled => new Job {
-                            //         destination = firstCell,
-                            //         action = j.Build,
-                            //     },
-                            //     
-                            //     _ => null,
-                            // };
-                            //
-                            // Job job2 = (secondNode) switch
-                            // {
-                            //     Machine m when !m.machine.enabled => new Job
-                            //     {
-                            //         destination = firstCell,
-                            //         action = m.Build,
-                            //     },
-                            //
-                            //     MultiJunction j when !j.junction.enabled => new Job
-                            //     {
-                            //         destination = firstCell,
-                            //         action = j.Build,
-                            //     },
-                            //
-                            //     _ => null,
-                            // };
-                            //
-                            // if (job1 is { }) AgentManager.QueueJob(job1);
-                            // if (job2 is { }) AgentManager.QueueJob(job2);
-                            //
-                            // if (conveyor is Conveyor c)
-                            // {
-                            //     AgentManager.QueueJob(new Job
-                            //     {
-                            //         destination = TileGrid.GetCellAtPosition(c.transform.position),
-                            //         action = c.Build,
-                            //     });
-                            // }
+                            BuildEdgeBetween(firstNode, secondNode);
                         }
                     }
                 }
@@ -217,29 +195,32 @@ namespace ProcessControl.Construction
                     Debug.Log("Not valid cell to build on...");
                     return;
                 }
-                if (cell.occupied)
+                if (cell.occupied && cell.node is Junction )
                 {
-                    Debug.Log("Cell is already occupied.");
-                    return;
-                }
-                
-                
-                var node = BuildNodeOn(cell);
-                node.parentCell = cell;
-                cell.node = node;
+                    Debug.Log("Replacing junction with machine...");
+                    var newNode = BuildNodeOn(cell);
+                    newNode.parentCell = cell;
 
-                // if (node is Junction )
-                // {
-                    //@ replace junctions with machines when applicable
-                // }
-
-                if (node is Machine machine)
-                {
-                    AgentManager.QueueJob(new Job
+                    if (cell.node.Input is { })
                     {
-                        location = cell.position,
-                        order = () => machine.Build(1000),
-                    });
+                        newNode.ConnectInput(cell.node.Input);
+                        cell.node.DisconnectInput(cell.node.Input);
+                    }
+
+                    if (cell.node.Output is { })
+                    {
+                        newNode.ConnectOutput(cell.node.Output);
+                        cell.node.DisconnectOutput(cell.node.Output);
+                    }
+                    
+                    Destroy(cell.node);
+                    cell.node = newNode;
+                }
+                else
+                {
+                    var node = BuildNodeOn(cell);
+                    node.parentCell = cell;
+                    cell.node = node;
                 }
             }
             
