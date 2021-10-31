@@ -64,7 +64,7 @@ namespace ProcessControl.Pathfinding
                         return new List<Vector3> { start };
                     }
                     
-                    Debug.Log($"{finalPath.Count} m path in {timer.ElapsedMilliseconds} ms");
+                    // Debug.Log($"{finalPath.Count} m path in {timer.ElapsedMilliseconds} ms");
                     return finalPath;
                 }
                 
