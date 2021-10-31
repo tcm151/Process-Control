@@ -11,8 +11,8 @@ namespace ProcessControl.Industry.Conveyors
 {
     public class MultiJunction : Junction
     {
-        override public IO Input => junction.currentInput;
-        override public IO Output => junction.currentOutput;
+        override public IO Input => currentInput;
+        override public IO Output => currentOutput;
 
         //> CONNECT INPUT
         override public bool ConnectInput(IO input)

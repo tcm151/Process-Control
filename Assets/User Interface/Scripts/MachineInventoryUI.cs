@@ -16,6 +16,8 @@ namespace ProcessControl
     {
         override public void GoBack() => Hide();
 
+        [SerializeField] private TextMeshProUGUI title;
+        
         [SerializeField] private Machine selectedMachine;
 
         [SerializeField] private TextMeshProUGUI inputCount;
@@ -76,9 +78,12 @@ namespace ProcessControl
                 var selectedCell = TileGrid.GetCellUnderMouse();
                 if (selectedCell is {occupied: true, node: Machine machine})
                 {
+                    
                     selectedMachine = machine;
                     selectedMachine.inputInventory.onModified += UpdateInventory;
                     selectedMachine.outputInventory.onModified += UpdateInventory;
+                    
+                    title.text = selectedMachine.name;
                     
                     recipeDropdown.ClearOptions();
                     var dropdownOptions = selectedMachine.recipes.ConvertAll(r => r.name);

@@ -39,19 +39,18 @@ namespace ProcessControl.Construction
         
         private void BuildEdgeBetween(Node firstNode, Node secondNode)
         {
-            if ((firstNode.parentCell.coords.x == secondNode.parentCell.coords.x) == (firstNode.parentCell.coords.y == secondNode.parentCell.coords.y))
+            firstCell = firstNode.parentCell;
+            secondCell = secondNode.parentCell;
+            
+            if ((firstCell.coords.x == secondCell.coords.x) == (firstCell.coords.y == secondCell.coords.y))
             {
                 Debug.Log("Conveyors node not in straight line...");
                 return;
             }
 
-            if (firstNode.parentCell.coords.x == secondNode.parentCell.coords.x)
+            if (firstCell.coords.x == secondCell.coords.x)
             {
-                var currentNode = firstNode;
-                var direction = firstNode.DirectionTo(secondNode);
-                for (int i = 0; i < firstNode.DistanceTo(secondNode); i++)
-                {
-                }
+                
             }
 
             var conveyor = Factory.Spawn("Edges", selectedEdge, Node.Center(firstNode, secondNode));
@@ -238,16 +237,20 @@ namespace ProcessControl.Construction
                     Debug.Log("Nothing present on selected cell.");
                     return;
                 }
-                
-                AgentManager.QueueJob(new Job
+
+                if (cell.node is IBuildable buildable)
                 {
-                    location = cell.position,
-                    order = () =>
+                    AgentManager.QueueJob(new Job
                     {
-                        Destroy(cell.node);
-                        return Task.CompletedTask;
-                    },
-                });
+                        location = cell.position,
+                        order = () =>
+                        {
+                            buildable.Deconstruct(1000);
+                            return Task.CompletedTask;
+                        },
+                    });
+                }
+                
             }
         }
     }

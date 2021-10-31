@@ -7,6 +7,7 @@ using ProcessControl.Graphs;
 using ProcessControl.Industry.Conveyors;
 using ProcessControl.Industry.Resources;
 using ProcessControl.Jobs;
+#pragma warning disable 108,114
 
 
 namespace ProcessControl.Industry.Machines
@@ -17,7 +18,7 @@ namespace ProcessControl.Industry.Machines
         // //> MACHINE DATA CONTAINER
         // [Serializable] public class Data
         // {
-            new public bool enabled;
+            // public bool enabled;
             public bool sleeping;
             public int ticks;
             public int sleepThreshold = 256;
@@ -45,15 +46,30 @@ namespace ProcessControl.Industry.Machines
         // }
         // [SerializeField] internal Data machine;
 
+        public Color enabledColor = new Color(255, 255, 255, 255);
+        public Color disabledColor = new Color(255, 255, 255, 100);
+        
+        private SpriteRenderer renderer;
+
 
         public async Task Build(int buildTime)
         {
-            enabled = true;
             await Task.Delay(buildTime);
+            renderer.color = enabledColor;
+            enabled = true;
+        }
+        
+        public async Task Deconstruct(int deconstructionTime)
+        {
+            await Task.Delay(deconstructionTime);
+            Destroy(this);
         }
 
         private void Awake()
         {
+            renderer = GetComponent<SpriteRenderer>();
+            renderer.color = disabledColor;
+            
             inputInventory = new Inventory(maxInputs, inventorySize);
             outputInventory = new Inventory(maxOutputs, inventorySize);
             if (recipes.Count >= 1) currentRecipe = recipes[0];

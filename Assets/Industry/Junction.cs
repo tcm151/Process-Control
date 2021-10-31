@@ -11,9 +11,9 @@ namespace ProcessControl.Industry.Conveyors
 {
     abstract public class Junction : Node, IBuildable
     {
-        [Serializable] public class Data
-        {
-            public bool enabled;
+        // [Serializable] public class Data
+        // {
+            // public bool enabled;
             public bool sleeping;
             public int ticks;
             public int sleepThreshold = 256;
@@ -32,8 +32,8 @@ namespace ProcessControl.Industry.Conveyors
 
             [Header("Inventory")]
             public Container inventory;
-        }
-        [SerializeField] internal Data junction;
+        // }
+        // [SerializeField] internal Data junction;
         
         abstract override public IO Input {get;}
         abstract override public IO Output {get;}
@@ -51,8 +51,14 @@ namespace ProcessControl.Industry.Conveyors
         
         public async Task Build(int buildTime)
         {
-            junction.enabled = true;
             await Task.Delay(buildTime);
+            enabled = true;
+        }
+
+        public async Task Deconstruct(int deconstructionTime)
+        {
+            await Task.Delay(deconstructionTime);
+            Destroy(this);
         }
     }
 }

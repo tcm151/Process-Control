@@ -95,24 +95,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c153ecdc8654f99b7e2966dfa70a4cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  machine:
-    enabled: 0
-    sleeping: 0
-    ticks: 0
-    sleepThreshold: 2048
-    currentRecipe: {fileID: 0}
-    recipes:
-    - {fileID: 11400000, guid: 1c61227c2c18f9a4f92478c58af39a50, type: 2}
-    - {fileID: 11400000, guid: 2282f3fcf9fc97844bc46c09a250a4e3, type: 2}
-    - {fileID: 11400000, guid: e60e9dc963de2ce4595ea6aa401a00b6, type: 2}
-    - {fileID: 11400000, guid: 5eb5038374714b54d9cebedb8947291b, type: 2}
-    inventorySize: 16
-    inputEnabled: 1
-    maxInputs: 1
-    currentInput: {fileID: 0}
-    inputs: []
-    outputEnabled: 1
-    maxOutputs: 1
-    currentOutput: {fileID: 0}
-    outputs: []
+  enabled: 0
+  sleeping: 0
+  ticks: 0
+  sleepThreshold: 256
+  currentRecipe: {fileID: 0}
+  recipes: []
+  inventorySize: 8
+  inputEnabled: 1
+  maxInputs: 1
+  currentInput: {fileID: 0}
+  inputs: []
+  outputEnabled: 1
+  maxOutputs: 1
+  currentOutput: {fileID: 0}
+  outputs: []
+  enabledColor: {r: 1, g: 1, b: 1, a: 1}
+  disabledColor: {r: 1, g: 1, b: 1, a: 0.39215687}
   speed: 32

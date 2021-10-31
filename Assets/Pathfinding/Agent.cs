@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ProcessControl.Construction;
 using ProcessControl.Procedural;
 using ProcessControl.Tools;
@@ -55,8 +56,8 @@ namespace ProcessControl.Pathfinding
             if (currentPath is { } && currentPath.Count >= 1)
             {
                 var currentPosition = transform.position;
-                if (currentPosition.DistanceTo(currentPath[0]) < 0.5f) currentPath.RemoveAt(0);
-                if (currentPath.Count == 0)
+                if (currentPosition.DistanceTo(currentPath[0]) < 0.2f) currentPath.RemoveAt(0);
+                if (currentPath.Count == 0 || currentPosition.DistanceTo(currentPath.Last()) < 1.5f)
                 {
                     onReachedDestination?.Invoke();
                     currentPath = null;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using ProcessControl.Graphs;
 using ProcessControl.Industry.Resources;
@@ -22,10 +21,17 @@ namespace ProcessControl.Procedural
 
     public class Cell
     {
+        public enum Direction
+        {
+            NorthWest, North, NorthEast, West, East, SouthWest, South, SouthEast,
+        }
+
         internal Chunk parentChunk;
         
-        // might need to be converted to a bool
-        public bool occupied => node is { } || edges.Count >= 1;
+        public Node node;
+        public readonly List<Edge> edges = new List<Edge>();
+        public bool occupied => (node is {enabled: true}) || (edges.Count >= 1);
+        public bool walkable => node is null || node is {enabled: false};
         public bool buildable = true;
 
         public Vector3 position;
@@ -33,14 +39,12 @@ namespace ProcessControl.Procedural
 
         public Biome biome;
         
-        public Node node;
-        public readonly List<Edge> edges = new List<Edge>();
         public float terrainValue;
         public readonly Cell[] neighbours = new Cell[8];
         public readonly PathInfo pathInfo = new PathInfo();
         public readonly List<ResourceDeposit> resourceDeposits = new List<ResourceDeposit>();
     }
-
+    
     public class PathInfo
     {
         public float gCost = float.MaxValue;

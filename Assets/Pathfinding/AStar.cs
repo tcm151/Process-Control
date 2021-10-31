@@ -29,7 +29,7 @@ namespace ProcessControl.Pathfinding
                 Debug.Log("End tile was not navigable");
                 return new List<Vector3> {start};
             }
-            if (endCell.occupied)
+            if (!endCell.walkable)
             {
                 endCell = endCell.neighbours.ToList().OrderBy(n => DistanceBetween(startCell, n)).First();
             }
@@ -68,7 +68,7 @@ namespace ProcessControl.Pathfinding
                     return finalPath;
                 }
                 
-                if (!currentCell.buildable || currentCell.occupied)
+                if (!currentCell.buildable || !currentCell.walkable)
                 {
                     openList.Remove(currentCell);
                     closedList.Add(currentCell);
@@ -84,7 +84,7 @@ namespace ProcessControl.Pathfinding
                 {
                     if (neighbourCell is null) return;
                     if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) return;
-                    if (!neighbourCell.buildable || neighbourCell.occupied)
+                    if (!neighbourCell.buildable || !neighbourCell.walkable)
                     {
                         closedList.Add(neighbourCell);
                         neighbourCell.pathInfo.Reset();

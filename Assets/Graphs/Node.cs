@@ -8,6 +8,8 @@ namespace ProcessControl.Graphs
 {
     abstract public class Node : MonoBehaviour, IO
     {
+        new public bool enabled;
+        
         protected const int TicksPerSecond = 64;
         protected static int TicksPerMinute => TicksPerSecond * 60;
         
