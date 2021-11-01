@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
   m_Name: Platinum Ingot Recipe
   m_EditorClassIdentifier: 
+  name: Platinum Ingot
+  energyCost: 32
   inputItems:
   - item: {fileID: 11400000, guid: 4dd272e6345039c47a7a23d14143802c, type: 2}
     amount: 2

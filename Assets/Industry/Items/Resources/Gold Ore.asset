@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
-  m_Name: Coal Raw
-  m_EditorClassIdentifier: 
-  name: Coal Ore
+  m_Name: Gold Ore
+  m_EditorClassIdentifier: Assembly-CSharp:ProcessControl.Industry.Resources:Resource/Properties
+  name: Gold Ore
   recipe: {fileID: 0}
-  sprite: {fileID: 8155883353306805422, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
-  description: Compressed carbon ripped from the ground. An excellent fuel.
-  material: 4
+  sprite: {fileID: -1419259163969335966, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
+  description: A precious metal. Very valuable.
+  material: 2
   form: 0

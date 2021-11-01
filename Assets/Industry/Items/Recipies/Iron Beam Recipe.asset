@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
   m_Name: Iron Beam Recipe
   m_EditorClassIdentifier: 
+  name: Iron Beam
+  energyCost: 64
   inputItems:
   - item: {fileID: 11400000, guid: e0fe1603f8c727b4a89208cc34e8afd2, type: 2}
     amount: 1

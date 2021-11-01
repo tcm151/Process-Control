@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
   m_Name: Iron Ingot Recipe
   m_EditorClassIdentifier: 
+  name: Iron Ingot
+  energyCost: 32
   inputItems:
   - item: {fileID: 11400000, guid: c51a5650e0749044b9d105817a988d18, type: 2}
     amount: 2

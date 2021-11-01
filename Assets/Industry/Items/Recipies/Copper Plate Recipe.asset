@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
   m_Name: Copper Plate Recipe
   m_EditorClassIdentifier: 
+  name: Copper Plate
+  energyCost: 32
   inputItems:
   - item: {fileID: 11400000, guid: aec6421ffede95943bdaf89919ff66b4, type: 2}
     amount: 1

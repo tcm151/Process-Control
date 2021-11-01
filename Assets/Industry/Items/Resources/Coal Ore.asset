@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
-  m_Name: Platinum Raw
-  m_EditorClassIdentifier: Assembly-CSharp:ProcessControl.Industry.Resources:Resource/Properties
-  name: Platinum Ore
+  m_Name: Coal Ore
+  m_EditorClassIdentifier: 
+  name: Coal Ore
   recipe: {fileID: 0}
-  sprite: {fileID: 522416265914234524, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
-  description: 
-  material: 3
-  form: 0
+  sprite: {fileID: 8155883353306805422, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
+  description: Compressed carbon ripped from the ground. An excellent fuel.
+  material: 4
+  energy: 256

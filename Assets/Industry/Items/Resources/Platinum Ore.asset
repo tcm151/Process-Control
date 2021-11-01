@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
-  m_Name: Copper Raw
+  m_Name: Platinum Ore
   m_EditorClassIdentifier: Assembly-CSharp:ProcessControl.Industry.Resources:Resource/Properties
-  name: Copper Ore
+  name: Platinum Ore
   recipe: {fileID: 0}
-  sprite: {fileID: -6400913422314380486, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
-  description: A highly conductive metal.
-  material: 0
+  sprite: {fileID: 522416265914234524, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
+  description: 
+  material: 3
   form: 0

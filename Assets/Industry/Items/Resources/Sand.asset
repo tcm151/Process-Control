@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
-  m_Name: Sand Raw
+  m_Name: Sand
   m_EditorClassIdentifier: 
   name: Sand
   recipe: {fileID: 0}

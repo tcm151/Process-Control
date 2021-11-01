@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
   m_Name: Machine Frame Recipe
   m_EditorClassIdentifier: 
+  name: Machine Frame
+  energyCost: 1024
   inputItems:
   - item: {fileID: 11400000, guid: 71ce7f169cba9884c82d9b46e0874827, type: 2}
     amount: 4

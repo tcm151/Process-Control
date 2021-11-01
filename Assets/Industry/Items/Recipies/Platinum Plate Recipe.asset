@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
   m_Name: Platinum Plate Recipe
   m_EditorClassIdentifier: 
+  name: Platinum Plate
+  energyCost: 64
   inputItems:
   - item: {fileID: 11400000, guid: 29786622f0a5cfc46826c998377645c9, type: 2}
     amount: 1

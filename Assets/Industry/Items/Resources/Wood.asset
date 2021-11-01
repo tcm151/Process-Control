@@ -17,4 +17,4 @@ MonoBehaviour:
   sprite: {fileID: 0}
   description: A strong organic fiberous material.
   material: 7
-  form: 0
+  energy: 64
