@@ -21,7 +21,7 @@ namespace ProcessControl.UI
 
         private void Initialize()
         {
-            if (node is null && edge is null) return;
+            if (node is null) return;
 
             button = GetComponent<Button>();
             button.onClick.AddListener(() =>
@@ -31,6 +31,7 @@ namespace ProcessControl.UI
                 ConstructionManager.SetEdgeMode(isEdge);
             });
 
+            if (edge is null) return;
             images = GetComponentsInChildren<Image>();
             images[1].sprite = (edge is { })
                 ? edge.GetComponent<SpriteRenderer>().sprite

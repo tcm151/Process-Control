@@ -48,6 +48,14 @@ namespace ProcessControl.Industry.Conveyors
 
         abstract override public bool CanWithdraw();
         abstract override public Container Withdraw();
+
+        override public void OnDestroy()
+        {
+            inputs.ForEach(Destroy);
+            outputs.ForEach(Destroy);
+            Destroy(inventory);
+            base.OnDestroy();
+        }
         
         public async Task Build(int buildTime)
         {

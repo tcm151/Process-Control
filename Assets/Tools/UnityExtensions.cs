@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -62,6 +63,11 @@ namespace ProcessControl.Tools
             }
             return list;
         }
+        //------------------------------------------------------------------------------------------
+        // public static T Intersect<T>(this List<T> list, Predicate<T> action)
+        // {
+        //     var match = list.Where(i => action(i)).Select()
+        // }
         //------------------------------------------------------------------------------------------
         
         

@@ -215,7 +215,7 @@ namespace ProcessControl.Construction
                     Destroy(cell.node);
                     cell.node = newNode;
                 }
-                else
+                else if (!cell.occupied)
                 {
                     var node = BuildNodeOn(cell);
                     node.parentCell = cell;

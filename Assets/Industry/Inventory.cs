@@ -29,7 +29,7 @@ namespace ProcessControl.Industry.Machines
         private readonly Dictionary<Item, int> items = new Dictionary<Item, int>();
 
         public int Count => items.Sum(i => i.Value);
-        public bool Full => items.Count >= stackSize;
+        public bool Full => Count >= slots * stackSize;
         public bool Empty => items.Count == 0;
         public List<Item> AllItems => items.Keys.ToList();
 
@@ -80,7 +80,7 @@ namespace ProcessControl.Industry.Machines
         public (Item, int) Withdraw(Item match, int amount)
         {
             if (!items.Any(i => i.Value >= amount)) return default;
-            var item = items.FirstOrDefault(i => i.Value >= amount).Key;
+            var item = items.FirstOrDefault(i => i.Key == match && i.Value >= amount).Key;
             if (item is { })
             {
                 items[item] -= amount;

@@ -15,36 +15,31 @@ namespace ProcessControl.Industry.Machines
     [SelectionBase]
     public class Machine : Node , IBuildable
     {
-        // //> MACHINE DATA CONTAINER
-        // [Serializable] public class Data
-        // {
-            // public bool enabled;
-            public bool sleeping;
-            public int ticks;
-            public int sleepThreshold = 256;
+        // [Header("Machine")]
+        public bool sleeping;
+        public int ticks;
+        public int sleepThreshold = 256;
 
-            [Header("Recipes")]
-            public Recipe currentRecipe;
-            public List<Recipe> recipes;
+        [Header("Recipes")]
+        public Recipe currentRecipe;
+        public List<Recipe> recipes;
 
-            [Header("Inventory")]
-            public int inventorySize = 8;
-            
-            [Header("Input")]
-            public bool inputEnabled = true;
-            public int maxInputs = 1;
-            public Conveyor currentInput;
-            public List<Conveyor> inputs = new List<Conveyor>();
-            public Inventory inputInventory;
+        [Header("Inventory")]
+        public int inventorySize = 8;
+        
+        [Header("Input")]
+        public bool inputEnabled = true;
+        public int maxInputs = 1;
+        public Conveyor currentInput;
+        public List<Conveyor> inputs = new List<Conveyor>();
+        public Inventory inputInventory;
 
-            [Header("Output")]
-            public bool outputEnabled = true;
-            public int maxOutputs = 1;
-            public Conveyor currentOutput;
-            public List<Conveyor> outputs = new List<Conveyor>();
-            public Inventory outputInventory;
-        // }
-        // [SerializeField] internal Data machine;
+        [Header("Output")]
+        public bool outputEnabled = true;
+        public int maxOutputs = 1;
+        public Conveyor currentOutput;
+        public List<Conveyor> outputs = new List<Conveyor>();
+        public Inventory outputInventory;
 
         public Color enabledColor = new Color(255, 255, 255, 255);
         public Color disabledColor = new Color(255, 255, 255, 100);
@@ -145,7 +140,6 @@ namespace ProcessControl.Industry.Machines
 
 
         //> WITHDRAW RESOURCES
-        // override public bool CanWithdraw => machine.outputInventory.Count >= 1;
         override public bool CanWithdraw() => outputInventory.Count >= 1;
         override public Container Withdraw()
         {
@@ -159,6 +153,7 @@ namespace ProcessControl.Industry.Machines
         //> SLEEP IF IDLE
         virtual protected void FixedUpdate()
         {
+            //! these may not work properly
             if (!enabled || sleeping) return;
             if (ticks >= sleepThreshold)
             {
@@ -172,11 +167,8 @@ namespace ProcessControl.Industry.Machines
         {
             inputs.ForEach(Destroy);
             outputs.ForEach(Destroy);
-            // machine.inputInventory.ForEach(Destroy);
-            // machine.outputInventory.ForEach(Destroy);
             inputInventory.Clear();
             outputInventory.Clear();
-            // Destroy(gameObject);
             base.OnDestroy();
         }
     }
