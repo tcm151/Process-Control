@@ -95,14 +95,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 104160210eb62dd4b88a0b5099234f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  conveyor:
-    enabled: 0
-    sleeping: 0
-    ticks: 0
-    sleepThreshold: 256
-    itemsPerMinute: 64
-    input: {fileID: 0}
-    output: {fileID: 0}
-    distanceBetweenIO: 0
-    inventorySize: 4
-    inventory: []
+  enabled: 0
+  sleeping: 0
+  ticks: 0
+  sleepThreshold: 256
+  itemsPerMinute: 64
+  input: {fileID: 0}
+  output: {fileID: 0}
+  distanceBetweenIO: 0
+  inventorySize: 8
+  inventory: []

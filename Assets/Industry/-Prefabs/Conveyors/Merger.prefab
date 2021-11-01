@@ -95,25 +95,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05bd1899a6084a6b82f5d5aea70c3986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentCell:
-    buildable: 1
-    node: {fileID: 0}
-    terrainValue: 0
-    resourceValue: 0
-    resourceType: 1
-    resourceDeposit: 0
-    position: {x: 0, y: 0, z: 0}
-    coordinates: {x: 0, y: 0}
-  junction:
-    sleeping: 0
-    ticks: 0
-    sleepThreshold: 256
-    inputEnabled: 1
-    maxInputs: 3
-    currentInput: {fileID: 0}
-    inputs: []
-    outputEnabled: 1
-    maxOutputs: 1
-    currentOutput: {fileID: 0}
-    outputs: []
-    inventory: {fileID: 0}
+  enabled: 0
+  sleeping: 0
+  ticks: 0
+  sleepThreshold: 256
+  inputEnabled: 1
+  maxInputs: 3
+  currentInput: {fileID: 0}
+  inputs: []
+  outputEnabled: 1
+  maxOutputs: 1
+  currentOutput: {fileID: 0}
+  outputs: []
+  inventory: {fileID: 0}

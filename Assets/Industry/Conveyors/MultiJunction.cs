@@ -90,13 +90,13 @@ namespace ProcessControl.Industry.Conveyors
             }
         }
 
-        override public void OnDestroy()
-        {
-            inputs.ForEach(Destroy);
-            outputs.ForEach(Destroy);
-            Destroy(inventory);
-            // Destroy(gameObject);
-            base.OnDestroy();
-        }
+        // override public void OnDestroy()
+        // {
+        //     inputs.ForEach(Destroy);
+        //     outputs.ForEach(Destroy);
+        //     Destroy(inventory);
+        //     // Destroy(gameObject);
+        //     base.OnDestroy();
+        // }
     }
 }

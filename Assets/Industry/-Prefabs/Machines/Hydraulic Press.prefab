@@ -101,7 +101,7 @@ MonoBehaviour:
   sleepThreshold: 256
   currentRecipe: {fileID: 0}
   recipes: []
-  inventorySize: 8
+  inventorySize: 16
   inputEnabled: 1
   maxInputs: 1
   currentInput: {fileID: 0}
