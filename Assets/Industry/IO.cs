@@ -1,5 +1,4 @@
-﻿using ProcessControl.Industry.Conveyors;
-using ProcessControl.Industry.Resources;
+﻿using ProcessControl.Industry.Resources;
 
 
 namespace ProcessControl.Industry

@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Object = UnityEngine.Object;
-using ProcessControl.Industry.Resources;
-using ProcessControl.Tools;
-using UnityEngine;
-using UnityEngine.Rendering;
 
 
 namespace ProcessControl.Industry.Machines

@@ -1,6 +1,4 @@
-using ProcessControl.Industry.Resources;
 using UnityEngine;
-using ProcessControl.Tools;
 
 
 namespace ProcessControl.Industry.Machines

@@ -7,8 +7,6 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
-using UnityEngine.Serialization;
-
 using ProcessControl.Tools;
 using ProcessControl.Industry.Resources;
 

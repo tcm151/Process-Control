@@ -1,6 +1,5 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.Serialization;
+﻿using UnityEngine;
+
 #pragma warning disable 108,114
 
 

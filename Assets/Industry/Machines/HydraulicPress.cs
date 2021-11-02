@@ -1,9 +1,4 @@
-﻿using ProcessControl.Industry.Resources;
-using ProcessControl.Tools;
-using UnityEngine;
-
-
-namespace ProcessControl.Industry.Machines
+﻿namespace ProcessControl.Industry.Machines
 {
     public class HydraulicPress : Machine
     {

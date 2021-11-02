@@ -1,6 +1,5 @@
-using Aseprite;
-using ProcessControl.Industry.Resources;
 using UnityEngine;
+using ProcessControl.Industry.Resources;
 
 namespace ProcessControl
 {
