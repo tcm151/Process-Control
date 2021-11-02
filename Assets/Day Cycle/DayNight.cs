@@ -10,16 +10,17 @@ namespace ProcessControl
         public Light2D sun;
         public AnimationCurve sunCurve;
 
-        [SerializeField] public int ticks;
+        [SerializeField, Range(0, 65_536)] internal int ticks;
+        [SerializeField] private int morning = 8192;
 
-        private void Awake()
-        {
-            ticks = 8192;
-        }
+        private void SetSunIntensity() => sun.intensity = sunCurve.Evaluate(ticks);
+
+        private void Awake() => ticks = morning;
+        private void OnValidate() => SetSunIntensity();
 
         private void FixedUpdate()
         {
-            sun.intensity = sunCurve.Evaluate(ticks);
+            SetSunIntensity();
             
             ticks++;
             if (ticks >= 65_536) ticks = 0;

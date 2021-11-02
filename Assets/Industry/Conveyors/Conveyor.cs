@@ -7,6 +7,7 @@ using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Industry;
 using ProcessControl.Industry.Resources;
+using ProcessControl.Procedural;
 using UnityEngine.Serialization;
 #pragma warning disable 108,114
 
@@ -16,27 +17,25 @@ namespace ProcessControl.Industry.Conveyors
     [SelectionBase]
     public class Conveyor : Edge
     {
-        //> CONVEYOR DATA CONTAINER
-        // [Serializable] public class Data
-        // {
-            public bool enabled;
-            public bool sleeping;
-            public int ticks;
-            public int sleepThreshold = 256;
-            
-            [Header("Conveyor Speed")]
-            public int itemsPerMinute = 8;
+        public bool enabled;
+        public bool sleeping;
+        public int ticks;
+        public int sleepThreshold = 256;
+        
+        [Header("Conveyor Speed")]
+        public int itemsPerMinute = 8;
 
-            [Header("IO")]
-            public Node input;
-            public Node output;
-            public float distanceBetweenIO;
+        [Header("IO")]
+        public Node input;
+        public Node output;
+        public float distanceBetweenIO;
 
-            [Header("Inventory")]
-            public int inventorySize = 8;
-            public List<Container> inventory = new List<Container>();
-        // }
-        // [SerializeField] internal Data conveyor;
+        [Header("Inventory")]
+        public int inventorySize = 8;
+        public List<Container> inventory = new List<Container>();
+
+        public readonly List<Cell> tilesCovered = new List<Cell>();
+
 
         private SpriteRenderer renderer;
         public void SetLength(float size) => renderer.size = new Vector2(size, 1);
@@ -183,6 +182,7 @@ namespace ProcessControl.Industry.Conveyors
         {
             input.DisconnectOutput(this);
             output.DisconnectInput(this);
+            tilesCovered.ForEach(t => t.edges.Remove(this));
             inventory.ForEach(Destroy);
             base.OnDestroy();
         }

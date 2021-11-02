@@ -9,6 +9,7 @@ using ProcessControl.Graphs;
 using ProcessControl.Procedural;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Industry.Conveyors;
+using ProcessControl.Pathfinding;
 
 #pragma warning disable 108,114
 
@@ -48,17 +49,21 @@ namespace ProcessControl.Construction
                 return;
             }
 
-            if (firstCell.coords.x == secondCell.coords.x)
-            {
-                
-            }
-
             var conveyor = Factory.Spawn("Edges", selectedEdge, Node.Center(firstNode, secondNode));
             firstNode.ConnectOutput(conveyor);
             conveyor.ConnectInput(firstNode);
             conveyor.ConnectOutput(secondNode);
             secondNode.ConnectInput(conveyor);
-            
+
+            var conveyorPath = AStar.FindPath(firstCell.position, secondCell.position);
+            conveyorPath.ForEach(
+                p =>
+                {
+                    var tile = TileGrid.GetCellAtPosition(p);
+                    tile.edges.Add(conveyor);
+                    if (conveyor is Conveyor c) c.tilesCovered.Add(tile);
+                });
+
             //@ add job for creation
         }
 
@@ -117,6 +122,11 @@ namespace ProcessControl.Construction
                     firstNode = secondNode = null;
 
                     firstCell = TileGrid.GetCellUnderMouse();
+                }
+
+                //- left click released
+                if (Input.GetKeyUp(KeyCode.Mouse0))
+                {
                     if (firstCell is null || !firstCell.buildable)
                     {
                         Debug.Log("Invalid parentCell!");
@@ -128,11 +138,9 @@ namespace ProcessControl.Construction
                         firstNode.parentCell = firstCell;
                     }
                     else firstNode = firstCell.node;
-                }
-
-                //- left click released
-                if (Input.GetKeyUp(KeyCode.Mouse0))
-                {
+                    
+                    if (firstNode is null) return;
+                     
                     secondCell = TileGrid.GetCellUnderMouse();
                     if (firstCell is null || secondCell is null || !secondCell.buildable) Debug.Log("Invalid parentCell!");
                     else
@@ -252,18 +260,15 @@ namespace ProcessControl.Construction
                 }
                 else if (cell.edges.Count == 1)
                 {
-                    AgentManager.QueueJob
-                    (
-                        new Job
+                    AgentManager.QueueJob(new Job
+                    {
+                        location = cell.position,
+                        order = () =>
                         {
-                            location = cell.position,
-                            order = () =>
-                            {
-                                cell.edges[0]?.Deconstruct(1);
-                                return Task.CompletedTask;
-                            },
-                        }
-                    );
+                            cell.edges[0]?.Deconstruct(1);
+                            return Task.CompletedTask;
+                        },
+                    });
                 }
                 
             }
