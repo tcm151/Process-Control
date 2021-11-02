@@ -74,7 +74,7 @@ namespace ProcessControl.Construction
                 AgentManager.QueueJob(new Job
                 {
                     location = cell.position,
-                    order = () => buildable.Build(1000),
+                    order = () => buildable.Build(1),
                 });
             }
 
@@ -245,10 +245,25 @@ namespace ProcessControl.Construction
                         location = cell.position,
                         order = () =>
                         {
-                            buildable.Deconstruct(1000);
+                            buildable.Deconstruct(1);
                             return Task.CompletedTask;
                         },
                     });
+                }
+                else if (cell.edges.Count == 1)
+                {
+                    AgentManager.QueueJob
+                    (
+                        new Job
+                        {
+                            location = cell.position,
+                            order = () =>
+                            {
+                                cell.edges[0]?.Deconstruct(1);
+                                return Task.CompletedTask;
+                            },
+                        }
+                    );
                 }
                 
             }
