@@ -25,30 +25,39 @@ namespace ProcessControl.Jobs
             onReachedDestination += CompleteJob;
         }
 
-        // private void Start()
-        // {
-        //     Roam();
-        // }
+        private async void Start()
+        {
+            var time = 0f;
+            while ((time += Time.deltaTime) < 5f) await Task.Yield();
+            Roam();
+        }
 
         private async void CompleteJob()
         {
-            // if (currentJob is null)
-            // {
-            //     await Task.Delay(2000);
-            //     // Roam();
-            //     return;
-            // }
+            if (currentJob is null)
+            {
+                var time = 0f;
+                while ((time += Time.deltaTime) < 2.5f) await Task.Yield();
+                Roam();
+                return;
+            }
             
             await currentJob.order();
             currentJob.complete = true;
             currentJob = null;
             onJobCompleted?.Invoke();
-            // if (currentJob is null) Roam();
+
+            // if (currentJob is null)
+            // {
+            //     var time = 0f;
+            //     while ((time += Time.deltaTime) < 2.5f) await Task.Yield();
+            //     Roam();
+            // }
         }
 
-        // private void Roam()
-        // {
-        //     currentPath = AStar.FindPath(transform.position, transform.position + Random.insideUnitCircle.ToVector3() * 5f);
-        // }
+        private void Roam()
+        {
+            currentPath = AStar.FindPath(transform.position, transform.position + Random.insideUnitCircle.ToVector3() * 5f);
+        }
     }
 }

@@ -24,6 +24,12 @@ namespace ProcessControl.Pathfinding
         
         public event Action onReachedDestination;
 
+        public Vector3 position
+        {
+            get => transform.position;
+            set => transform.position = value;
+        }
+        
         private bool buildMode;
         
         virtual protected void Awake()
