@@ -10,17 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
-  m_Name: Conveyor Recipe
+  m_Name: Copper Wire Recipe
   m_EditorClassIdentifier: 
-  name: Conveyor
-  energyCost: 64
+  name: Copper Wire
+  energyCost: 128
   inputItems:
-  - item: {fileID: 11400000, guid: e0fe1603f8c727b4a89208cc34e8afd2, type: 2}
+  - item: {fileID: 11400000, guid: aec6421ffede95943bdaf89919ff66b4, type: 2}
     amount: 1
-  - item: {fileID: 11400000, guid: 9a0c8c00f7f48bb459036ad2f0d220e0, type: 2}
-    amount: 2
-  - item: {fileID: 11400000, guid: 4b0a0abbbf796d64ebdc08130c604530, type: 2}
-    amount: 4
   outputItems:
-  - item: {fileID: 11400000, guid: 04108836106950044b2243783a507520, type: 2}
-    amount: 1
+  - item: {fileID: 11400000, guid: b15cb4fba235c2040b71dccf05e7f086, type: 2}
+    amount: 8

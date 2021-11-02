@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
-  m_Name: Conveyor
+  m_Name: Conveyor x128
   m_EditorClassIdentifier: 
-  name: Conveyor x64
-  recipe: {fileID: 11400000, guid: 783f1129ffa52984cb578895c1712cfa, type: 2}
+  name: Conveyor x128
+  recipe: {fileID: 11400000, guid: c8c6ace95fc903840a5c1bbc0b5d989e, type: 2}
   sprite: {fileID: 6068227909245428731, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
-  description: 
-  prefab: {fileID: 5607184206472440130, guid: 79ef1de90a4a6a847aed0fafbeea4a9e, type: 3}
+  description: Move items from machine to machine at a moderate speed.
+  prefab: {fileID: 654775231712836657, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
