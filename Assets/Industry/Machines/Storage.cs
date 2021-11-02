@@ -21,8 +21,8 @@ public class Storage : Node, IBuildable
     override public IO Output => output;
 
     private SpriteRenderer renderer;
-    public Color enabledColor = new Color(255, 255, 255, 255);
-    public Color disabledColor = new Color(255, 255, 255, 100);
+    // public Color enabledColor = new Color(255, 255, 255, 255);
+    // public Color disabledColor = new Color(255, 255, 255, 100);
 
     private void Awake()
     {

@@ -11,29 +11,24 @@ namespace ProcessControl.Industry.Conveyors
 {
     abstract public class Junction : Node, IBuildable
     {
-        // [Serializable] public class Data
-        // {
-            // public bool enabled;
-            public bool sleeping;
-            public int ticks;
-            public int sleepThreshold = 256;
-            
-            [Header("Input")]
-            public bool inputEnabled = true;
-            public int maxInputs = 1;
-            public Edge currentInput;
-            public List<Edge> inputs = new List<Edge>();
-            
-            [Header("Output")]
-            public bool outputEnabled = true;
-            public int maxOutputs = 1;
-            public Edge currentOutput;
-            public List<Edge> outputs = new List<Edge>();
+        public bool sleeping;
+        public int ticks;
+        public int sleepThreshold = 256;
+        
+        [Header("Input")]
+        public bool inputEnabled = true;
+        public int maxInputs = 1;
+        public Edge currentInput;
+        public List<Edge> inputs = new List<Edge>();
+        
+        [Header("Output")]
+        public bool outputEnabled = true;
+        public int maxOutputs = 1;
+        public Edge currentOutput;
+        public List<Edge> outputs = new List<Edge>();
 
-            [Header("Inventory")]
-            public Container inventory;
-        // }
-        // [SerializeField] internal Data junction;
+        [Header("Inventory")]
+        public Container inventory;
         
         abstract override public IO Input {get;}
         abstract override public IO Output {get;}
@@ -59,13 +54,16 @@ namespace ProcessControl.Industry.Conveyors
         
         public async Task Build(int buildTime)
         {
-            await Task.Delay(buildTime);
+            var time = 0f;
+            while ((time += Time.deltaTime) < buildTime) await Task.Yield();
+            // renderer.color = enabledColor;
             enabled = true;
         }
-
+        
         public async Task Deconstruct(int deconstructionTime)
         {
-            await Task.Delay(deconstructionTime);
+            var time = 0f;
+            while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
             Destroy(this);
         }
     }

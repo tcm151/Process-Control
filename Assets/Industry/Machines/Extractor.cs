@@ -33,22 +33,8 @@ namespace ProcessControl.Industry.Machines
                 if (outputInventory.Count >= inventorySize) return;
 
                 ExtractResource();
-                // outputInventory.Deposit(resource);
-                // outputInventory.Add(resource);
-                // onInventoryModified?.Invoke();
             }
         }
-
-        //> DEPOSIT RESOURCE INTO INVENTORY
-        // override public void Deposit(Container container)
-        // {
-        //     // container.position = Position;
-        //     // outputInventory.Add(container);
-        //     outputInventory.Deposit(container.item);
-        //     Destroy(container);
-        //     // onInventoryModified?.Invoke();
-        //     // container.SetVisible(false);
-        // }
 
         //> EXTRACT RESOURCE FROM THE GROUND
         private void ExtractResource()
@@ -56,9 +42,6 @@ namespace ProcessControl.Industry.Machines
             parentCell.resourceDeposits[0].quantity--;
             var resourceDeposit = parentCell.resourceDeposits[0];
             outputInventory.Deposit(resourceDeposit.resource);
-            // var instance = ResourceFactory.SpawnResource(resourceDeposit.material, resourceDeposit.type, Position);
-            // if (instance is null) Debug.Log("NO PREFAB!");
-            // return instance;
         }
     }
 }

@@ -9,17 +9,13 @@ namespace ProcessControl.Industry.Resources
     //@ TODO convert this to a generic conveyor object
     public class Container : MonoBehaviour
     {
-        public static int Count = 0;
+        [SerializeField] internal Item item;
         
-        public int ticks;
-        
-        internal Item item;
+        internal int ticks;
 
         private SpriteRenderer renderer;
-
-
         public Sprite sprite => item.sprite;
-        
+
         public Vector3 position
         {
             get => transform.position;
@@ -27,7 +23,6 @@ namespace ProcessControl.Industry.Resources
         }
         
         public void SetVisible(bool isVisible) => renderer.enabled = isVisible;
-        public void ToggleVisible() => renderer.enabled = !renderer.enabled;
 
         public void SetItem(Item newItem)
         {
@@ -39,7 +34,7 @@ namespace ProcessControl.Industry.Resources
         private void Awake()
         {
             renderer = GetComponent<SpriteRenderer>();
-            // renderer.sprite = resourceProperties.sprite;
+            renderer.sprite = item.sprite;
         }
 
         public void OnDestroy() => Destroy(gameObject);

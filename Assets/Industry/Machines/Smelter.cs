@@ -9,13 +9,11 @@ namespace ProcessControl.Industry.Machines
     public class Smelter : Machine
     {
         [Header("Smelter")]
-        public List<Resource> acceptedFuels;
-        
         public int energy;
         public int maxEnergy;
-        
+        public List<Resource> acceptedFuels;
         [Range(1, 64)] public float smeltingSpeed;
-
+        
         override protected void FixedUpdate()
         {
             base.FixedUpdate();
@@ -47,6 +45,7 @@ namespace ProcessControl.Industry.Machines
                     Debug.Log($"Added {match.energy} energy...");
                 }
                 
+                if (energy < currentRecipe.energyCost) return;
                 Smelt();
             }
         }

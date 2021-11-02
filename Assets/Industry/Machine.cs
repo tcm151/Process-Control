@@ -15,9 +15,8 @@ namespace ProcessControl.Industry.Machines
     [SelectionBase]
     public class Machine : Node , IBuildable
     {
-        // [Header("Machine")]
-        public bool sleeping;
         public int ticks;
+        public bool sleeping;
         public int sleepThreshold = 256;
 
         [Header("Recipes")]
@@ -25,38 +24,40 @@ namespace ProcessControl.Industry.Machines
         public List<Recipe> recipes;
 
         [Header("Inventory")]
-        public int inventorySize = 8;
+        public int inventorySize = 16;
+        public Inventory inputInventory;
+        public Inventory outputInventory;
         
         [Header("Input")]
         public bool inputEnabled = true;
         public int maxInputs = 1;
         public Conveyor currentInput;
         public List<Conveyor> inputs = new List<Conveyor>();
-        public Inventory inputInventory;
 
         [Header("Output")]
         public bool outputEnabled = true;
         public int maxOutputs = 1;
         public Conveyor currentOutput;
         public List<Conveyor> outputs = new List<Conveyor>();
-        public Inventory outputInventory;
 
-        public Color enabledColor = new Color(255, 255, 255, 255);
-        public Color disabledColor = new Color(255, 255, 255, 100);
+        // public Color enabledColor = new Color(255, 255, 255, 255);
+        // public Color disabledColor = new Color(255, 255, 255, 100);
         
         private SpriteRenderer renderer;
 
 
         public async Task Build(int buildTime)
         {
-            await Task.Delay(buildTime);
+            var time = 0f;
+            while ((time += Time.deltaTime) < buildTime) await Task.Yield();
             renderer.color = enabledColor;
             enabled = true;
         }
         
         public async Task Deconstruct(int deconstructionTime)
         {
-            await Task.Delay(deconstructionTime);
+            var time = 0f;
+            while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
             Destroy(this);
         }
 

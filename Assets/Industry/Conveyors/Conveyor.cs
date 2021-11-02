@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
@@ -62,9 +63,19 @@ namespace ProcessControl.Industry.Conveyors
         override public IO Input => input;
         override public IO Output => output;
 
-        public void Build()
+        public async Task Build(int buildTime)
         {
+            var time = 0f;
+            while ((time += Time.deltaTime) < buildTime) await Task.Yield();
+            // renderer.color = enabledColor;
             enabled = true;
+        }
+        
+        public async Task Deconstruct(int deconstructionTime)
+        {
+            var time = 0f;
+            while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
+            Destroy(this);
         }
 
         //> CONNECT INPUT
