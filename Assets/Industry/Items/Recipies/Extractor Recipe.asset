@@ -10,17 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
-  m_Name: Machine Frame Recipe
+  m_Name: Extractor Recipe
   m_EditorClassIdentifier: 
-  name: Machine Frame
-  energyCost: 1024
+  name: Extractor
+  energyCost: 128
   inputItems:
+  - item: {fileID: 11400000, guid: 7b433afae22022c4f951fe1793b97e8d, type: 2}
+    amount: 1
   - item: {fileID: 11400000, guid: 71ce7f169cba9884c82d9b46e0874827, type: 2}
-    amount: 2
-  - item: {fileID: 11400000, guid: e0fe1603f8c727b4a89208cc34e8afd2, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 9a0c8c00f7f48bb459036ad2f0d220e0, type: 2}
     amount: 2
   - item: {fileID: 11400000, guid: 4b0a0abbbf796d64ebdc08130c604530, type: 2}
-    amount: 8
+    amount: 4
   outputItems:
-  - item: {fileID: 11400000, guid: 7b433afae22022c4f951fe1793b97e8d, type: 2}
+  - item: {fileID: 11400000, guid: 7e18d7f33428c79448ee1e613dae3ce9, type: 2}
     amount: 1

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
-  m_Name: Iron Plate
-  m_EditorClassIdentifier: Assembly-CSharp:ProcessControl.Industry.Resources:Resource/Properties
-  name: 
-  recipe: {fileID: 11400000, guid: e60e9dc963de2ce4595ea6aa401a00b6, type: 2}
-  sprite: {fileID: 1848216903799394968, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
+  m_Name: Iron Gear
+  m_EditorClassIdentifier: 
+  name: Iron Gear
+  recipe: {fileID: 11400000, guid: ca5d21e42df1b474e8d2004dcd88615c, type: 2}
+  sprite: {fileID: -4446887906909828161, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
   description: 
   material: 1
-  form: 2
+  energy: 0

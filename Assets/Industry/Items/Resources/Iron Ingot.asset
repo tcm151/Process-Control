@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b790a2bb91b74bdb843cd8f834534ef3, type: 3}
-  m_Name: Platinum Ingot
+  m_Name: Iron Ingot
   m_EditorClassIdentifier: Assembly-CSharp:ProcessControl.Industry.Resources:Resource/Properties
-  name: 
-  recipe: {fileID: 11400000, guid: dd98e2c96a6b3954f8aeb8bc14954100, type: 2}
-  sprite: {fileID: -8937251575758773851, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
+  name: Iron Ingot
+  recipe: {fileID: 11400000, guid: 8facd055e581123498015be89ad05bb9, type: 2}
+  sprite: {fileID: 7871495015514009198, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
   description: 
-  material: 3
-  form: 1
+  material: 1
+  energy: 0
