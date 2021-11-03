@@ -304,8 +304,6 @@ namespace ProcessControl.Procedural
                         {
                             noiseValue = noiseValue,
                             quantity = (noiseValue * 16484f).FloorToInt(),
-                            // material = rnl.resource.material,
-                            // type = rnl.resource.form,
                             resource = rnl.resource,
                         });
                     }
@@ -315,19 +313,24 @@ namespace ProcessControl.Procedural
                 {
                     case Biome.Sand: cell.resourceDeposits.Add(new ResourceDeposit
                     {
-                        // material = Resource.Material.Sand,
-                        // type = Resource.Form.Raw,
                         resource = sandResource,
                         quantity = 10000,
                     }); break;
                     
                     case Biome.Stone: cell.resourceDeposits.Add(new ResourceDeposit
                     {
-                        // material = Resource.Material.Stone,
-                        // type = Resource.Form.Raw,
                         resource = stoneResource,
                         quantity = 10000,
                     }); break;
+                }
+
+                if (cell.resourceDeposits.Count == 0)
+                {
+                    cell.resourceDeposits.Add(new ResourceDeposit
+                    {
+                        resource = stoneResource,
+                        quantity = 10000,
+                    });
                 }
                 
                 TileBase tile;
@@ -358,7 +361,6 @@ namespace ProcessControl.Procedural
 
                 var tile = (cell.biome) switch
                 {
-                    // Biome.Forest => ,
                     Biome.Sand   => grid.tiles[9],
                     Biome.Grass  => grid.tiles[5],
                     Biome.Stone  => grid.tiles[1],
@@ -368,7 +370,6 @@ namespace ProcessControl.Procedural
                     Biome.Ocean  => grid.tiles[0],
                     _ => grid.tiles[3],
                 };
-                // var tile = (cell.terrainValue >= grid.terrainNoise[0].threshold) ? grid.tiles[1] : grid.tiles[0];
                 grid.tilemaps[map].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
             }
         }

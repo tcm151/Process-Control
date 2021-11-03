@@ -33,7 +33,6 @@ namespace ProcessControl.Industry.Resources
         private void Awake()
         {
             renderer = GetComponent<SpriteRenderer>();
-            renderer.sprite = item.sprite;
         }
 
         public void OnDestroy() => Destroy(gameObject);
