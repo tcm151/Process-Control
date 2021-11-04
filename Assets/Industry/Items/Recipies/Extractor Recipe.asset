@@ -17,12 +17,10 @@ MonoBehaviour:
   inputItems:
   - item: {fileID: 11400000, guid: 7b433afae22022c4f951fe1793b97e8d, type: 2}
     amount: 1
-  - item: {fileID: 11400000, guid: 71ce7f169cba9884c82d9b46e0874827, type: 2}
-    amount: 1
   - item: {fileID: 11400000, guid: 9a0c8c00f7f48bb459036ad2f0d220e0, type: 2}
     amount: 2
   - item: {fileID: 11400000, guid: 4b0a0abbbf796d64ebdc08130c604530, type: 2}
-    amount: 4
+    amount: 2
   outputItems:
   - item: {fileID: 11400000, guid: 7e18d7f33428c79448ee1e613dae3ce9, type: 2}
     amount: 1

@@ -12,7 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
   m_Name: Smelter Recipe
   m_EditorClassIdentifier: 
-  name: 
+  name: Smelter
   energyCost: 0
-  inputItems: []
-  outputItems: []
+  inputItems:
+  - item: {fileID: 11400000, guid: 7b433afae22022c4f951fe1793b97e8d, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 53682c61255ed74449d65034dad78c5a, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: b5a4453a966460c46bb5b08a91399c25, type: 2}
+    amount: 2
+  outputItems:
+  - item: {fileID: 11400000, guid: 9ac08af6586d59a4e860741cea102295, type: 2}
+    amount: 1

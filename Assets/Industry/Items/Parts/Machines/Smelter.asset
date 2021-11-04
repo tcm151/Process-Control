@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
   m_Name: Smelter
   m_EditorClassIdentifier: 
-  name: 
+  name: Smelter
   recipe: {fileID: 0}
   sprite: {fileID: 0}
   description: 

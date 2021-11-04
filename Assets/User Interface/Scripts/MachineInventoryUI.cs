@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using ProcessControl.Construction;
 using ProcessControl.UI;
 using ProcessControl.Industry.Machines;
+using ProcessControl.Industry.Resources;
 using ProcessControl.Procedural;
 using TMPro;
 using UnityEngine;
@@ -57,13 +58,15 @@ namespace ProcessControl
             var inputItems = selectedMachine.inputInventory.GetItems();
             for (int i = 0; i < inputSlots.Length; i++)
             {
-                inputSlots[i].Set((i < inputItems.Count) ? inputItems[i] : new KeyValuePair<Item, int>(null, 0));
+                // inputSlots[i].Set((i < inputItems.Count) ? inputItems[i] : new KeyValuePair<Item, int>(null, 0));
+                inputSlots[i].Set((i < inputItems.Count) ? inputItems[i] : null);
             }
 
             var outputItems = selectedMachine.outputInventory.GetItems();
             for (int i = 0; i < outputSlots.Length; i++)
             {
-                outputSlots[i].Set((i < outputItems.Count) ? outputItems[i] : new KeyValuePair<Item, int>(null, 0));
+                // outputSlots[i].Set((i < outputItems.Count) ? outputItems[i] : new KeyValuePair<Item, int>(null, 0));
+                outputSlots[i].Set((i < outputItems.Count) ? outputItems[i] : null);
             }
         }
 

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
   m_Name: Furnace
   m_EditorClassIdentifier: 
-  name: 
+  name: Furnace
   recipe: {fileID: 0}
-  sprite: {fileID: 0}
-  description: 
+  sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
+  description: A rudimentary stone furnace.
   prefab: {fileID: 0}

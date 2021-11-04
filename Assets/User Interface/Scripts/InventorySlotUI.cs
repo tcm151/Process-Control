@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ProcessControl.Industry.Resources;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,13 +12,14 @@ namespace ProcessControl
         [SerializeField] private Image icon;
         [SerializeField] private TextMeshProUGUI count;
 
-        public void Set(KeyValuePair<Item, int> inventorySlot)
+        public void Set(ItemAmount inventorySlot)
         {
-            if (inventorySlot.Value >= 1)
+            
+            if (inventorySlot is {})
             {
                 icon.enabled = true;
-                icon.sprite = inventorySlot.Key.sprite;
-                count.text = inventorySlot.Value.ToString();
+                icon.sprite = inventorySlot.item.sprite;
+                count.text = inventorySlot.amount.ToString();
             }
             else
             {
