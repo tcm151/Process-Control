@@ -3,7 +3,7 @@
 #pragma warning disable 108,114
 
 
-namespace ProcessControl.Industry.Resources
+namespace ProcessControl.Industry
 {
     //@ TODO convert this to a generic conveyor object
     public class Container : MonoBehaviour

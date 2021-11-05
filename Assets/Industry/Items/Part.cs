@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-namespace ProcessControl.Industry.Resources
+namespace ProcessControl.Industry
 {
     [CreateAssetMenu(menuName = "Resources/Part")]
     public class Part : Item

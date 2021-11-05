@@ -1,16 +1,15 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
-using ProcessControl.Industry.Resources;
 using ProcessControl.Procedural;
 
 #pragma warning disable 108,114
 
 
-namespace ProcessControl.Industry.Conveyors
+namespace ProcessControl.Industry
 {
     [SelectionBase]
     public class Conveyor : Edge

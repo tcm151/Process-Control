@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Graphs;
-using ProcessControl.Industry.Resources;
+using ProcessControl.Industry;
 
 
 namespace ProcessControl.Procedural

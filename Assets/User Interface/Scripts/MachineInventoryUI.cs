@@ -1,12 +1,9 @@
-using System.Collections.Generic;
-using ProcessControl.Construction;
-using ProcessControl.UI;
-using ProcessControl.Industry.Machines;
-using ProcessControl.Industry.Resources;
-using ProcessControl.Procedural;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using ProcessControl.UI;
+using ProcessControl.Industry;
+using ProcessControl.Procedural;
 
 
 namespace ProcessControl

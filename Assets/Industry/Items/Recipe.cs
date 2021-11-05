@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 
-namespace ProcessControl.Industry.Resources
+namespace ProcessControl.Industry
 {
     [CreateAssetMenu(menuName = "Resources/Recipe")]
     public class Recipe : ScriptableObject

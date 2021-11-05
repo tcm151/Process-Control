@@ -7,14 +7,14 @@ using ProcessControl.Jobs;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Procedural;
+using ProcessControl.Pathfinding;
 using ProcessControl.Industry.Machines;
 using ProcessControl.Industry.Conveyors;
-using ProcessControl.Pathfinding;
 
 #pragma warning disable 108,114
 
 
-namespace ProcessControl.Construction
+namespace ProcessControl.Industry
 {
     public class ConstructionManager : MonoBehaviour
     {
@@ -34,9 +34,18 @@ namespace ProcessControl.Construction
         //> EVENT SUBSCRIPTIONS
         public static Action<bool> OnBuildModeChanged;
         
-        
         public Node firstNode, secondNode;
         public Cell firstCell, secondCell;
+        
+        //> INITIALIZATION
+        private void Awake()
+        {
+            camera = Camera.main;
+
+            SetNode += (newSelection) => selectedNode = newSelection;
+            SetEdge += (newSelection) => selectedEdge = newSelection;
+            SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
+        }
         
         private void BuildEdgeBetween(Node firstNode, Node secondNode)
         {
@@ -86,15 +95,6 @@ namespace ProcessControl.Construction
             return node;
         }
         
-        //> INITIALIZATION
-        private void Awake()
-        {
-            camera = Camera.main;
-
-            SetNode += (newSelection) => selectedNode = newSelection;
-            SetEdge += (newSelection) => selectedEdge = newSelection;
-            SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
-        }
 
         //> BUILD STUFF
         private void Update()

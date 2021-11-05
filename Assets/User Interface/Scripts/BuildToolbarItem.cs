@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using ProcessControl.Construction;
 using ProcessControl.Graphs;
+using ProcessControl.Industry;
 
 
 namespace ProcessControl.UI

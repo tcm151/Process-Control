@@ -1,7 +1,7 @@
 using UnityEngine;
-using ProcessControl.Procedural;
-using ProcessControl.Construction;
 using ProcessControl.Tools;
+using ProcessControl.Industry;
+using ProcessControl.Procedural;
 
 #pragma warning disable 108,114
 

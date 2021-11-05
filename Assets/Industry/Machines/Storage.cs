@@ -1,13 +1,9 @@
 ﻿using System.Threading.Tasks;
-using ProcessControl;
-using ProcessControl.Graphs;
-using ProcessControl.Industry;
-using ProcessControl.Industry.Conveyors;
-using ProcessControl.Industry.Machines;
-using ProcessControl.Industry.Resources;
+using UnityEngine;
 using ProcessControl.Jobs;
 using ProcessControl.Tools;
-using UnityEngine;
+using ProcessControl.Graphs;
+using ProcessControl.Industry;
 #pragma warning disable 108,114
 
 public class Storage : Node, IBuildable

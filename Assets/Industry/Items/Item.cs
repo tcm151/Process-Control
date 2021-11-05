@@ -1,7 +1,6 @@
 using UnityEngine;
-using ProcessControl.Industry.Resources;
 
-namespace ProcessControl
+namespace ProcessControl.Industry
 {
     public class Item : ScriptableObject
     {

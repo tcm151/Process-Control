@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
 using UnityEngine;
 using ProcessControl.Industry;
-using ProcessControl.Industry.Resources;
-
 
 namespace ProcessControl.Graphs
 {

@@ -1,4 +1,5 @@
-﻿using ProcessControl.Construction;
+﻿using ProcessControl.Industry;
+
 
 namespace ProcessControl.UI
 {

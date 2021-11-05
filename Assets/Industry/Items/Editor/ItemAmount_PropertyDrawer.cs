@@ -1,6 +1,5 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using ProcessControl.Industry.Resources;
 
 
 namespace ProcessControl.Industry.Items.Editor

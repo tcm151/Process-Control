@@ -62,10 +62,11 @@ namespace ProcessControl.Tools
             return list;
         }
         //------------------------------------------------------------------------------------------
-        // public static T Intersect<T>(this List<T> list, Predicate<T> action)
-        // {
-        //     var match = list.Where(i => action(i)).Select()
-        // }
+        public static T NextAfter<T>(this List<T> list, T currentItem)
+        {
+            var index = list.IndexOf(currentItem);
+            return (index < list.Count - 1) ? list[index + 1] : default;
+        }
         //------------------------------------------------------------------------------------------
         
         
@@ -99,7 +100,7 @@ namespace ProcessControl.Tools
                 }
             }
         }
-        
+        //------------------------------------------------------------------------------------------
         public static List<R> SelectMany<T, R>(this T[,] array2d, Func<T, R[,]> selector)
         {
             var listOfSelections = new List<R>();

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using ProcessControl.Industry.Resources;
 
 
-namespace ProcessControl.Industry.Machines
+namespace ProcessControl.Industry
 {
     public class Inventory
     {

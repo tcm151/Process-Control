@@ -3,12 +3,12 @@ using System.Linq;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using ProcessControl.Industry;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 using ProcessControl.Tools;
-using ProcessControl.Industry.Resources;
 
 #pragma warning disable 108, 114
 

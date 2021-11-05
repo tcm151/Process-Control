@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using ProcessControl.Industry.Resources;
 using UnityEngine;
+using ProcessControl.Industry;
 
 
 namespace ProcessControl.Tools

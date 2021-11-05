@@ -1,8 +1,7 @@
-using System.Collections.Generic;
-using ProcessControl.Industry.Resources;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using ProcessControl.Industry;
 
 
 namespace ProcessControl

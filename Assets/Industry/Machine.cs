@@ -1,15 +1,13 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
+using ProcessControl.Jobs;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
-using ProcessControl.Industry.Conveyors;
-using ProcessControl.Industry.Resources;
-using ProcessControl.Jobs;
 #pragma warning disable 108,114
 
 
-namespace ProcessControl.Industry.Machines
+namespace ProcessControl.Industry
 {
     [SelectionBase]
     public class Machine : Node , IBuildable

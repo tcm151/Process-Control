@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using System.Collections.Generic;
+using UnityEngine;
 using ProcessControl.Jobs;
 using ProcessControl.Graphs;
-using ProcessControl.Industry.Resources;
-using UnityEngine;
 
 
-namespace ProcessControl.Industry.Conveyors
+namespace ProcessControl.Industry
 {
     abstract public class Junction : Node, IBuildable
     {

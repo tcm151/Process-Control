@@ -1,5 +1,4 @@
 ﻿using ProcessControl.Graphs;
-using ProcessControl.Industry.Resources;
 using ProcessControl.Tools;
 
 
