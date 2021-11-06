@@ -37,8 +37,8 @@ namespace ProcessControl.Pathfinding
 
         private void FixedUpdate()
         {
-            // if (currentPath is { } && currentPath.Count >= 1)
-            if (currentPath is { })
+            if (currentPath is { } && currentPath.Count >= 1)
+            // if (currentPath is { })
             {
                 var currentPosition = transform.position;
                 if (currentPosition.DistanceTo(currentPath[0]) < 0.25f) currentPath.RemoveAt(0);

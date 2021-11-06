@@ -36,7 +36,7 @@ namespace ProcessControl.Pathfinding
 
             if (startCell == endCell)
             {
-                Debug.Log("Close enough already!");
+                // Debug.Log("Close enough already!");
                 return new List<Vector3> {end};
             }
             
@@ -47,6 +47,27 @@ namespace ProcessControl.Pathfinding
             var closedList = new List<Cell>();
 
             startCell.pathInfo.Set(0, DistanceBetween(startCell, endCell), null);
+
+            if (startCell.occupied || !startCell.walkable)
+            {
+                startCell.neighbours.ForEach(neighbourCell =>
+                {
+                    if (neighbourCell is null) return;
+                    if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) return;
+                    if (!neighbourCell.buildable || !neighbourCell.walkable)
+                    {
+                        closedList.Add(neighbourCell);
+                        neighbourCell.pathInfo.Reset();
+                        return;
+                    }
+
+                    neighbourCell.pathInfo.Reset();
+                    float gCost = startCell.pathInfo.gCost + DistanceBetween(startCell, neighbourCell);
+                    if (gCost >= neighbourCell.pathInfo.gCost) return;
+                    neighbourCell.pathInfo.Set(gCost, DistanceBetween(neighbourCell, endCell), startCell);
+                    if (!openList.Contains(neighbourCell)) openList.Add(neighbourCell);
+                });
+            }
 
             var steps = 0;
             var minimumDistance = DistanceBetween(startCell, endCell);
@@ -103,7 +124,7 @@ namespace ProcessControl.Pathfinding
             Debug.Log($"Open list emptied after {timer.ElapsedMilliseconds} ms");
             return new List<Vector3> { start };
         }
-
+        
         //> RETRACE THE AND RETURN SHORTEST PATH
         private static List<Vector3> RetracePath(Cell endCell)
         {

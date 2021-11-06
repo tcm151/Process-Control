@@ -28,8 +28,8 @@ namespace ProcessControl.Jobs
         private async void Start()
         {
             var time = 0f;
-            while ((time += Time.deltaTime) < 5f && currentJob is null) await Task.Yield();
-            Roam();
+            while ((time += Time.deltaTime) < 5f) await Task.Yield();
+            if (currentPath is null) Roam();
         }
 
         private async void CompleteJob()
