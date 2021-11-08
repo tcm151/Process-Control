@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
+  m_Name: Stone Furnace Recipe
+  m_EditorClassIdentifier: 
+  name: Furnace
+  energyCost: 0
+  inputItems:
+  - item: {fileID: 11400000, guid: 376c1a2de7d508742b20577457a87521, type: 2}
+    amount: 8
+  - item: {fileID: 11400000, guid: b5a4453a966460c46bb5b08a91399c25, type: 2}
+    amount: 1
+  outputItems:
+  - item: {fileID: 11400000, guid: 53682c61255ed74449d65034dad78c5a, type: 2}
+    amount: 1
