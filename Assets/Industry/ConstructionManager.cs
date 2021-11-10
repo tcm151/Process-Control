@@ -8,9 +8,6 @@ using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Procedural;
 using ProcessControl.Pathfinding;
-using ProcessControl.Industry.Machines;
-using ProcessControl.Industry.Conveyors;
-
 #pragma warning disable 108,114
 
 
@@ -47,6 +44,7 @@ namespace ProcessControl.Industry
             SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
         }
         
+        //> BUILD EDGE BETWEEN TWO NODES
         private void BuildEdgeBetween(Node firstNode, Node secondNode)
         {
             firstCell = firstNode.parentCell;
@@ -58,7 +56,7 @@ namespace ProcessControl.Industry
                 return;
             }
 
-            var conveyor = Factory.Spawn("Edges", selectedEdge, Node.Center(firstNode, secondNode));
+            var conveyor = Factory.Spawn("Conveyors", selectedEdge, Node.Center(firstNode, secondNode));
             firstNode.ConnectOutput(conveyor);
             conveyor.ConnectInput(firstNode);
             conveyor.ConnectOutput(secondNode);
@@ -73,14 +71,21 @@ namespace ProcessControl.Industry
                     if (conveyor is Conveyor c) c.tilesCovered.Add(tile);
                 });
 
-            //@ add job for creation
+            if (conveyor is IBuildable buildable)
+            {
+                AgentManager.QueueJob(new Job
+                {
+                    location = conveyor.Center,
+                    order = () => buildable.Build(1),
+                });
+            }
         }
 
         private Node BuildNodeOn(Cell cell)
         {
             Node node;
             if (selectedNode is Machine) node = Factory.Spawn("Machines", selectedNode, cell.position);
-            else if (secondNode is Junction) node = Factory.Spawn("Junctions", selectedNode, cell.position);
+            else if (selectedNode is Junction) node = Factory.Spawn("Junctions", selectedNode, cell.position);
             else node = Factory.Spawn("Nodes", selectedNode, cell.position);
             
             if (node is IBuildable buildable)
