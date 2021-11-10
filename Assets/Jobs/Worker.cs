@@ -10,7 +10,7 @@ namespace ProcessControl.Jobs
 {
     public class Worker : Agent, IWorker
     {
-        public Job currentJob {get; private set;}
+        internal Job currentJob;
         public void TakeJob(Job newJob)
         {
             currentJob = newJob;
@@ -25,38 +25,26 @@ namespace ProcessControl.Jobs
             onReachedDestination += CompleteJob;
         }
 
-        private async void Start()
-        {
-            var time = 0f;
-            while ((time += Time.deltaTime) < 5f) await Task.Yield();
-            if (currentPath is null) Roam();
-        }
+        private void Start() => Roam();
 
         private async void CompleteJob()
         {
             if (currentJob is null)
-            {
-                var time = 0f;
-                while ((time += Time.deltaTime) < 2.5f && currentJob is null) await Task.Yield();
+            { 
                 Roam();
                 return;
             }
             
             await currentJob.order();
             currentJob.complete = true;
-            currentJob = null;
             onJobCompleted?.Invoke();
-
-            // if (currentJob is null)
-            // {
-            //     var time = 0f;
-            //     while ((time += Time.deltaTime) < 2.5f) await Task.Yield();
-            //     Roam();
-            // }
         }
 
-        private void Roam()
+        private async void Roam()
         {
+            var time = 0f;
+            while ((time += Time.deltaTime) < 2.5f) await Task.Yield();
+            if (currentJob is {}) return;
             currentPath = AStar.FindPath(transform.position, transform.position + Random.insideUnitCircle.ToVector3() * 5f);
         }
     }
