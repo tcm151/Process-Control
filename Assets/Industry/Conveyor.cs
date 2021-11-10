@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
+using ProcessControl.Jobs;
 using ProcessControl.Procedural;
-
 #pragma warning disable 108,114
 
 
 namespace ProcessControl.Industry
 {
     [SelectionBase]
-    public class Conveyor : Edge
+    public class Conveyor : Edge, IBuildable
     {
         public bool enabled;
         public bool sleeping;
@@ -37,10 +37,22 @@ namespace ProcessControl.Industry
         private SpriteRenderer renderer;
         public void SetLength(float size) => renderer.size = new Vector2(size, 1);
 
+        public Vector3 position
+        {
+            get => transform.position;
+            set => transform.position = value;
+        }
+        
         override public float Length { get
         {
             if (input is null || output is null) return 0;
             return Node.DistanceBetween(input, output);
+        }}
+        
+        override public Vector3 Center { get
+        {
+            if (input is null || output is null) return default;
+            return Node.Center(input, output);
         }}
 
         //> ADD AND REMOVE RESOURCES
@@ -59,7 +71,7 @@ namespace ProcessControl.Industry
         override public IO Input => input;
         override public IO Output => output;
 
-        public async Task Build(int buildTime)
+        public async Task Build(float buildTime)
         {
             var time = 0f;
             while ((time += Time.deltaTime) < buildTime) await Task.Yield();

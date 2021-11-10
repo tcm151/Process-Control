@@ -25,6 +25,7 @@ namespace ProcessControl.Graphs
         }
         
         abstract public float Length {get;}
+        abstract public Vector3 Center {get;}
 
         abstract public IO Input {get;}
         abstract public IO Output {get;}
