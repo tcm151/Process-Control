@@ -14,7 +14,7 @@ namespace ProcessControl.Audio
         [SerializeField] private SFX[] soundEffects;
         [SerializeField] private AudioSource[] sources;
 
-        //- EVENT TRIGGERS
+        //- EVENT HOOKS
         public static Action<string> PlaySFX;
         public static Action<SFX, int, bool> PlayTrack;
         public static Action<string, int, bool> FindAndPlayTrack;
@@ -27,10 +27,10 @@ namespace ProcessControl.Audio
             PlaySFX += OnPlaySFX;
             PlayTrack += OnPlayTrack;
             FindAndPlayTrack += OnPlayTrack;
-
-            // StartCoroutine(CR_StartMusic(true));
         }
 
+        //@ convert to async/await
+        //> PLAY A PLAYLIST OF MUSIC
         private IEnumerator CR_PlayPlaylist(List<SFX> tracks, int channel, bool shuffle, bool loop)
         {
             if (tracks.Count <= 0) Debug.LogWarning("Provided <colors=yellow>NO SONGS</color> in Playlist!");
@@ -58,6 +58,7 @@ namespace ProcessControl.Audio
             OnPlayTrack(sfx, channel, loop);
         }
 
+        //> PLAY SOUND EFFECT
         private void OnPlayTrack(SFX sfx, int channel, bool loop = false)
         {
             if (sfx is { })
@@ -71,10 +72,10 @@ namespace ProcessControl.Audio
             else Debug.LogWarning($"Unable to find track: <color=yellow>\"{name}\"</color>");
         }
 
-
         //> STOP STREAM SOUND CLIP
         private void Stop(int stream) => sources[stream].Stop();
 
+        //> SET THE VOLUME IN PLAYER PREFERENCES
         private static void SetVolume(float volume)
         {
             AudioListener.volume = volume;

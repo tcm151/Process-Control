@@ -88,6 +88,7 @@ namespace ProcessControl.Industry
                     location = conveyor.Center,
                     order = () => buildable.Build(1),
                 });
+                // AgentManager.QueueJob(new ConstructionJob(conveyor.Center, buildable, 1));
             }
         }
 
@@ -107,6 +108,7 @@ namespace ProcessControl.Industry
                     location = cell.position,
                     order = () => buildable.Build(1),
                 });
+                // AgentManager.QueueJob(new ConstructionJob(cell.position, buildable, 1));
             }
             
             if (node is Machine machine) builtMachines.Add(machine);
@@ -292,16 +294,13 @@ namespace ProcessControl.Industry
                         },
                     });
                 }
-                else if (cell.edges.Count == 1)
+                else if (cell.edges.Count == 1 && cell.edges[0] is Conveyor c)
                 {
                     AgentManager.QueueJob(new Job
                     {
                         location = cell.position,
-                        order = () =>
-                        {
-                            cell.edges[0]?.Deconstruct(1);
-                            return Task.CompletedTask;
-                        },
+                        order = () => c.Deconstruct(1),
+                            // return Task.CompletedTask;
                     });
                 }
                 

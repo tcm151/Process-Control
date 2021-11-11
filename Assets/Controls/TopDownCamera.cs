@@ -1,6 +1,5 @@
 using UnityEngine;
 using ProcessControl.Tools;
-
 #pragma warning disable 108,114
 
 
@@ -25,6 +24,7 @@ namespace ProcessControl.Controls
         public float maxAcceleration = 1;
         public float maxDeceleration = 1;
 
+        // PRIVATE VARIABLES
         private bool dragging;
         private Camera camera;
         private Vector3 mouseInput;
@@ -83,27 +83,31 @@ namespace ProcessControl.Controls
             {
                 transform.position -= mouseInput * (dragSpeed * camera.orthographicSize);
             }
-            //> USING WASD/ARROW KEYS
-            else
+            else //> USING WASD/ARROW KEYS
             {
-
                 var currentVelocity = rigidbody.velocity;
+                
+                // calculate velocity based on movement input
                 Vector2 desiredVelocity = (movementInput) switch
                 {
                     { x: 0f, y: 0f } => Vector2.zero,
                     _ => movementInput * (maxPanSpeed * camera.orthographicSize),
                 };
+                
+                // calculate acceleration based on movement input
                 float acceleration = (movementInput) switch
                 {
                     { x: 0f, y: 0f } => maxDeceleration,
                     _ => maxAcceleration,
                 };
 
+                // if moving away from current velocity use maximum acceleration
                 if (Vector2.Dot(movementInput, currentVelocity) < 0)
                 {
                     acceleration = maxAcceleration;
                 }
 
+                // apply the maths
                 currentVelocity.MoveTowardsR(desiredVelocity, acceleration * Time.deltaTime);
                 rigidbody.velocity = currentVelocity.ClampMagnitudeR(maxPanSpeed);
             }
