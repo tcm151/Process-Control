@@ -15,8 +15,6 @@ namespace ProcessControl.Procedural
         
         public int quantity;
         public Resource resource;
-        // public Resource.Material material;
-        // public Resource.Form type;
     }
 
     public class Cell

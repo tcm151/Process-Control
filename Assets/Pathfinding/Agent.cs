@@ -12,7 +12,7 @@ namespace ProcessControl.Pathfinding
     {
         public float speed = 2.5f;
         
-        public enum Movement { Idle, Moving }
+        // public enum Movement { Idle, Moving }
         // public enum Task { DoingJob, AcceptingJob }
         
         protected List<Vector3> currentPath = new List<Vector3>();
@@ -31,7 +31,7 @@ namespace ProcessControl.Pathfinding
         virtual protected void Awake()
         {
             // movement = Movement.Idle;
-            ConstructionManager.OnBuildModeChanged += isEnabled => buildMode = isEnabled;
+            ConstructionManager.OnBuildModeChanged += (isEnabled) => buildMode = isEnabled;
 
         }
 

@@ -31,12 +31,11 @@ namespace ProcessControl.Pathfinding
             }
             if (!endCell.walkable)
             {
+                Debug.Log("Destination was not walkable, using next closest walkable cell");
                 endCell = endCell.neighbours.ToList().OrderBy(n => DistanceBetween(startCell, n)).First();
             }
-
             if (startCell == endCell)
             {
-                // Debug.Log("Close enough already!");
                 return new List<Vector3> {end};
             }
             
@@ -48,48 +47,26 @@ namespace ProcessControl.Pathfinding
 
             startCell.pathInfo.Set(0, DistanceBetween(startCell, endCell), null);
 
-            // if (startCell.occupied || !startCell.walkable)
-            // {
-            //     startCell.neighbours.ForEach(neighbourCell =>
-            //     {
-            //         if (neighbourCell is null) return;
-            //         if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) return;
-            //         if (!neighbourCell.buildable || !neighbourCell.walkable)
-            //         {
-            //             closedList.Add(neighbourCell);
-            //             neighbourCell.pathInfo.Reset();
-            //             return;
-            //         }
-            //
-            //         neighbourCell.pathInfo.Reset();
-            //         float gCost = startCell.pathInfo.gCost + DistanceBetween(startCell, neighbourCell);
-            //         if (gCost >= neighbourCell.pathInfo.gCost) return;
-            //         neighbourCell.pathInfo.Set(gCost, DistanceBetween(neighbourCell, endCell), startCell);
-            //         if (!openList.Contains(neighbourCell)) openList.Add(neighbourCell);
-            //     });
-            // }
-
-            var steps = 0;
-            var minimumDistance = DistanceBetween(startCell, endCell);
 
             //- loop until path is found or limit is reached
+            var steps = 0;
+            var minimumDistance = DistanceBetween(startCell, endCell);
             while (openList.Count > 0 && ++steps < minimumDistance.CeilToInt() * 32)
             {
                 var currentCell = openList.OrderBy(pc => pc.pathInfo.fCost).First();
+                
+                // check is reached destination
                 if (currentCell == endCell)
                 {
                     var finalPath = RetracePath(endCell);
-                    if (finalPath is null)
-                    {
-                        Debug.Log($"Path did not exist between {startCell.coords} and {endCell.coords}");
-                        return new List<Vector3> { start };
-                    }
+                    if (finalPath is {}) return finalPath;
                     
-                    // Debug.Log($"{finalPath.Count} m path in {timer.ElapsedMilliseconds} ms");
-                    return finalPath;
+                    Debug.Log($"Path did not exist between {startCell.coords} and {endCell.coords}");
+                    return new List<Vector3> {start};
                 }
                 
-                if (!currentCell.buildable || !currentCell.walkable)
+                // move cell to closed list if not walkable and continue
+                if (!currentCell.walkable)
                 {
                     openList.Remove(currentCell);
                     closedList.Add(currentCell);
@@ -97,17 +74,16 @@ namespace ProcessControl.Pathfinding
                     continue;
                 }
 
+                // move cell to closed list
                 closedList.Add(currentCell);
                 openList.Remove(currentCell);
 
                 //- add neighbours to open list
                 for (int i = 0; i < currentCell.neighbours.Length; i++)
-                // currentCell.neighbours.ForEach(neighbourCell =>
                 {
-                    Debug.Log(i);
-                    
                     var neighbourCell = currentCell.neighbours[i];
                     if (neighbourCell is null) continue;
+                    
                     if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) continue;
                     if (!neighbourCell.buildable || !neighbourCell.walkable)
                     {
@@ -115,50 +91,18 @@ namespace ProcessControl.Pathfinding
                         neighbourCell.pathInfo.Reset();
                         continue;
                     }
-
                     
                     bool skipped = false;
-                    
-                    if (i == 0)
+                    switch (i)
                     {
-                        Debug.Log("TOP LEFT");
-                        if (!neighbourCell.neighbours[6].walkable || !neighbourCell.neighbours[4].walkable)
-                        {
-                            Debug.Log("Skipped.");
-                            skipped = true;
-                        }
-                    }
-                    else if (i == 2)
-                    {
-                        Debug.Log("TOP RIGHT");
-                        if (!neighbourCell.neighbours[3].walkable || !neighbourCell.neighbours[6].walkable)
-                        {
-                            Debug.Log("Skipped.");
-                            skipped = true;
-                        }
-                    }
-                    else if (i == 5)
-                    {
-                        Debug.Log("BOTTOM LEFT");
-                        if (!currentCell.neighbours[3].walkable || !currentCell.neighbours[6].walkable)
-                        {
-                            Debug.Log("Skipped.");
-                            skipped = true;
-                        }
-                    }
-                    else if (i == 7)
-                    {
-                        Debug.Log("BOTTOM RIGHT");
-                        if (!currentCell.neighbours[4].walkable || !currentCell.neighbours[6].walkable)
-                        {
-                            Debug.Log("Skipped.");
-                            skipped = true;
-                        }
+                        case 0: if (!neighbourCell.neighbours[6].walkable || !neighbourCell.neighbours[4].walkable) skipped = true; break;
+                        case 2: if (!neighbourCell.neighbours[3].walkable || !neighbourCell.neighbours[6].walkable) skipped = true; break;
+                        case 5: if (!neighbourCell.neighbours[1].walkable || !neighbourCell.neighbours[4].walkable) skipped = true; break;
+                        case 7: if (!neighbourCell.neighbours[1].walkable || !neighbourCell.neighbours[3].walkable) skipped = true; break;
                     }
 
                     if (!skipped && !openList.Contains(neighbourCell))
                     {
-                        // Debug.Log("ADDING NEW CELL TO OPEN LIST");
                         neighbourCell.pathInfo.Reset();
                         float gCost = currentCell.pathInfo.gCost + DistanceBetween(currentCell, neighbourCell);
                         if (gCost >= neighbourCell.pathInfo.gCost) continue;
@@ -166,7 +110,6 @@ namespace ProcessControl.Pathfinding
                         
                         openList.Add(neighbourCell);
                     }
-                    // });
                 }
             }
             

@@ -16,26 +16,24 @@ public class Storage : Node, IBuildable
     override public IO Input => input;
     override public IO Output => output;
 
-    // private SpriteRenderer renderer;
-    // public Color enabledColor = new Color(255, 255, 255, 255);
-    // public Color disabledColor = new Color(255, 255, 255, 100);
-
     private void Awake()
     {
         renderer = GetComponent<SpriteRenderer>();
         renderer.color = disabledColor;
     }
 
-    public async Task Build(int buildTime)
+    public async Task Build(float buildTime)
     {
-        await Task.Delay(buildTime);
+        var time = 0f;
+        while ((time += Time.deltaTime) < buildTime) await Task.Yield();
         renderer.color = enabledColor;
         enabled = true;
     }
         
-    public async Task Deconstruct(int deconstructionTime)
+    public async Task Deconstruct(float deconstructionTime)
     {
-        await Task.Delay(deconstructionTime);
+        var time = 0f;
+        while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
         Destroy(this);
     }
 
@@ -73,7 +71,7 @@ public class Storage : Node, IBuildable
     {
         var resource = inventory.Withdraw(null);
         if (resource is null) Debug.Log("Inventory empty.");
-        var container = ItemFactory.Instance.SpawnItem(resource, this.Position);
+        var container = ItemFactory.Instance.SpawnItem(resource, this.position);
         return container;
 
     }
