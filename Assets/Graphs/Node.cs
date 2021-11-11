@@ -6,15 +6,15 @@ using ProcessControl.Procedural;
 
 namespace ProcessControl.Graphs
 {
-    abstract public class Node : MonoBehaviour, IO
+    abstract public class Node : Entity, IO
     {
         protected const int TicksPerSecond = 64;
         protected static int TicksPerMinute => TicksPerSecond * 60;
         
         new public bool enabled;
         
-        public Color enabledColor = new Color(255, 255, 255, 255);
-        public Color disabledColor = new Color(255, 255, 255, 100);
+        // public Color enabledColor = new Color(255, 255, 255, 255);
+        // public Color disabledColor = new Color(255, 255, 255, 100);
         
         //> PROPERTIES
         public Cell parentCell;

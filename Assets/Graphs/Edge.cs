@@ -4,7 +4,7 @@ using ProcessControl.Industry;
 
 namespace ProcessControl.Graphs
 {
-    abstract public class Edge : MonoBehaviour, IO
+    abstract public class Edge : Entity, IO
     {
         protected const int TicksPerSecond = 64;
         protected static int TicksPerMinute => TicksPerSecond * 60;
