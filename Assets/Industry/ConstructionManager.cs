@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -33,7 +35,10 @@ namespace ProcessControl.Industry
         
         public Node firstNode, secondNode;
         public Cell firstCell, secondCell;
-        
+
+        private readonly List<Machine> builtMachines = new List<Machine>();
+
+
         //> INITIALIZATION
         private void Awake()
         {
@@ -96,10 +101,22 @@ namespace ProcessControl.Industry
                     order = () => buildable.Build(1),
                 });
             }
+            
+            if (node is Machine machine) builtMachines.Add(machine);
 
             return node;
         }
-        
+
+        private List<Machine> FindMachinesWithItems(List<ItemAmount> items)
+        {
+            List<Machine> matchingMachines = new List<Machine>();
+            items.ForEach(i =>
+            {
+                var machine = builtMachines.FirstOrDefault(m => m.inputInventory.Contains(i) || m.outputInventory.Contains(i));
+                matchingMachines.Add(machine);
+            });
+            return matchingMachines;
+        }
 
         //> BUILD STUFF
         private void Update()
