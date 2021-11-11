@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 
-namespace ProcessControl.User_Interface
+namespace ProcessControl.UI
 {
     public class FlexibleGridLayout : LayoutGroup
     {

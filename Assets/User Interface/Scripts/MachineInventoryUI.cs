@@ -6,7 +6,7 @@ using ProcessControl.Industry;
 using ProcessControl.Procedural;
 
 
-namespace ProcessControl
+namespace ProcessControl.UI
 {
     public class MachineInventoryUI : UI_DraggableWindow
     {
@@ -76,7 +76,6 @@ namespace ProcessControl
                 var selectedCell = TileGrid.GetCellUnderMouse();
                 if (selectedCell is {occupied: true, node: Machine machine})
                 {
-                    
                     selectedMachine = machine;
                     selectedMachine.inputInventory.onModified += UpdateInventory;
                     selectedMachine.outputInventory.onModified += UpdateInventory;

@@ -5,7 +5,7 @@ using ProcessControl.Procedural;
 
 #pragma warning disable 108,114
 
-namespace ProcessControl
+namespace ProcessControl.UI
 {
     [RequireComponent(typeof(SpriteRenderer))]
     public class TileSelectorUI : MonoBehaviour

@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 
 
-namespace ProcessControl.User_Interface
+namespace ProcessControl.UI
 {
     public class FPS : MonoBehaviour
     {

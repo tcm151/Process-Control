@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ProcessControl.UI
 {
-    public class TooltipUI : MonoBehaviour
+    public class StorageInventoryUI : MonoBehaviour
     {
         // Start is called before the first frame update
         void Start()
