@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using ProcessControl.Graphs;
+using UnityEngine;
 
 
 namespace ProcessControl.Industry
@@ -7,5 +8,6 @@ namespace ProcessControl.Industry
     public class Part : Item
     {
         public GameObject prefab;
+        public Entity entity;
     }
 }

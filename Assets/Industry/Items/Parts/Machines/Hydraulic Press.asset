@@ -17,3 +17,4 @@ MonoBehaviour:
   sprite: {fileID: 0}
   description: 
   prefab: {fileID: 0}
+  entity: {fileID: 163049205698065749, guid: 1c55ce35d7c3d7241915c42e6f4f3777, type: 3}

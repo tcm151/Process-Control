@@ -17,3 +17,4 @@ MonoBehaviour:
   sprite: {fileID: 6068227909245428731, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
   description: Move items from machine to machine at a moderate speed.
   prefab: {fileID: 654775231712836657, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
+  entity: {fileID: 3544268022991761394, guid: b8bee7f48cf04fd4cbe4ef5369939678, type: 3}
