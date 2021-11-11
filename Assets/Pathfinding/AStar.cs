@@ -31,7 +31,7 @@ namespace ProcessControl.Pathfinding
             }
             if (!endCell.walkable)
             {
-                Debug.Log("Destination was not walkable, using next closest walkable cell");
+                // Debug.Log("Destination was not walkable, using next closest walkable cell");
                 endCell = endCell.neighbours.ToList().OrderBy(n => DistanceBetween(startCell, n)).First();
             }
             if (startCell == endCell)
@@ -51,7 +51,7 @@ namespace ProcessControl.Pathfinding
             //- loop until path is found or limit is reached
             var steps = 0;
             var minimumDistance = DistanceBetween(startCell, endCell);
-            while (openList.Count > 0 && ++steps < minimumDistance.CeilToInt() * 32)
+            while (openList.Count > 0 && ++steps < (minimumDistance.CeilToInt() * 32))
             {
                 var currentCell = openList.OrderBy(pc => pc.pathInfo.fCost).First();
                 

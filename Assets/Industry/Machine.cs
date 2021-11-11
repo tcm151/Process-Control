@@ -37,12 +37,6 @@ namespace ProcessControl.Industry
         public Conveyor currentOutput;
         public List<Conveyor> outputs = new List<Conveyor>();
 
-        // public Color enabledColor = new Color(255, 255, 255, 255);
-        // public Color disabledColor = new Color(255, 255, 255, 100);
-        
-        // private SpriteRenderer renderer;
-
-
         public async Task Build(float buildTime)
         {
             var time = 0f;
@@ -61,8 +55,6 @@ namespace ProcessControl.Industry
         override protected void Awake()
         {
             base.Awake();
-            // renderer = GetComponent<SpriteRenderer>();
-            // renderer.color = disabledColor;
             
             inputInventory = new Inventory(maxInputs, inventorySize);
             outputInventory = new Inventory(maxOutputs, inventorySize);
