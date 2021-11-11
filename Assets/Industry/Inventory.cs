@@ -35,7 +35,8 @@ namespace ProcessControl.Industry
         public void Clear() => items.Clear();
         // public bool Contains(Item match, int amount = 1) => items.ContainsKey(match) && items[match] >= amount;
         public bool Contains(Item match, int amount = 1) => items.FirstOrDefault(i => i.item == match && i.amount >= amount) is {};
-
+        public bool Contains(ItemAmount itemAmount) => Contains(itemAmount.item, itemAmount.amount);
+        
         // public List<KeyValuePair<Item, int>> GetItems() => items.ToList();
         public IReadOnlyList<ItemAmount> GetItems() => items.AsReadOnly();
 
