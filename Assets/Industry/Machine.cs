@@ -43,7 +43,7 @@ namespace ProcessControl.Industry
         // private SpriteRenderer renderer;
 
 
-        public async Task Build(int buildTime)
+        public async Task Build(float buildTime)
         {
             var time = 0f;
             while ((time += Time.deltaTime) < buildTime) await Task.Yield();
@@ -51,7 +51,7 @@ namespace ProcessControl.Industry
             enabled = true;
         }
         
-        public async Task Deconstruct(int deconstructionTime)
+        public async Task Deconstruct(float deconstructionTime)
         {
             var time = 0f;
             while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
@@ -130,7 +130,7 @@ namespace ProcessControl.Industry
         override public bool CanDeposit(Item item) => inputInventory.CanDeposit(item);
         override public void Deposit(Container container)
         {
-            container.position = this.Position;
+            container.position = this.position;
             container.SetVisible(false);
             inputInventory.Deposit(container.item);
             Destroy(container);
@@ -143,7 +143,7 @@ namespace ProcessControl.Industry
         override public Container Withdraw()
         {
             var item = outputInventory.Withdraw();
-            var container = ItemFactory.Instance.SpawnItem(item, this.Position);
+            var container = ItemFactory.Instance.SpawnItem(item, this.position);
             container.SetVisible(true);
             NextOutput();
             return container;

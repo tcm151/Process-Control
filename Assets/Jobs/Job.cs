@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProcessControl.Industry;
 using UnityEngine;
 
 
@@ -14,6 +16,28 @@ namespace ProcessControl.Jobs
         public Func<Task> order;
         
         public bool complete;
+    }
+
+    [Serializable] public class ConstructionJob : Job
+    {
+        public ConstructionJob(Vector3 position, IBuildable buildable, float constructionTime)
+        {
+            location = position;
+            order = () => buildable.Build(constructionTime);
+        }
+    }
+
+    [Serializable] public class DeliveryJob : Job
+    {
+        public DeliveryJob(IInventory recipient, ItemAmount itemAmount, Vector3 position)
+        {
+            location = position;
+            order = () =>
+            {
+                recipient.Deposit(itemAmount);
+                return Task.CompletedTask;
+            };
+        }
     }
     
     public interface IWorker

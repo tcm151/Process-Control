@@ -79,7 +79,7 @@ namespace ProcessControl.Industry
             enabled = true;
         }
         
-        public async Task Deconstruct(int deconstructionTime)
+        public async Task Deconstruct(float deconstructionTime)
         {
             var time = 0f;
             while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
@@ -165,7 +165,7 @@ namespace ProcessControl.Industry
                 var resource = inventory[i];
                 
                 var indexPercentage = distanceBetweenIO * ((inventorySize - i) / (float) inventorySize);
-                var indexPosition = input.Position + input.DirectionTo(output) * indexPercentage;
+                var indexPosition = input.position + input.DirectionTo(output) * indexPercentage;
 
                 if (resource.position != indexPosition) resource.ticks++;
                 

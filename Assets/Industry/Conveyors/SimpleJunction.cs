@@ -78,7 +78,7 @@
         // override public bool CanDeposit => junction.inventory is null;
         // override public void Deposit(Resource resource)
         // {
-        //     resource.data.position = Position;
+        //     resource.data.position = position;
         //     junction.inventory = resource;
         // }
         //

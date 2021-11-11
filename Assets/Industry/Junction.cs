@@ -50,7 +50,7 @@ namespace ProcessControl.Industry
             base.OnDestroy();
         }
         
-        public async Task Build(int buildTime)
+        public async Task Build(float buildTime)
         {
             var time = 0f;
             while ((time += Time.deltaTime) < buildTime) await Task.Yield();
@@ -58,7 +58,7 @@ namespace ProcessControl.Industry
             enabled = true;
         }
         
-        public async Task Deconstruct(int deconstructionTime)
+        public async Task Deconstruct(float deconstructionTime)
         {
             var time = 0f;
             while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();

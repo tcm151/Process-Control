@@ -60,7 +60,7 @@ namespace ProcessControl.Industry.Conveyors
         override public bool CanDeposit(Item item) => inventory is null;
         override public void Deposit(Container container)
         {
-            container.position = Position;
+            container.position = position;
             inventory = container;
         }
 
