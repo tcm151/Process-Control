@@ -47,9 +47,11 @@ namespace ProcessControl.Procedural
         
         private Camera camera;
         private readonly Stopwatch timer = new Stopwatch();
+        
+        //> EVENTS
+        public static event Action<Vector2> onStartLocationDetermined;
 
         //> EXTERNAL CALLS
-        // public static Func<Chunk[,]> GetChunks;
         public static Func<Cell> GetCellUnderMouse;
         public static Func<Vector3, Cell> GetCellAtPosition;
         public static Func<Vector2Int, Cell> GetCellAtCoordinates;
@@ -73,8 +75,40 @@ namespace ProcessControl.Procedural
             timer.Reset();
             
             Debug.Log($"{init} | {chunkGen} | {resourceGen} | {biomeGen} |= {init+chunkGen+resourceGen} ms");
+            
+            CalculateSpawnLocation();
         }
+        
+        private void CalculateSpawnLocation()
+        {
+            var openList = new List<Cell>();
+            var closedList = new List<Cell>();
+            var startingCell = TileGrid.GetCellAtCoordinates(Vector2Int.zero);
+            openList.Add(startingCell);
 
+            var steps = 1;
+            while (openList.Count >= 1 && ++steps < 10_000)
+            {
+                var currentCell = openList.First();
+                
+                if (currentCell.biome != Biome.Ocean)
+                {
+                    Debug.Log($"Start Location Found! {currentCell.coords}");
+                    onStartLocationDetermined?.Invoke(currentCell.position);
+                    break;
+                }
+
+                closedList.Add(currentCell);
+                openList.Remove(currentCell);
+                currentCell.neighbours.ForEach(n =>
+                    {
+                        if (!closedList.Contains(n) && !openList.Contains(n)) openList.Add(n);
+                    }
+                );
+            }
+
+        }
+        
         //> CACHE LAST TOUCHED CELL
         private void Update()
         {
