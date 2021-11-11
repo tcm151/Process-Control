@@ -40,7 +40,7 @@ namespace ProcessControl.Industry
         // public Color enabledColor = new Color(255, 255, 255, 255);
         // public Color disabledColor = new Color(255, 255, 255, 100);
         
-        private SpriteRenderer renderer;
+        // private SpriteRenderer renderer;
 
 
         public async Task Build(int buildTime)
@@ -58,10 +58,11 @@ namespace ProcessControl.Industry
             Destroy(this);
         }
 
-        private void Awake()
+        override protected void Awake()
         {
-            renderer = GetComponent<SpriteRenderer>();
-            renderer.color = disabledColor;
+            base.Awake();
+            // renderer = GetComponent<SpriteRenderer>();
+            // renderer.color = disabledColor;
             
             inputInventory = new Inventory(maxInputs, inventorySize);
             outputInventory = new Inventory(maxOutputs, inventorySize);

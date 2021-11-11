@@ -17,8 +17,9 @@ namespace ProcessControl.Industry
 {
     public class ConstructionManager : MonoBehaviour
     {
-        public Node selectedNode;
-        public Edge selectedEdge;
+        public Part selectedPart;
+        // public Node selectedNode;
+        // public Edge selectedEdge;
 
         [SerializeField] private bool buildMode;
         [SerializeField] private bool conveyorMode;
@@ -26,8 +27,9 @@ namespace ProcessControl.Industry
         private Camera camera;
         
         //> EVENT TRIGGERS
-        public static Action<Node> SetNode;
-        public static Action<Edge> SetEdge;
+        // public static Action<Node> SetNode;
+        // public static Action<Edge> SetEdge;
+        public static Action<Part> SetPart;
         public static Action<bool> SetEdgeMode;
 
         //> EVENT SUBSCRIPTIONS
@@ -44,17 +46,20 @@ namespace ProcessControl.Industry
         {
             camera = Camera.main;
 
-            SetNode += (newSelection) => selectedNode = newSelection;
-            SetEdge += (newSelection) => selectedEdge = newSelection;
+            SetPart += (part) => selectedPart = part;
+            // SetNode += (newSelection) => selectedNode = newSelection;
+            // SetEdge += (newSelection) => selectedEdge = newSelection;
             SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
         }
         
         //> BUILD EDGE BETWEEN TWO NODES
         private void BuildEdgeBetween(Node firstNode, Node secondNode)
         {
+            if (!(selectedPart.entity is Edge selectedEdge)) return;
+            
             firstCell = firstNode.parentCell;
             secondCell = secondNode.parentCell;
-            
+                
             if ((firstCell.coords.x == secondCell.coords.x) == (firstCell.coords.y == secondCell.coords.y))
             {
                 Debug.Log("Conveyors node not in straight line...");
@@ -88,6 +93,8 @@ namespace ProcessControl.Industry
 
         private Node BuildNodeOn(Cell cell)
         {
+            if (!(selectedPart.entity is Node selectedNode)) return default;
+            
             Node node;
             if (selectedNode is Machine) node = Factory.Spawn("Machines", selectedNode, cell.position);
             else if (selectedNode is Junction) node = Factory.Spawn("Junctions", selectedNode, cell.position);
@@ -133,7 +140,7 @@ namespace ProcessControl.Industry
             }
             
             //- ignore if over UI
-            if (!buildMode || selectedNode is null || EventSystem.current.IsPointerOverGameObject()) return;
+            if (!buildMode || selectedPart is null || EventSystem.current.IsPointerOverGameObject()) return;
             
             //- handle conveyor building
             if (conveyorMode)
@@ -248,6 +255,11 @@ namespace ProcessControl.Industry
                 else if (!cell.occupied)
                 {
                     var node = BuildNodeOn(cell);
+                    if (node is null)
+                    {
+                        Debug.Log("Node was null.");
+                        return;
+                    }
                     node.parentCell = cell;
                     cell.node = node;
                 }

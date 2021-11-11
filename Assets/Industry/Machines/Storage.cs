@@ -16,7 +16,7 @@ public class Storage : Node, IBuildable
     override public IO Input => input;
     override public IO Output => output;
 
-    private SpriteRenderer renderer;
+    // private SpriteRenderer renderer;
     // public Color enabledColor = new Color(255, 255, 255, 255);
     // public Color disabledColor = new Color(255, 255, 255, 100);
 

@@ -34,7 +34,7 @@ namespace ProcessControl.Industry
         public readonly List<Cell> tilesCovered = new List<Cell>();
 
 
-        private SpriteRenderer renderer;
+        // private SpriteRenderer renderer;
         public void SetLength(float size) => renderer.size = new Vector2(size, 1);
 
         public Vector3 position

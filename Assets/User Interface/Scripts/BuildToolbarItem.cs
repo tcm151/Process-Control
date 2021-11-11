@@ -8,9 +8,11 @@ namespace ProcessControl.UI
 {
     public class BuildToolbarItem : MonoBehaviour
     {
-        public Node node;
-        public Edge edge;
+        public Part part;
+        // public Node node;
+        // public Edge edge;
         public bool isEdge;
+        public bool isNode => !isEdge;
         
         private Button button;
         private Image[] images;
@@ -20,21 +22,23 @@ namespace ProcessControl.UI
 
         private void Initialize()
         {
-            if (node is null) return;
+            // if (node is null) return;
+            if (part is null) return;
 
             button = GetComponent<Button>();
             button.onClick.AddListener(() =>
             {
-                ConstructionManager.SetNode(node);
-                ConstructionManager.SetEdge(edge);
+                // ConstructionManager.SetNode(node);
+                // ConstructionManager.SetEdge(edge);
+                // ConstructionManager.SetNode(part.prefab);
+                // ConstructionManager.SetEdge(edge);
+                ConstructionManager.SetPart(part);
                 ConstructionManager.SetEdgeMode(isEdge);
             });
 
-            if (edge is null) return;
+            if (part.entity is Node) return;
             images = GetComponentsInChildren<Image>();
-            images[1].sprite = (edge is { })
-                ? edge.GetComponent<SpriteRenderer>().sprite
-                : node.GetComponent<SpriteRenderer>().sprite;
+            images[1].sprite = part.sprite;
         }
         
     }

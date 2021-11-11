@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using ProcessControl.Pathfinding;
 using ProcessControl.Tools;
@@ -47,5 +48,7 @@ namespace ProcessControl.Jobs
             if (currentJob is {}) return;
             currentPath = AStar.FindPath(transform.position, transform.position + Random.insideUnitCircle.ToVector3() * 5f);
         }
+
+        private void OnDestroy() => currentJob = null;
     }
 }
