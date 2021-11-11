@@ -48,26 +48,26 @@ namespace ProcessControl.Pathfinding
 
             startCell.pathInfo.Set(0, DistanceBetween(startCell, endCell), null);
 
-            if (startCell.occupied || !startCell.walkable)
-            {
-                startCell.neighbours.ForEach(neighbourCell =>
-                {
-                    if (neighbourCell is null) return;
-                    if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) return;
-                    if (!neighbourCell.buildable || !neighbourCell.walkable)
-                    {
-                        closedList.Add(neighbourCell);
-                        neighbourCell.pathInfo.Reset();
-                        return;
-                    }
-
-                    neighbourCell.pathInfo.Reset();
-                    float gCost = startCell.pathInfo.gCost + DistanceBetween(startCell, neighbourCell);
-                    if (gCost >= neighbourCell.pathInfo.gCost) return;
-                    neighbourCell.pathInfo.Set(gCost, DistanceBetween(neighbourCell, endCell), startCell);
-                    if (!openList.Contains(neighbourCell)) openList.Add(neighbourCell);
-                });
-            }
+            // if (startCell.occupied || !startCell.walkable)
+            // {
+            //     startCell.neighbours.ForEach(neighbourCell =>
+            //     {
+            //         if (neighbourCell is null) return;
+            //         if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) return;
+            //         if (!neighbourCell.buildable || !neighbourCell.walkable)
+            //         {
+            //             closedList.Add(neighbourCell);
+            //             neighbourCell.pathInfo.Reset();
+            //             return;
+            //         }
+            //
+            //         neighbourCell.pathInfo.Reset();
+            //         float gCost = startCell.pathInfo.gCost + DistanceBetween(startCell, neighbourCell);
+            //         if (gCost >= neighbourCell.pathInfo.gCost) return;
+            //         neighbourCell.pathInfo.Set(gCost, DistanceBetween(neighbourCell, endCell), startCell);
+            //         if (!openList.Contains(neighbourCell)) openList.Add(neighbourCell);
+            //     });
+            // }
 
             var steps = 0;
             var minimumDistance = DistanceBetween(startCell, endCell);
@@ -101,23 +101,73 @@ namespace ProcessControl.Pathfinding
                 openList.Remove(currentCell);
 
                 //- add neighbours to open list
-                currentCell.neighbours.ForEach(neighbourCell =>
+                for (int i = 0; i < currentCell.neighbours.Length; i++)
+                // currentCell.neighbours.ForEach(neighbourCell =>
                 {
-                    if (neighbourCell is null) return;
-                    if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) return;
+                    Debug.Log(i);
+                    
+                    var neighbourCell = currentCell.neighbours[i];
+                    if (neighbourCell is null) continue;
+                    if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) continue;
                     if (!neighbourCell.buildable || !neighbourCell.walkable)
                     {
                         closedList.Add(neighbourCell);
                         neighbourCell.pathInfo.Reset();
-                        return;
+                        continue;
                     }
 
-                    neighbourCell.pathInfo.Reset();
-                    float gCost = currentCell.pathInfo.gCost + DistanceBetween(currentCell, neighbourCell);
-                    if (gCost >= neighbourCell.pathInfo.gCost) return;
-                    neighbourCell.pathInfo.Set(gCost, DistanceBetween(neighbourCell, endCell), currentCell);
-                    if (!openList.Contains(neighbourCell)) openList.Add(neighbourCell);
-                });
+                    
+                    bool skipped = false;
+                    
+                    if (i == 0)
+                    {
+                        Debug.Log("TOP LEFT");
+                        if (!neighbourCell.neighbours[6].walkable || !neighbourCell.neighbours[4].walkable)
+                        {
+                            Debug.Log("Skipped.");
+                            skipped = true;
+                        }
+                    }
+                    else if (i == 2)
+                    {
+                        Debug.Log("TOP RIGHT");
+                        if (!neighbourCell.neighbours[3].walkable || !neighbourCell.neighbours[6].walkable)
+                        {
+                            Debug.Log("Skipped.");
+                            skipped = true;
+                        }
+                    }
+                    else if (i == 5)
+                    {
+                        Debug.Log("BOTTOM LEFT");
+                        if (!currentCell.neighbours[3].walkable || !currentCell.neighbours[6].walkable)
+                        {
+                            Debug.Log("Skipped.");
+                            skipped = true;
+                        }
+                    }
+                    else if (i == 7)
+                    {
+                        Debug.Log("BOTTOM RIGHT");
+                        if (!currentCell.neighbours[4].walkable || !currentCell.neighbours[6].walkable)
+                        {
+                            Debug.Log("Skipped.");
+                            skipped = true;
+                        }
+                    }
+
+                    if (!skipped && !openList.Contains(neighbourCell))
+                    {
+                        // Debug.Log("ADDING NEW CELL TO OPEN LIST");
+                        neighbourCell.pathInfo.Reset();
+                        float gCost = currentCell.pathInfo.gCost + DistanceBetween(currentCell, neighbourCell);
+                        if (gCost >= neighbourCell.pathInfo.gCost) continue;
+                        neighbourCell.pathInfo.Set(gCost, DistanceBetween(neighbourCell, endCell), currentCell);
+                        
+                        openList.Add(neighbourCell);
+                    }
+                    // });
+                }
             }
             
             //- no open nodes left

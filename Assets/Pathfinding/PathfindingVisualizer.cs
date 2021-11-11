@@ -78,6 +78,16 @@ namespace ProcessControl.Pathfinding
                 Debug.Log("End tile was not navigable");
                 return new List<Vector3> {start};
             }
+            if (!endCell.walkable)
+            {
+                endCell = endCell.neighbours.ToList().OrderBy(n => DistanceBetween(startCell, n)).First();
+            }
+
+            if (startCell == endCell)
+            {
+                // Debug.Log("Close enough already!");
+                return new List<Vector3> {end};
+            }
             
             SetTileAndColor(startCell.position, Color.blue);
             SetTileAndColor(endCell.position, Color.blue);
@@ -97,11 +107,7 @@ namespace ProcessControl.Pathfinding
             while (openList.Count > 0 && ++steps < minimumDistance * 32)
             {
                 var currentCell = openList.OrderBy(pc => pc.pathInfo.fCost).First();
-                
-                SetTileAndColor(currentCell.position, Color.green);
-                
-                while (!Input.GetKeyDown(KeyCode.Space) !^ noPause) await Task.Yield();
-
+                openList.Remove(currentCell);
                 if (currentCell == endCell)
                 {
                     var finalPath = RetracePath(endCell);
@@ -112,11 +118,16 @@ namespace ProcessControl.Pathfinding
                     }
                     
                     finalPath.ForEach(v => SetTileAndColor(v, Color.blue));
-                    Debug.Log($"{finalPath.Count} m path in {timer.ElapsedMilliseconds} ms");
+                    // Debug.Log($"{finalPath.Count} m path in {timer.ElapsedMilliseconds} ms");
                     return finalPath;
                 }
                 
-                if (!currentCell.buildable || currentCell.occupied)
+                SetTileAndColor(currentCell.position, Color.green);
+                
+                
+                while (!Input.GetKeyDown(KeyCode.Space) !^ noPause) await Task.Yield();
+                
+                if (!currentCell.buildable || !currentCell.walkable)
                 {
                     openList.Remove(currentCell);
                     closedList.Add(currentCell);
@@ -131,32 +142,87 @@ namespace ProcessControl.Pathfinding
                 SetTileAndColor(currentCell.position, Color.gray);
 
                 // add neighbours to open list
-                currentCell.neighbours.ForEach(neighbourCell =>
+                for (int i = 0; i < currentCell.neighbours.Length; i++)
+                // currentCell.neighbours.ForEach(neighbourCell =>
                 {
-                    if (neighbourCell is null) return;
-                    if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) return;
-                    if (!neighbourCell.buildable || neighbourCell.occupied)
+                    var neighbourCell = currentCell.neighbours[i];
+                    if (neighbourCell is null) continue;
+                    if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) continue;
+                    if (!neighbourCell.buildable || !neighbourCell.walkable)
                     {
                         closedList.Add(neighbourCell);
                         neighbourCell.pathInfo.Reset();
                         SetTileAndColor(neighbourCell.position, Color.red);
-                        return;
+                        continue;
                     }
 
-                    SetTileAndColor(neighbourCell.position, Color.magenta);
-                    neighbourCell.pathInfo.Reset();
-                    float gCost = currentCell.pathInfo.gCost + DistanceBetween(currentCell, neighbourCell);
-                    if (gCost >= neighbourCell.pathInfo.gCost) return;
-                    neighbourCell.pathInfo.Set(gCost, DistanceBetween(neighbourCell, endCell), currentCell);
-                    // neighbourCell.pathInfo.previousInPath = currentCell;
-                    // neighbourCell.pathInfo.gCost = gCost;
-                    // neighbourCell.pathInfo.hCost = DistanceBetween(neighbourCell, endCell);
-                    if (!openList.Contains(neighbourCell)) openList.Add(neighbourCell);
+                    while (!Input.GetKeyDown(KeyCode.Space) !^ noPause) await Task.Yield();
 
-                    var tileText = Factory.Spawn(tileTextPrefab, neighbourCell.position);
-                    tileText.text = neighbourCell.pathInfo.fCost.ToString("F1");
-                    textObjects.Add(tileText);
-                });
+                    bool skipped = false;
+                    
+                    if (i == 0)
+                    {
+                        Debug.Log("TOP LEFT");
+                        if (!neighbourCell.neighbours[6].walkable || !neighbourCell.neighbours[4].walkable)
+                        {
+                            Debug.Log("Skipped.");
+                            skipped = true;
+                            // openList.Add(neighbourCell);
+                            // SetTileAndColor(currentCell.position, Color.magenta);
+                        }
+                    }
+                    else if (i == 2)
+                    {
+                        Debug.Log("TOP RIGHT");
+                        if (!neighbourCell.neighbours[3].walkable || !neighbourCell.neighbours[6].walkable)
+                        {
+                            Debug.Log("Skipped.");
+                            skipped = true;
+                            // SetTileAndColor(currentCell.position, Color.magenta);
+                        }
+                    }
+                    else if (i == 5)
+                    {
+                        Debug.Log("BOTTOM LEFT");
+                        if (!currentCell.neighbours[3].walkable || !currentCell.neighbours[6].walkable)
+                        {
+                            Debug.Log("Skipped.");
+                            skipped = true;
+                            // SetTileAndColor(currentCell.position, Color.magenta);
+                        }
+                    }
+                    else if (i == 7)
+                    {
+                        Debug.Log("BOTTOM RIGHT");
+                        if (!currentCell.neighbours[4].walkable || !currentCell.neighbours[6].walkable)
+                        {
+                            Debug.Log("Skipped.");
+                            skipped = true;
+                            // SetTileAndColor(currentCell.position, Color.magenta);
+                        }
+                    }
+                    
+                    if (!skipped && !openList.Contains(neighbourCell))
+                    {
+                        SetTileAndColor(neighbourCell.position, Color.magenta);
+                        // Debug.Log("ADDING NEW CELL TO OPEN LIST");
+                        neighbourCell.pathInfo.Reset();
+                        float gCost = currentCell.pathInfo.gCost + DistanceBetween(currentCell, neighbourCell);
+                        if (gCost >= neighbourCell.pathInfo.gCost) continue;
+                        neighbourCell.pathInfo.Set(gCost, DistanceBetween(neighbourCell, endCell), currentCell);
+                        
+                        openList.Add(neighbourCell);
+                        
+                        var tileText = Factory.Spawn(tileTextPrefab, neighbourCell.position);
+                        tileText.text = neighbourCell.pathInfo.fCost.ToString("F1");
+                        textObjects.Add(tileText);
+                    }
+
+                    // var tileText = Factory.Spawn(tileTextPrefab, neighbourCell.position);
+                    // tileText.text = neighbourCell.pathInfo.fCost.ToString("F1");
+                    // textObjects.Add(tileText);
+                // });
+                }
 
                 await Task.Yield();
             }
@@ -166,29 +232,29 @@ namespace ProcessControl.Pathfinding
             return new List<Vector3> { start };
         }
 
+        //> RETRACE THE AND RETURN SHORTEST PATH
         private static List<Vector3> RetracePath(Cell endCell)
         {
             var currentCell = endCell;
-            var reversedPath = new List<Cell> { currentCell };
-
+            var reversedPath = new List<Cell> {currentCell};
             while (currentCell.pathInfo.previousInPath is { })
             {
                 reversedPath.Add(currentCell.pathInfo.previousInPath);
                 currentCell = currentCell.pathInfo.previousInPath;
             }
-
             reversedPath.Reverse();
             reversedPath.RemoveAt(0);
             return reversedPath.ConvertAll(c => c.position);
         }
 
-        private static readonly float D = 1;
-        private static readonly float D2 = Mathf.Sqrt(2);
-        
+        private const float HorizontalCost = 1;
+        private static readonly float DiagonalCost = Mathf.Sqrt(2);
+
+        //> DISTANCE HEURISTIC FUNCTION
         private static float DistanceBetween(Cell first, Cell second)
         {
             var d = (first.position - second.position).Abs();
-            return D * Mathf.Max(d.x, d.y) + (D2-D) * Mathf.Min(d.x, d.y);
+            return HorizontalCost * Mathf.Max(d.x, d.y) + (DiagonalCost-HorizontalCost) * Mathf.Min(d.x, d.y);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace ProcessControl.Procedural
         public Node node;
         public readonly List<Edge> edges = new List<Edge>();
         public bool occupied => (node is {}) || (edges.Count >= 1);
-        public bool walkable => node is null || node is {enabled: false};
+        public bool walkable => buildable && (node is null || node is {enabled: false});
         public bool buildable = true;
 
         public Vector3 position;
