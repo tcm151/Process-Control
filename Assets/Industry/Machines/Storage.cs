@@ -6,7 +6,7 @@ using ProcessControl.Graphs;
 using ProcessControl.Industry;
 #pragma warning disable 108,114
 
-public class Storage : Node, IBuildable
+public class Storage : Node, IBuildable, IInventory
 {
     private Conveyor input;
     private Conveyor output;
@@ -69,11 +69,10 @@ public class Storage : Node, IBuildable
     override public bool CanWithdraw() => !inventory.Empty;
     override public Container Withdraw()
     {
-        var resource = inventory.Withdraw(null);
+        var resource = inventory.Withdraw();
         if (resource is null) Debug.Log("Inventory empty.");
-        var container = ItemFactory.Instance.SpawnItem(resource, this.position);
+        var container = ItemFactory.Instance.SpawnItem(resource, position);
         return container;
-
     }
 
     override public bool CanDeposit(Item item) => !inventory.Full;
@@ -82,4 +81,8 @@ public class Storage : Node, IBuildable
         inventory.Deposit(container.item);
         Destroy(container);
     }
+
+    public bool Contains(ItemAmount itemAmount) => inventory.Contains(itemAmount);
+    public ItemAmount Withdraw(ItemAmount itemAmount) => inventory.Withdraw(itemAmount.item, itemAmount.amount);
+    public void Deposit(ItemAmount itemAmount) => inventory.Deposit(itemAmount.item, itemAmount.amount);
 }

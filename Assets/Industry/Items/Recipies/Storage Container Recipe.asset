@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
+  m_Name: Storage Container Recipe
+  m_EditorClassIdentifier: 
+  name: Storage Container
+  energyCost: 0
+  inputItems:
+  - item: {fileID: 11400000, guid: 7b433afae22022c4f951fe1793b97e8d, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: e0fe1603f8c727b4a89208cc34e8afd2, type: 2}
+    amount: 2
+  - item: {fileID: 11400000, guid: 4b0a0abbbf796d64ebdc08130c604530, type: 2}
+    amount: 4
+  outputItems:
+  - item: {fileID: 11400000, guid: dc9ec7e7730036f44ba1db509dffb3f7, type: 2}
+    amount: 1
