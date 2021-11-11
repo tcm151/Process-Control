@@ -19,5 +19,6 @@ namespace ProcessControl.Jobs
     public interface IWorker
     {
         public void TakeJob(Job newJob);
+        public void CompleteJob();
     }
 }

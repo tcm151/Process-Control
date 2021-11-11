@@ -27,7 +27,7 @@ namespace ProcessControl.Jobs
 
         private void Start() => Roam();
 
-        private async void CompleteJob()
+        public async void CompleteJob()
         {
             if (currentJob is null)
             { 
