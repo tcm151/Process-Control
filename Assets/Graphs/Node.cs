@@ -8,26 +8,23 @@ namespace ProcessControl.Graphs
 {
     abstract public class Node : Entity, IO
     {
-        protected const int TicksPerSecond = 64;
-        protected static int TicksPerMinute => TicksPerSecond * 60;
-        
-        new public bool enabled;
-        
-        // public Color enabledColor = new Color(255, 255, 255, 255);
-        // public Color disabledColor = new Color(255, 255, 255, 100);
+        // new public bool enabled;
         
         //> PROPERTIES
         public Cell parentCell;
-        public Vector3 Position => transform.position;
+
+        public Vector3 position
+        {
+            get => transform.position;
+            set => transform.position = value;
+        }
         
-        //> INSTANCE HELPERS
-        public float DistanceTo(Node otherNode) => Vector3.Distance(this.Position, otherNode.Position);
-        public Vector3 VectorTo(Node otherNode) => otherNode.Position - this.Position;
-        public Vector3 DirectionTo(Node otherNode) => (otherNode.Position - this.Position).normalized;
-        
-        //> STATIC HELPERS
-        public static Vector3 Center(Node first, Node second) => (first.Position + second.Position) / 2f;
-        public static float DistanceBetween(Node first, Node second) => Vector3.Distance(first.Position, second.Position);
+        //> HELPER FUNCTIONS
+        public float DistanceTo(Node otherNode) => Vector3.Distance(this.position, otherNode.position);
+        public Vector3 VectorTo(Node otherNode) => otherNode.position - this.position;
+        public Vector3 DirectionTo(Node otherNode) => (otherNode.position - this.position).normalized;
+        public static Vector3 Center(Node first, Node second) => (first.position + second.position) / 2f;
+        public static float DistanceBetween(Node first, Node second) => Vector3.Distance(first.position, second.position);
 
         abstract public IO Input {get;}
         abstract public IO Output {get;}

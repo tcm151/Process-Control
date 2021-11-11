@@ -1,29 +1,13 @@
 ﻿using System.Threading.Tasks;
 using UnityEngine;
 using ProcessControl.Industry;
+using ProcessControl.Jobs;
+
 
 namespace ProcessControl.Graphs
 {
     abstract public class Edge : Entity, IO
     {
-        protected const int TicksPerSecond = 64;
-        protected static int TicksPerMinute => TicksPerSecond * 60;
-        
-        public async Task Build(int buildTime)
-        {
-            var time = 0f;
-            while ((time += Time.deltaTime) < buildTime) await Task.Yield();
-            // renderer.color = enabledColor;
-            enabled = true;
-        }
-        
-        public async Task Deconstruct(int deconstructionTime)
-        {
-            var time = 0f;
-            while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
-            Destroy(this);
-        }
-        
         abstract public float Length {get;}
         abstract public Vector3 Center {get;}
 
