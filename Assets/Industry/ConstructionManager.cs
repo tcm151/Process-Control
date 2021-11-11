@@ -10,6 +10,8 @@ using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Procedural;
 using ProcessControl.Pathfinding;
+using Random = UnityEngine.Random;
+
 #pragma warning disable 108,114
 
 
@@ -17,28 +19,23 @@ namespace ProcessControl.Industry
 {
     public class ConstructionManager : MonoBehaviour
     {
-        public Part selectedPart;
-        // public Node selectedNode;
-        // public Edge selectedEdge;
-
-        [SerializeField] private bool buildMode;
-        [SerializeField] private bool conveyorMode;
-        
-        private Camera camera;
-        
         //> EVENT TRIGGERS
-        // public static Action<Node> SetNode;
-        // public static Action<Edge> SetEdge;
         public static Action<Part> SetPart;
         public static Action<bool> SetEdgeMode;
 
         //> EVENT SUBSCRIPTIONS
         public static Action<bool> OnBuildModeChanged;
         
+        [SerializeField] private bool buildMode;
+        [SerializeField] private bool conveyorMode;
+        [SerializeField] private Part selectedPart;
+        
+        private Camera camera;
+        private Vector2 startPosition;
         public Node firstNode, secondNode;
         public Cell firstCell, secondCell;
+        [SerializeField] private List<Machine> builtMachines = new List<Machine>();
 
-        private readonly List<Machine> builtMachines = new List<Machine>();
 
 
         //> INITIALIZATION
@@ -50,8 +47,53 @@ namespace ProcessControl.Industry
             // SetNode += (newSelection) => selectedNode = newSelection;
             // SetEdge += (newSelection) => selectedEdge = newSelection;
             SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
+
+            TileGrid.onStartLocationDetermined += GenerateSpawnArea;
+        }
+
+        private void GenerateSpawnArea(Vector2 position)
+        {
+            startPosition = position;
+
+
+            var itemFactory = ItemFactory.Instance;
+            var ironIngot = itemFactory.GetItem("Iron Ingot");
+            var ironPlate = itemFactory.GetItem("Iron Plate");
+
+            for (int i = 0; i < 25; i++)
+            {
+                var pos = Random.insideUnitCircle * (Random.value * 50);
+                var cell = TileGrid.GetCellAtPosition(pos);
+                if (!cell.buildable) continue;
+                itemFactory.SpawnItem(ironIngot, pos);
+            }
+            
+            for (int i = 0; i < 25; i++)
+            {
+                var pos = Random.insideUnitCircle * (Random.value * 50);
+                var cell = TileGrid.GetCellAtPosition(pos);
+                if (!cell.buildable) continue;
+                itemFactory.SpawnItem(ironPlate, pos);
+            }
+
+            var storage = itemFactory.GetItem("Storage Container");
+            if (storage is Part part)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    var cell = TileGrid.GetCellAtPosition(Random.insideUnitCircle * (Random.value * 50));
+                    var node = BuildNodeOn(part.entity as Node, cell);
+                }
+            }
+
         }
         
+        private void Start()
+        {
+            var machines = FindObjectsOfType<Machine>();
+            machines.ForEach(m => builtMachines.Add(m));
+        }
+
         //> BUILD EDGE BETWEEN TWO NODES
         private void BuildEdgeBetween(Node firstNode, Node secondNode)
         {
@@ -73,13 +115,12 @@ namespace ProcessControl.Industry
             secondNode.ConnectInput(conveyor);
 
             var conveyorPath = AStar.FindPath(firstCell.position, secondCell.position);
-            conveyorPath.ForEach(
-                p =>
-                {
-                    var tile = TileGrid.GetCellAtPosition(p);
-                    tile.edges.Add(conveyor);
-                    if (conveyor is Conveyor c) c.tilesCovered.Add(tile);
-                });
+            conveyorPath.ForEach(p =>
+            {
+                var tile = TileGrid.GetCellAtPosition(p);
+                tile.edges.Add(conveyor);
+                if (conveyor is Conveyor c) c.tilesCovered.Add(tile);
+            });
 
             if (conveyor is IBuildable buildable)
             {
@@ -92,9 +133,9 @@ namespace ProcessControl.Industry
             }
         }
 
-        private Node BuildNodeOn(Cell cell)
+        private Node BuildNodeOn(Node selectedNode, Cell cell)
         {
-            if (!(selectedPart.entity is Node selectedNode)) return default;
+            // if (!(selectedPart.entity is Node selectedNode)) return default;
             
             Node node;
             if (selectedNode is Machine) node = Factory.Spawn("Machines", selectedNode, cell.position);
@@ -103,6 +144,13 @@ namespace ProcessControl.Industry
             
             if (node is IBuildable buildable)
             {
+                // var machines = FindMachinesWithItems(selectedPart.recipe.inputItems);
+                // Debug.Log(machines.Count);
+                // AgentManager.QueueJob(new Job
+                // {
+                //     
+                // });
+                
                 AgentManager.QueueJob(new Job
                 {
                     location = cell.position,
@@ -122,7 +170,7 @@ namespace ProcessControl.Industry
             items.ForEach(i =>
             {
                 var machine = builtMachines.FirstOrDefault(m => m.inputInventory.Contains(i) || m.outputInventory.Contains(i));
-                matchingMachines.Add(machine);
+                if (machine is {}) matchingMachines.Add(machine);
             });
             return matchingMachines;
         }
@@ -165,7 +213,7 @@ namespace ProcessControl.Industry
                     }
                     if (!firstCell.occupied)
                     {
-                        firstNode = firstCell.node = BuildNodeOn(firstCell);
+                        firstNode = firstCell.node = BuildNodeOn(selectedPart.entity as Node, firstCell);
                         firstNode.parentCell = firstCell;
                     }
                     else firstNode = firstCell.node;
@@ -179,7 +227,7 @@ namespace ProcessControl.Industry
                         
                         if (!secondCell.occupied)
                         {
-                            secondNode = secondCell.node = BuildNodeOn(secondCell);
+                            secondNode = secondCell.node = BuildNodeOn(selectedPart.entity as Node, secondCell);
                             secondNode.parentCell = secondCell;
                         }
                         else secondNode = secondCell.node;
@@ -204,7 +252,7 @@ namespace ProcessControl.Industry
                                 return;
                             }
 
-                            var junction = BuildNodeOn(bestCell);
+                            var junction = BuildNodeOn(selectedPart.entity as Node, bestCell);
                             bestCell.node = junction;
                             junction.parentCell = bestCell;
                             
@@ -236,7 +284,7 @@ namespace ProcessControl.Industry
                 if (cell.occupied && cell.node is Junction )
                 {
                     Debug.Log("Replacing junction with machine...");
-                    var newNode = BuildNodeOn(cell);
+                    var newNode = BuildNodeOn(selectedPart.entity as Node, cell);
                     newNode.parentCell = cell;
 
                     if (cell.node.Input is { })
@@ -256,7 +304,7 @@ namespace ProcessControl.Industry
                 }
                 else if (!cell.occupied)
                 {
-                    var node = BuildNodeOn(cell);
+                    var node = BuildNodeOn(selectedPart.entity as Node, cell);
                     if (node is null)
                     {
                         Debug.Log("Node was null.");
@@ -282,25 +330,20 @@ namespace ProcessControl.Industry
                     return;
                 }
 
-                if (cell.node is IBuildable buildable)
+                if (cell.node is IBuildable node)
                 {
                     AgentManager.QueueJob(new Job
                     {
                         location = cell.position,
-                        order = () =>
-                        {
-                            buildable.Deconstruct(1);
-                            return Task.CompletedTask;
-                        },
+                        order = () => node.Deconstruct(1),
                     });
                 }
-                else if (cell.edges.Count == 1 && cell.edges[0] is Conveyor c)
+                else if (cell.edges.Count == 1 && cell.edges[0] is IBuildable conveyor)
                 {
                     AgentManager.QueueJob(new Job
                     {
                         location = cell.position,
-                        order = () => c.Deconstruct(1),
-                            // return Task.CompletedTask;
+                        order = () => conveyor.Deconstruct(1),
                     });
                 }
                 
