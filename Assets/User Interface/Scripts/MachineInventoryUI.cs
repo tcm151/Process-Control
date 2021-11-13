@@ -1,3 +1,4 @@
+using ProcessControl.Graphs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,18 +14,18 @@ namespace ProcessControl.UI
         override public void GoBack() => Hide();
 
         [SerializeField] private TextMeshProUGUI title;
-        
         [SerializeField] private Machine selectedMachine;
-
-        [SerializeField] private TextMeshProUGUI inputCount;
-        [SerializeField] private Image inputIcon;
-        [SerializeField] private TextMeshProUGUI outputCount;
-        [SerializeField] private Image outputIcon;
+        [SerializeField] private Node selectedNode;
+        
+        // [SerializeField] private TextMeshProUGUI inputCount;
+        // [SerializeField] private Image inputIcon;
+        // [SerializeField] private TextMeshProUGUI outputCount;
+        // [SerializeField] private Image outputIcon;
 
         public Transform inputSlotsContainer;
         public Transform outputSlotsContainer;
         
-        [SerializeField] private InventorySlotUI inventorySlotPrefab;
+        // [SerializeField] private InventorySlotUI inventorySlotPrefab;
 
         [SerializeField] private TMP_Dropdown recipeDropdown;
 
@@ -39,30 +40,23 @@ namespace ProcessControl.UI
             ConstructionManager.OnBuildModeChanged += (isEnabled) => buildMode = isEnabled;
             Hide();
 
-            recipeDropdown.onValueChanged.AddListener(value =>
-            {
-                selectedMachine.currentRecipe = selectedMachine.recipes[value];
-            });
+            recipeDropdown.onValueChanged.AddListener(value => selectedMachine.currentRecipe = selectedMachine.recipes[value]);
 
             inputSlots = inputSlotsContainer.GetComponentsInChildren<InventorySlotUI>();
             outputSlots = outputSlotsContainer.GetComponentsInChildren<InventorySlotUI>();
         }
         
-        
-
         private void UpdateInventory()
         {
             var inputItems = selectedMachine.inputInventory.GetItems();
             for (int i = 0; i < inputSlots.Length; i++)
             {
-                // inputSlots[i].Set((i < inputItems.Count) ? inputItems[i] : new KeyValuePair<Item, int>(null, 0));
                 inputSlots[i].Set((i < inputItems.Count) ? inputItems[i] : null);
             }
 
             var outputItems = selectedMachine.outputInventory.GetItems();
             for (int i = 0; i < outputSlots.Length; i++)
             {
-                // outputSlots[i].Set((i < outputItems.Count) ? outputItems[i] : new KeyValuePair<Item, int>(null, 0));
                 outputSlots[i].Set((i < outputItems.Count) ? outputItems[i] : null);
             }
         }

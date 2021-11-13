@@ -54,7 +54,6 @@ namespace ProcessControl.UI
             raycaster = GetComponent<GraphicRaycaster>();
             initialized = true;
         }
-
     }
 
     [RequireComponent(typeof(Canvas))]

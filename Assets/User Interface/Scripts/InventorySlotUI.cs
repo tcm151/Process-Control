@@ -13,7 +13,6 @@ namespace ProcessControl.UI
 
         public void Set(ItemAmount itemAmount)
         {
-            
             if (itemAmount is {})
             {
                 icon.enabled = true;

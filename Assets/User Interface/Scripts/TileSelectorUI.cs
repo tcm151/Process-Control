@@ -27,8 +27,6 @@ namespace ProcessControl.UI
 
         private void Update()
         {
-            // if (!EventSystem.current.IsPointerOverGameObject()) return;
-
             var coords = camera.MousePosition2D().FloorToInt();
             if (coords == currentCoords) return;
             currentCoords = coords;
