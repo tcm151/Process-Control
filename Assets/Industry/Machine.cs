@@ -130,7 +130,7 @@ namespace ProcessControl.Industry
             container.position = this.position;
             container.SetVisible(false);
             inputInventory.Deposit(container.item);
-            ItemFactory.Instance.DisposeContainer(container);
+            ItemFactory.DisposeContainer(container);
             NextInput();
         }
 
@@ -140,7 +140,7 @@ namespace ProcessControl.Industry
         override public Container Withdraw()
         {
             var item = outputInventory.Withdraw();
-            var container = ItemFactory.Instance.SpawnContainer(item, position);
+            var container = ItemFactory.SpawnContainer(item, position);
             container.SetVisible(true);
             NextOutput();
             return container;

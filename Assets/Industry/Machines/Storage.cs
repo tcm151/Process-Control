@@ -77,7 +77,7 @@ public class Storage : Node, IBuildable, IInventory
     {
         var resource = inventory.Withdraw();
         if (resource is null) Debug.Log("Inventory empty.");
-        var container = ItemFactory.Instance.SpawnContainer(resource, position);
+        var container = ItemFactory.SpawnContainer(resource, position);
         return container;
     }
 
@@ -85,7 +85,7 @@ public class Storage : Node, IBuildable, IInventory
     override public void Deposit(Container container)
     {
         inventory.Deposit(container.item);
-        ItemFactory.Instance.DisposeContainer(container);
+        ItemFactory.DisposeContainer(container);
     }
 
     public bool Contains(ItemAmount itemAmount) => inventory.Contains(itemAmount);

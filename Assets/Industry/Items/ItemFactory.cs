@@ -15,54 +15,49 @@ namespace ProcessControl.Tools
         [SerializeField] public List<Item> itemPrefabs;
         [SerializeField] private List<Container> spawnedContainers = new List<Container>();
 
-        public static ItemFactory Instance {get; private set;}
+        //> EVENT HOOKS
+        public static Func<string, Item> GetItem;
+        public static Func<ItemAmount, bool> Exists;
+        public static Func<Vector3, int, List<Container>> FindClosest;
+        public static Func<Item, Vector3, Container> SpawnContainer;
+        public static Action<Container> DisposeContainer;
+
         private void Awake()
         {
-            Instance = this;
-        }
-        
-        public Item GetItem(string name)
-        {
-            var item = itemPrefabs.FirstOrDefault(i => i.name == name);
-            if (item is {}) return item;
+            GetItem += (name) =>
+            {
+                var item = itemPrefabs.FirstOrDefault(i => i.name == name);
+                if (item is {}) return item;
             
-            Debug.Log($"Item \"{name}\" was not found.");
-            return default;
-        }
+                Debug.Log($"Item \"{name}\" was not found.");
+                return default;
+            };
 
+            Exists += (itemAmount) =>
+            {
+                var matchingContainers = spawnedContainers.Where(c => c.item == itemAmount.item);
+                return (matchingContainers.Count() >= itemAmount.amount);
+            };
 
-        public bool Exists(ItemAmount itemAmount)
-        {
-            var matchingContainers = spawnedContainers.Where(c => c.item == itemAmount.item);
-            return (matchingContainers.Count() >= itemAmount.amount);
-        }
-        
-        public List<Container> FindClosest(Vector3 position, int amount = 1)
-        {
-            return spawnedContainers.OrderBy(c => Vector3.Distance(c.position, position)).Take(amount).ToList();
-        }
+            FindClosest += (position, amount) =>
+            {
+                return spawnedContainers.OrderBy(c => Vector3.Distance(c.position, position))
+                                        .Take(amount).ToList();
+            };
+            
+            SpawnContainer += (item, position) =>
+            {
+                var instance = Spawn(sceneName, containerPrefab, position);
+                instance.SetItem(item);
+                spawnedContainers.Add(instance);
+                return instance;
+            };
 
-
-        public Container SpawnContainer(Item item, Vector3 position)
-        {
-            var instance = Spawn(sceneName, containerPrefab, position);
-            instance.SetItem(item);
-            spawnedContainers.Add(instance);
-            return instance;
-        }
-
-        public List<Container> SpawnContainers(List<Item> items, Vector3 position)
-        {
-            var instances = new List<Container>();
-            items.ForEach(i => instances.Add(SpawnContainer(i, position)));
-            instances.ForEach(i => spawnedContainers.Add(i));
-            return instances;
-        }
-
-        public void DisposeContainer(Container container)
-        {
-            spawnedContainers.Remove(container);
-            Destroy(container);
+            DisposeContainer += (container) =>
+            {
+                spawnedContainers.Remove(container);
+                Destroy(container);
+            };
         }
     }
 }
