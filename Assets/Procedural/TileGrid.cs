@@ -38,7 +38,7 @@ namespace ProcessControl.Procedural
             public Chunk[,] chunks;
             public Cell lastCell;
         }
-        [SerializeField] internal Data grid;
+        [SerializeField] internal TileGrid.Data grid;
 
         public string seed;
         public bool showNeighbours = false;
@@ -48,15 +48,12 @@ namespace ProcessControl.Procedural
         private Camera camera;
         private readonly Stopwatch timer = new Stopwatch();
         
-        //> EVENTS
-        public static event Action<Vector2> onStartLocationDetermined;
 
         //> EXTERNAL CALLS
         public static Func<Cell> GetCellUnderMouse;
         public static Func<Vector3, Cell> GetCellAtPosition;
         public static Func<Vector2Int, Cell> GetCellAtCoordinates;
-
-
+        
         //> INITIALIZATION
         public void Awake()
         {
@@ -75,40 +72,12 @@ namespace ProcessControl.Procedural
             timer.Reset();
             
             Debug.Log($"{init} | {chunkGen} | {resourceGen} | {biomeGen} |= {init+chunkGen+resourceGen} ms");
-            
-            CalculateSpawnLocation();
+
+            Spawner.CalculateSpawnLocation();
         }
         
-        private void CalculateSpawnLocation()
-        {
-            var openList = new List<Cell>();
-            var closedList = new List<Cell>();
-            var startingCell = TileGrid.GetCellAtCoordinates(Vector2Int.zero);
-            openList.Add(startingCell);
+        //> EVENTS
 
-            var steps = 1;
-            while (openList.Count >= 1 && ++steps < 10_000)
-            {
-                var currentCell = openList.First();
-                
-                if (currentCell.biome != Biome.Ocean)
-                {
-                    Debug.Log($"Start Location Found! {currentCell.coords}");
-                    onStartLocationDetermined?.Invoke(currentCell.position);
-                    break;
-                }
-
-                closedList.Add(currentCell);
-                openList.Remove(currentCell);
-                currentCell.neighbours.ForEach(n =>
-                    {
-                        if (!closedList.Contains(n) && !openList.Contains(n)) openList.Add(n);
-                    }
-                );
-            }
-
-        }
-        
         //> CACHE LAST TOUCHED CELL
         private void Update()
         {
@@ -130,7 +99,8 @@ namespace ProcessControl.Procedural
             float bounds = (grid.size * grid.chunkSize) / 2f;
             var x = floatCoords.x.Remap(-bounds, bounds - 1, 0, grid.size - 0.0001f).FloorToInt();
             var y = floatCoords.y.Remap(-bounds, bounds - 1, 0, grid.size - 0.0001f).FloorToInt();
-            return grid.chunks[x,y];
+            Chunk chunk = grid.chunks?[x,y];
+            return chunk;
         }
 
         public void Initialize()
@@ -138,14 +108,12 @@ namespace ProcessControl.Procedural
             camera = Camera.main;
 
             //- register events
-            // GetChunks += () => grid.chunks;
             GetCellAtCoordinates += GetCellFromCoordinates;
             GetCellAtPosition += (position) => GetCellFromCoordinates(position.ToVector2().FloorToInt());
             GetCellUnderMouse += () => GetCellFromCoordinates(camera.MousePosition2D().FloorToInt());
 
             //- random seed noise layers
             if (seed != "") Random.InitState(seed.GetHashCode());
-            // else Debug.Log($"Seed: [{Random.state}]");
             grid.biomeNoise.ForEach(b => b.offset = Random.insideUnitSphere * (Random.value * 5));
             grid.terrainNoise.ForEach(t => t.offset = Random.insideUnitSphere * (Random.value * 10));
             grid.resourceNoise.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
@@ -177,16 +145,16 @@ namespace ProcessControl.Procedural
             for (int y = 0; y < grid.size; y++) {
                 for (int x = 0; x < grid.size; x++)
                 {
-                    // top left, top middle, top right
+                    //~ top left, top middle, top right
                     if (x - 1 >= 0 && y + 1 < grid.size)        grid.chunks[x, y].neighbours[0] = grid.chunks[x - 1, y + 1];
                     if (y + 1 < grid.size)                      grid.chunks[x, y].neighbours[1] = grid.chunks[  x  , y + 1];
                     if (x + 1 < grid.size && y + 1 < grid.size) grid.chunks[x, y].neighbours[2] = grid.chunks[x + 1, y + 1];
 
-                    // left and right
+                    //~ left and right
                     if (x - 1 >= 0)        grid.chunks[x, y].neighbours[3] = grid.chunks[x - 1, y];
                     if (x + 1 < grid.size) grid.chunks[x, y].neighbours[4] = grid.chunks[x + 1, y];
 
-                    // bottom left, bottom middle, bottomRight
+                    //~ bottom left, bottom middle, bottomRight
                     if (x - 1 >= 0 && y - 1 >= 0)        grid.chunks[x, y].neighbours[5] = grid.chunks[x - 1, y - 1];
                     if (y - 1 >= 0)                      grid.chunks[x, y].neighbours[6] = grid.chunks[  x  , y - 1];
                     if (x + 1 < grid.size && y - 1 >= 0) grid.chunks[x, y].neighbours[7] = grid.chunks[x + 1, y - 1];
@@ -204,7 +172,6 @@ namespace ProcessControl.Procedural
                             parentChunk = chunk,
                             position = new Vector3(x + chunk.chunkOffset.x + 0.5f, y + chunk.chunkOffset.y + 0.5f),
                             coords = new Vector2Int(x + chunk.chunkOffset.x, y + chunk.chunkOffset.y),
-                            // indexes = new Vector2Int(x, y),
                         };
                     }
                 }
@@ -213,6 +180,7 @@ namespace ProcessControl.Procedural
             //- assign cell neighbours
             grid.chunks.ForEach(chunk =>
             {
+                // loop over every cell in said chunk
                 for (int y = 0; y < grid.chunkSize; y++) {
                     for (int x = 0; x < grid.chunkSize; x++)
                     {
@@ -227,13 +195,13 @@ namespace ProcessControl.Procedural
                         if (y - 1 >= 0) chunk.cells[x, y].neighbours[6] = chunk.cells[x, y - 1];
                         if (x + 1 < grid.chunkSize && y - 1 >= 0) chunk.cells[x, y].neighbours[7] = chunk.cells[x + 1, y - 1];
 
-                        //! corners
+                        //$ corners
                         if (chunk.neighbours[0] is { } && x - 1 == -1 && y + 1 == grid.chunkSize) chunk.cells[x, y].neighbours[0] = chunk.neighbours[0].cells[grid.chunkSize-1, 0];
                         if (chunk.neighbours[2] is { } && x + 1 == grid.chunkSize && y + 1 == grid.chunkSize) chunk.cells[x, y].neighbours[2] = chunk.neighbours[2].cells[0, 0];
                         if (chunk.neighbours[5] is { } && x - 1 == -1 && y - 1 == -1) chunk.cells[x, y].neighbours[5] = chunk.neighbours[5].cells[grid.chunkSize - 1, grid.chunkSize - 1];
                         if (chunk.neighbours[7] is { } && x + 1 == grid.chunkSize && y - 1 == -1) chunk.cells[x, y].neighbours[7] = chunk.neighbours[7].cells[0, grid.chunkSize - 1];
                         
-                        //! top
+                        //$ top
                         if (chunk.neighbours[1] is { } && y + 1 == grid.chunkSize)
                         {
                             chunk.cells[x, y].neighbours[1] = chunk.neighbours[1].cells[x, 0];
@@ -241,7 +209,7 @@ namespace ProcessControl.Procedural
                             if (x < grid.chunkSize-1) chunk.cells[x, y].neighbours[2] = chunk.neighbours[1].cells[x+1, 0];
                         }
 
-                        //! left
+                        //$ left
                         if (chunk.neighbours[3] is { } && x - 1 == -1)
                         {
                             chunk.cells[x, y].neighbours[3] = chunk.neighbours[3].cells[grid.chunkSize - 1, y];
@@ -249,7 +217,7 @@ namespace ProcessControl.Procedural
                             if (y < grid.chunkSize-1) chunk.cells[x, y].neighbours[0] = chunk.neighbours[3].cells[grid.chunkSize-1, y+1];
                         }
                         
-                        //! right
+                        //$ right
                         if (chunk.neighbours[4] is { } && x + 1 == grid.chunkSize)
                         {
                             chunk.cells[x, y].neighbours[4] = chunk.neighbours[4].cells[0, y];
@@ -257,7 +225,7 @@ namespace ProcessControl.Procedural
                             if (y < grid.chunkSize - 1) chunk.cells[x, y].neighbours[2] = chunk.neighbours[4].cells[0, y+1];
                         }
                         
-                        //! bottom
+                        //$ bottom
                         if (chunk.neighbours[6] is { } && y - 1 == -1)
                         {
                             chunk.cells[x, y].neighbours[6] = chunk.neighbours[6].cells[x, grid.chunkSize - 1];

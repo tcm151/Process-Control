@@ -43,7 +43,7 @@ namespace ProcessControl.Controls
             camera = GetComponent<Camera>();
             camera.transform.position = initialTarget.position + cameraOffset;
 
-            TileGrid.onStartLocationDetermined += (coords) =>
+            Spawner.onStartLocationDetermined += (coords) =>
             {
                 camera.transform.position = coords.ToVector3() + cameraOffset;
                 initialTarget.position = coords.ToVector3();
