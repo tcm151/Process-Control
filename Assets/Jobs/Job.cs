@@ -9,6 +9,8 @@ namespace ProcessControl.Jobs
 {
     [Serializable] public class Job
     {
+        public string description = "untitled job.";
+        
         // must do prerequisite before current job
         public Job prerequisite;
         
