@@ -14,6 +14,12 @@ namespace ProcessControl.Graphs
 
         internal SpriteRenderer renderer;
         public Sprite sprite => renderer.sprite;
+        
+        public Vector3 position
+        {
+            get => transform.position;
+            set => transform.position = value;
+        }
 
         virtual protected void Awake()
         {
