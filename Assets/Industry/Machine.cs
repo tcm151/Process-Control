@@ -37,6 +37,11 @@ namespace ProcessControl.Industry
         public Conveyor currentOutput;
         public List<Conveyor> outputs = new List<Conveyor>();
 
+        public Task DeliverItems(List<ItemAmount> itemAmounts)
+        {
+            return Task.CompletedTask;
+        }
+        
         public async Task Build(float buildTime)
         {
             var time = 0f;
@@ -125,7 +130,7 @@ namespace ProcessControl.Industry
             container.position = this.position;
             container.SetVisible(false);
             inputInventory.Deposit(container.item);
-            Destroy(container);
+            ItemFactory.Instance.DisposeContainer(container);
             NextInput();
         }
 
@@ -135,7 +140,7 @@ namespace ProcessControl.Industry
         override public Container Withdraw()
         {
             var item = outputInventory.Withdraw();
-            var container = ItemFactory.Instance.SpawnItem(item, this.position);
+            var container = ItemFactory.Instance.SpawnContainer(item, position);
             container.SetVisible(true);
             NextOutput();
             return container;

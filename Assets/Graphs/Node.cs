@@ -43,7 +43,7 @@ namespace ProcessControl.Graphs
         //> DELETE THIS NODE
         virtual public void OnDestroy()
         {
-            parentCell.node = null;
+            if (parentCell is {}) parentCell.node = null;
             Destroy(gameObject);
         }
     }

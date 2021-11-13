@@ -50,6 +50,11 @@ namespace ProcessControl.Industry
             base.OnDestroy();
         }
         
+        public Task DeliverItems(List<ItemAmount> itemAmounts)
+        {
+            return Task.CompletedTask;
+        }
+        
         public async Task Build(float buildTime)
         {
             var time = 0f;

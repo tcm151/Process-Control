@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using ProcessControl.Industry;
+using UnityEngine.Serialization;
 
 
 namespace ProcessControl.Tools
@@ -9,7 +11,7 @@ namespace ProcessControl.Tools
     public class ItemFactory : Factory
     {
         public string sceneName = "Items";
-        public Container container;
+        [FormerlySerializedAs("container")] public Container containerPrefab;
         [SerializeField] public List<Item> itemPrefabs;
         [SerializeField] private List<Container> spawnedContainers = new List<Container>();
 
@@ -22,29 +24,50 @@ namespace ProcessControl.Tools
             return default;
         }
 
-        public Part GetPart(string name)
+        // public Part GetPart(string name)
+        // {
+        //     var item = GetItem(name);
+        //     return (item is Part part) ? part : default;
+        // }
+        
+        private void Awake()
         {
-            var item = GetItem(name);
-            return (item is Part part) ? part : default;
+            Instance = this;
+        }
+
+        public bool Exists(ItemAmount itemAmount)
+        {
+            var matchingContainers = spawnedContainers.Where(c => c.item == itemAmount.item);
+            return (matchingContainers.Count() >= itemAmount.amount);
         }
         
-        private void Awake() => Instance = this;
+        public List<Container> FindClosest(Vector3 position, int amount = 1)
+        {
+            return spawnedContainers.OrderBy(c => Vector3.Distance(c.position, position)).Take(amount).ToList();
+        }
+
         public static ItemFactory Instance {get; private set;}
 
-        public Container SpawnItem(Item item, Vector3 position)
+        public Container SpawnContainer(Item item, Vector3 position)
         {
-            var instance = Spawn(sceneName, container, position);
+            var instance = Spawn(sceneName, containerPrefab, position);
             instance.SetItem(item);
             spawnedContainers.Add(instance);
             return instance;
         }
 
-        public List<Container> SpawnItems(List<Item> items, Vector3 position)
+        public List<Container> SpawnContainers(List<Item> items, Vector3 position)
         {
             var instances = new List<Container>();
-            items.ForEach(i => instances.Add(SpawnItem(i, position)));
+            items.ForEach(i => instances.Add(SpawnContainer(i, position)));
             instances.ForEach(i => spawnedContainers.Add(i));
             return instances;
+        }
+
+        public void DisposeContainer(Container container)
+        {
+            spawnedContainers.Remove(container);
+            Destroy(container);
         }
     }
 }

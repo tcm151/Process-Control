@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -71,6 +72,13 @@ namespace ProcessControl.Industry
         override public IO Input => input;
         override public IO Output => output;
 
+        // public event Action onAllItemsDelivered;
+
+        public Task DeliverItems(List<ItemAmount> itemAmounts)
+        {
+            return Task.CompletedTask;
+        }
+        
         public async Task Build(float buildTime)
         {
             var time = 0f;

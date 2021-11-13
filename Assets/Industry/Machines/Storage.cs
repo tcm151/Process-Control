@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using ProcessControl.Jobs;
 using ProcessControl.Tools;
@@ -22,6 +23,11 @@ public class Storage : Node, IBuildable, IInventory
         renderer.color = disabledColor;
     }
 
+    public Task DeliverItems(List<ItemAmount> itemAmounts)
+    {
+        return Task.CompletedTask;
+    }
+    
     public async Task Build(float buildTime)
     {
         var time = 0f;
@@ -71,7 +77,7 @@ public class Storage : Node, IBuildable, IInventory
     {
         var resource = inventory.Withdraw();
         if (resource is null) Debug.Log("Inventory empty.");
-        var container = ItemFactory.Instance.SpawnItem(resource, position);
+        var container = ItemFactory.Instance.SpawnContainer(resource, position);
         return container;
     }
 
@@ -79,7 +85,7 @@ public class Storage : Node, IBuildable, IInventory
     override public void Deposit(Container container)
     {
         inventory.Deposit(container.item);
-        Destroy(container);
+        ItemFactory.Instance.DisposeContainer(container);
     }
 
     public bool Contains(ItemAmount itemAmount) => inventory.Contains(itemAmount);

@@ -56,6 +56,7 @@ namespace ProcessControl.Jobs
             // assign the job closest to the first available worker
             var worker = openWorkers.TakeFirst();
             var closestJob = openJobs.OrderBy(j => Vector3.Distance(worker.position, j.location)).First();
+            // var closestJob = openJobs.OrderBy(j => Vector3.Distance(worker.position, j.location)).First(j => j.prerequisite is {complete: true} || j.prerequisite is null);
             openJobs.Remove(closestJob);
             worker.TakeJob(closestJob);
             takenJobs.Add(closestJob);

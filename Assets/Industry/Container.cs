@@ -1,25 +1,15 @@
-﻿using UnityEngine;
+﻿using ProcessControl.Graphs;
+using UnityEngine;
 
 #pragma warning disable 108,114
 
 
 namespace ProcessControl.Industry
 {
-    //@ TODO convert this to a generic conveyor object
-    public class Container : MonoBehaviour
+    public class Container : Entity
     {
         [SerializeField] internal Item item;
-        
-        internal int ticks;
-
-        private SpriteRenderer renderer;
-        public Sprite sprite => item.sprite;
-
-        public Vector3 position
-        {
-            get => transform.position;
-            set => transform.position = value;
-        }
+        [SerializeField] internal int ticks;
         
         public void SetVisible(bool isVisible) => renderer.enabled = isVisible;
 
@@ -30,11 +20,10 @@ namespace ProcessControl.Industry
             gameObject.name = item.name;
         }
         
-        private void Awake()
+        override protected void Awake()
         {
             renderer = GetComponent<SpriteRenderer>();
+            renderer.color = enabledColor;
         }
-
-        public void OnDestroy() => Destroy(gameObject);
     }
 }
