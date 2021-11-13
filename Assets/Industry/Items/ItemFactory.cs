@@ -15,6 +15,12 @@ namespace ProcessControl.Tools
         [SerializeField] public List<Item> itemPrefabs;
         [SerializeField] private List<Container> spawnedContainers = new List<Container>();
 
+        public static ItemFactory Instance {get; private set;}
+        private void Awake()
+        {
+            Instance = this;
+        }
+        
         public Item GetItem(string name)
         {
             var item = itemPrefabs.FirstOrDefault(i => i.name == name);
@@ -24,16 +30,6 @@ namespace ProcessControl.Tools
             return default;
         }
 
-        // public Part GetPart(string name)
-        // {
-        //     var item = GetItem(name);
-        //     return (item is Part part) ? part : default;
-        // }
-        
-        private void Awake()
-        {
-            Instance = this;
-        }
 
         public bool Exists(ItemAmount itemAmount)
         {
@@ -46,7 +42,6 @@ namespace ProcessControl.Tools
             return spawnedContainers.OrderBy(c => Vector3.Distance(c.position, position)).Take(amount).ToList();
         }
 
-        public static ItemFactory Instance {get; private set;}
 
         public Container SpawnContainer(Item item, Vector3 position)
         {

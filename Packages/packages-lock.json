@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.unity.2d.animation": {
-      "version": "5.0.6",
+      "version": "5.0.9",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -38,12 +38,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.psdimporter": {
-      "version": "4.1.0",
+      "version": "4.1.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.2d.common": "4.0.3",
-        "com.unity.2d.animation": "5.0.6",
+        "com.unity.2d.animation": "5.0.9",
         "com.unity.2d.sprite": "1.0.0"
       },
       "url": "https://packages.unity.com"
@@ -55,7 +55,7 @@
       "dependencies": {}
     },
     "com.unity.2d.spriteshape": {
-      "version": "5.1.4",
+      "version": "5.1.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -119,22 +119,24 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
-      "version": "10.6.0",
+      "version": "10.7.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.ugui": "1.0.0"
+        "com.unity.ugui": "1.0.0",
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.universal": {
-      "version": "10.6.0",
+      "version": "10.7.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.mathematics": "1.1.0",
-        "com.unity.render-pipelines.core": "10.6.0",
-        "com.unity.shadergraph": "10.6.0"
+        "com.unity.render-pipelines.core": "10.7.0",
+        "com.unity.shadergraph": "10.7.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -146,11 +148,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.shadergraph": {
-      "version": "10.6.0",
+      "version": "10.7.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.render-pipelines.core": "10.6.0",
+        "com.unity.render-pipelines.core": "10.7.0",
         "com.unity.searcher": "4.3.2"
       },
       "url": "https://packages.unity.com"
