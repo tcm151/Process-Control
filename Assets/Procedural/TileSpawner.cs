@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace ProcessControl.Procedural
 {
-    public class Spawner
+    public class TileSpawner
     {
         public static event Action<Vector2> onStartLocationDetermined;
 
@@ -27,7 +27,8 @@ namespace ProcessControl.Procedural
                 if (currentCell.biome != Biome.Ocean)
                 {
                     Debug.Log($"Start coords: {currentCell.coords}");
-                    onStartLocationDetermined?.Invoke(currentCell.position);
+                    if (Application.isPlaying) onStartLocationDetermined?.Invoke(currentCell.position);
+                    // onStartLocationDetermined?.Invoke(currentCell.position);
                     return currentCell.position;
                 }
 

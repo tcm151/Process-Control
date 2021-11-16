@@ -73,7 +73,7 @@ namespace ProcessControl.Procedural
             
             Debug.Log($"{init} | {chunkGen} | {resourceGen} | {biomeGen} |= {init+chunkGen+resourceGen} ms");
 
-            Spawner.CalculateSpawnLocation();
+            TileSpawner.CalculateSpawnLocation();
         }
         
         //> EVENTS

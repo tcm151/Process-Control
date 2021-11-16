@@ -48,42 +48,42 @@ namespace ProcessControl.Industry
             // SetEdge += (newSelection) => selectedEdge = newSelection;
             SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
 
-            Spawner.onStartLocationDetermined += GenerateSpawnArea;
+            TileSpawner.onStartLocationDetermined += GenerateSpawnArea;
         }
 
         private void GenerateSpawnArea(Vector2 position)
         {
             startPosition = position;
+            
             var stone = ItemFactory.GetItem("Stone");
-            var ironIngot = ItemFactory.GetItem("Iron Ingot");
-            var ironPlate = ItemFactory.GetItem("Iron Plate");
-            var storage = ItemFactory.GetItem("Storage Container");
-
             for (int i = 0; i < 25; i++)
             {
-                var spawnPosition = Spawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                var spawnPosition = TileSpawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
                 ItemFactory.SpawnContainer(stone, spawnPosition);
             }
             
+            var ironIngot = ItemFactory.GetItem("Iron Ingot");
             for (int i = 0; i < 25; i++)
             {
-                var spawnPosition = Spawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                var spawnPosition = TileSpawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
                 ItemFactory.SpawnContainer(ironIngot, spawnPosition);
             }
             
+            var ironPlate = ItemFactory.GetItem("Iron Plate");
             for (int i = 0; i < 25; i++)
             {
-                var spawnPosition = Spawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                var spawnPosition = TileSpawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
                 ItemFactory.SpawnContainer(ironPlate, spawnPosition);
             }
             
             
 
+            var storage = ItemFactory.GetItem("Storage Container");
             if (storage is Part part)
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    var cell = TileGrid.GetCellAtPosition(Spawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100));
+                    var cell = TileGrid.GetCellAtPosition(TileSpawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100));
                     var node = BuildNodeOn(part.entity as Node, part.recipe, cell, false);
                     if (node is IBuildable buildable) buildable.Build(0);
                 }
@@ -324,8 +324,6 @@ namespace ProcessControl.Industry
                         Debug.Log("Node was null.");
                         return;
                     }
-                    // node.parentCell = cell;
-                    // cell.node = node;
                 }
             }
             
