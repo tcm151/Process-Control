@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 #pragma warning disable 108,114
 
 
@@ -26,5 +27,7 @@ namespace ProcessControl.Graphs
             renderer = GetComponent<SpriteRenderer>();
             renderer.color = disabledColor;
         }
+
+        protected void OnDestroy() => Destroy(gameObject);
     }
 }
