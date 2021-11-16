@@ -1,9 +1,14 @@
 ﻿
 
+using UnityEngine;
+
+
 namespace ProcessControl.Industry
 {
     public interface IO
     {
+        public Vector3 position {get;}
+        
         public IO Input {get;}
         public IO Output {get;}
 

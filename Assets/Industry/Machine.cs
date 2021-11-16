@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using ProcessControl.Jobs;
 using ProcessControl.Tools;
@@ -28,15 +29,22 @@ namespace ProcessControl.Industry
         [Header("Input")]
         public bool inputEnabled = true;
         public int maxInputs = 1;
-        public Conveyor currentInput;
-        public List<Conveyor> inputs = new List<Conveyor>();
+        // public Conveyor currentInput;
+        private IO currentInput;
+        override public IO Input => currentInput;
+        // public List<Conveyor> inputs = new List<Conveyor>();
+        public List<IO> inputs = new List<IO>();
 
         [Header("Output")]
         public bool outputEnabled = true;
         public int maxOutputs = 1;
-        public Conveyor currentOutput;
-        public List<Conveyor> outputs = new List<Conveyor>();
+        // public Conveyor currentOutput;
+        private IO currentOutput;
+        override public IO Output => currentOutput;
+        // public List<Conveyor> outputs = new List<Conveyor>();
+        public List<IO> outputs = new List<IO>();
 
+        
         public Task DeliverItems(List<ItemAmount> itemAmounts)
         {
             return Task.CompletedTask;
@@ -66,16 +74,13 @@ namespace ProcessControl.Industry
             if (recipes.Count >= 1) currentRecipe = recipes[0];
         }
 
-        //> IO INTERFACE
-        override public IO Input => currentInput;
-        override public IO Output => currentOutput;
         
         //> CONNECT INPUT
         override public bool ConnectInput(IO input)
         {
             if (inputs.Count >= maxInputs) return false;
-            if (inputs.Contains(input as Conveyor)) return false;
-            inputs.Add(input as Conveyor);
+            if (inputs.Contains(input)) return false;
+            inputs.Add(input);
             currentInput = inputs[0];
             return true;
         }
@@ -83,8 +88,8 @@ namespace ProcessControl.Industry
         //> DISCONNECT INPUT
         override public bool DisconnectInput(IO input)
         {
-            if (!inputs.Contains(input as Conveyor)) return false;
-            inputs.Remove(input as Conveyor);
+            if (!inputs.Contains(input)) return false;
+            inputs.Remove(input);
             currentInput = (inputs.Count >= 1) ? inputs[0] : null;
             return true;
         }
@@ -100,8 +105,8 @@ namespace ProcessControl.Industry
         override public bool ConnectOutput(IO output)
         {
             if (outputs.Count >= maxOutputs) return false;
-            if (outputs.Contains(output as Conveyor)) return false;
-            outputs.Add(output as Conveyor);
+            if (outputs.Contains(output)) return false;
+            outputs.Add(output);
             currentOutput = outputs[0];
             return true;
         }
@@ -109,8 +114,8 @@ namespace ProcessControl.Industry
         //> DISCONNECT OUTPUT
         override public bool DisconnectOutput(IO output)
         {
-            if (!outputs.Contains(output as Conveyor)) return false;
-            outputs.Remove(output as Conveyor);
+            if (!outputs.Contains(output)) return false;
+            outputs.Remove(output);
             currentOutput = (outputs.Count >= 1) ? outputs[0] : null;
             return true;
         }
@@ -161,8 +166,10 @@ namespace ProcessControl.Industry
         //> DESTROY AND CLEANUP MACHINE
         override public void OnDestroy()
         {
-            inputs.ForEach(Destroy);
-            outputs.ForEach(Destroy);
+            // inputs.ForEach(Destroy);
+            // outputs.ForEach(Destroy);
+            inputs.ForEach(i => { if (i is Entity e) Destroy(e);});
+            outputs.ForEach(o => { if (o is Entity e) Destroy(e);});
             inputInventory.Clear();
             outputInventory.Clear();
             base.OnDestroy();

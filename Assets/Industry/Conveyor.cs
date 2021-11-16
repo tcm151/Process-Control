@@ -24,8 +24,10 @@ namespace ProcessControl.Industry
         public int itemsPerMinute = 8;
 
         [Header("IO")]
-        public Node input;
-        public Node output;
+        // public Node input;
+        public IO input;
+        // public Node output;
+        public IO output;
         public float distanceBetweenIO;
 
         [Header("Inventory")]
@@ -47,13 +49,15 @@ namespace ProcessControl.Industry
         override public float Length { get
         {
             if (input is null || output is null) return 0;
-            return Node.DistanceBetween(input, output);
+            // return Node.DistanceBetween(input, output);
+            return Vector3.Distance(input.position, output.position);
         }}
         
         override public Vector3 Center { get
         {
             if (input is null || output is null) return default;
-            return Node.Center(input, output);
+            // return Node.Center(input, output);
+            return (input.position + output.position) / 2f;
         }}
 
         //> ADD AND REMOVE RESOURCES
@@ -97,14 +101,14 @@ namespace ProcessControl.Industry
         //> CONNECT INPUT
         override public bool ConnectInput(IO newInput)
         {
-            if (input == newInput as Node) return false;
-            input = newInput as Node;
+            if (input == newInput) return false;
+            input = newInput;
             ManageConnection();
             return true;
         }
         override public bool DisconnectInput(IO oldInput)
         {
-            if (input != oldInput as Node) return false;
+            if (input != oldInput) return false;
             input = null;
             ManageConnection();
             return true;
@@ -113,14 +117,14 @@ namespace ProcessControl.Industry
         //> CONNECT OUTPUT
         override public bool ConnectOutput(IO newOutput)
         {
-            if (output == newOutput as Node) return false;
-            output = newOutput as Node;
+            if (output == newOutput) return false;
+            output = newOutput;
             ManageConnection();
             return true;
         }
         override public bool DisconnectOutput(IO oldOutput)
         {
-            if (output != oldOutput as Node) return false;
+            if (output != oldOutput) return false;
             output = null;
             ManageConnection();
             return true;
@@ -136,13 +140,13 @@ namespace ProcessControl.Industry
         private void ManageConnection()
         {
             if (input is null || output is null) distanceBetweenIO = 0;
-            else distanceBetweenIO = Node.DistanceBetween(input, output);
+            else distanceBetweenIO = Vector3.Distance(input.position, output.position);
             
             SetLength(distanceBetweenIO);
 
             if (input is { } && output is { })
             {
-                var direction = input.DirectionTo(output);
+                var direction = input.position.DirectionTo(output.position);
                 var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             }
@@ -173,7 +177,7 @@ namespace ProcessControl.Industry
                 var resource = inventory[i];
                 
                 var indexPercentage = distanceBetweenIO * ((inventorySize - i) / (float) inventorySize);
-                var indexPosition = input.position + input.DirectionTo(output) * indexPercentage;
+                var indexPosition = input.position + input.position.DirectionTo(output.position) * indexPercentage;
 
                 if (resource.position != indexPosition) resource.ticks++;
                 
