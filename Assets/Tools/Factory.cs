@@ -5,7 +5,6 @@ using Object = UnityEngine.Object;
 
 namespace ProcessControl.Tools
 {
-    // [CreateAssetMenu(fileName = "Factory", menuName = "Tools/Factory")]
     abstract public class Factory : MonoBehaviour
     {
         //> CREATE AND INSTANCE ON PREFAB
