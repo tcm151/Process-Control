@@ -2,7 +2,7 @@
 
 namespace ProcessControl.Industry.Conveyors
 {
-    public class Splitter : MultiJunction
+    public class Splitter : Junction
     {
         override public Container Withdraw()
         {

@@ -2,7 +2,7 @@
 
 namespace ProcessControl.Industry.Conveyors
 {
-    public class Merger : MultiJunction
+    public class Merger : Junction
     {
         override public void Deposit(Container container)
         {
