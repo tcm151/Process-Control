@@ -91,7 +91,7 @@ namespace ProcessControl.Industry
             enabled = true;
         }
         
-        public async Task Deconstruct(float deconstructionTime)
+        public async Task Disassemble(float deconstructionTime)
         {
             var time = 0f;
             while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
@@ -199,7 +199,7 @@ namespace ProcessControl.Industry
         }
         
         //> DELETE CONVEYOR AND CLEAN UP
-        override public void OnDestroy()
+        override protected void OnDestroy()
         {
             input.DisconnectOutput(this);
             output.DisconnectInput(this);

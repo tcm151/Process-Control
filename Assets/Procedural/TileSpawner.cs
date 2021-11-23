@@ -16,7 +16,7 @@ namespace ProcessControl.Procedural
         {
             var openList = new List<Cell>();
             var closedList = new List<Cell>();
-            var startingCell = TileGrid.GetCellAtCoordinates(Vector2Int.zero);
+            var startingCell = CellGrid.GetCellAtCoordinates(Vector2Int.zero);
             openList.Add(startingCell);
 
             var steps = 1;
@@ -51,7 +51,7 @@ namespace ProcessControl.Procedural
             var closedList = new List<Cell>();
 
             var offset = (Random.insideUnitCircle.normalized * Random.value * range).FloorToInt();
-            var startingCell = TileGrid.GetCellAtCoordinates(origin + offset);
+            var startingCell = CellGrid.GetCellAtCoordinates(origin + offset);
             openList.Add(startingCell);
 
             var steps = 0;

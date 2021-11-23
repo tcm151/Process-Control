@@ -55,9 +55,7 @@ namespace ProcessControl.Jobs
         override protected void Awake()
         {
             base.Awake();
-
             inventory = new Inventory(inventorySlots, stackSize);
-            
             onReachedDestination += CompleteJob;
         }
 

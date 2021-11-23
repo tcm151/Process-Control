@@ -11,12 +11,7 @@ namespace ProcessControl.Industry
     
         [Header("Resource")]
         public Material material;
-        // public Form form;
 
         public int energy;
-
-        // new public string name => $"{material} {form}";
-        // public Sprite sprite;
-        // [TextArea] public string description;
     }
 }

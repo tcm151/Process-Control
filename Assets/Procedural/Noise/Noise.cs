@@ -30,7 +30,7 @@ namespace ProcessControl.Procedural
             public Vector3 offset = Vector3.zero;
         }
         
-        //> GET A NOISE VALUE FOR ANY SPECIFIC CELL
+        //> GET A NOISE VALUE FOR ANY VECTOR3
         public static float GenerateValue(List<Layer> noiseLayers, Vector3 v3)
         {
             float noiseValue = 0f;

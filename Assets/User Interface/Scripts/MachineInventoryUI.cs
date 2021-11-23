@@ -67,7 +67,7 @@ namespace ProcessControl.UI
             
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                var selectedCell = TileGrid.GetCellUnderMouse();
+                var selectedCell = CellGrid.GetCellUnderMouse();
                 if (selectedCell is {occupied: true, node: Machine machine})
                 {
                     selectedMachine = machine;

@@ -31,7 +31,7 @@ namespace ProcessControl.UI
             if (coords == currentCoords) return;
             currentCoords = coords;
             
-            var cell = TileGrid.GetCellUnderMouse();
+            var cell = CellGrid.GetCellUnderMouse();
             if (cell is { }) transform.position = cell.position;
         }
     }

@@ -33,7 +33,7 @@ namespace ProcessControl.Industry
         private IO currentInput;
         override public IO Input => currentInput;
         // public List<Conveyor> inputs = new List<Conveyor>();
-        public List<IO> inputs = new List<IO>();
+        public readonly List<IO> inputs = new List<IO>();
 
         [Header("Output")]
         public bool outputEnabled = true;
@@ -42,7 +42,7 @@ namespace ProcessControl.Industry
         private IO currentOutput;
         override public IO Output => currentOutput;
         // public List<Conveyor> outputs = new List<Conveyor>();
-        public List<IO> outputs = new List<IO>();
+        public readonly List<IO> outputs = new List<IO>();
 
         
         public Task DeliverItems(List<ItemAmount> itemAmounts)
@@ -58,7 +58,7 @@ namespace ProcessControl.Industry
             enabled = true;
         }
         
-        public async Task Deconstruct(float deconstructionTime)
+        public async Task Disassemble(float deconstructionTime)
         {
             var time = 0f;
             while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();

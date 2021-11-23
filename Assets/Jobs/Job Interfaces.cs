@@ -12,7 +12,7 @@ namespace ProcessControl.Jobs
         
         public Task DeliverItems(List<ItemAmount> itemAmounts);
         public Task Build(float buildTime);
-        public Task Deconstruct(float deconstructionTime);
+        public Task Disassemble(float deconstructionTime);
     }
 
     public interface IInventory

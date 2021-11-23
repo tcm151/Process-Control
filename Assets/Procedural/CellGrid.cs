@@ -16,7 +16,7 @@ using ProcessControl.Tools;
 namespace ProcessControl.Procedural
 {
     [RequireComponent(typeof(Grid))]
-    public class TileGrid : MonoBehaviour
+    public class CellGrid : MonoBehaviour
     {
         [Serializable]
         public class Data
@@ -28,28 +28,27 @@ namespace ProcessControl.Procedural
             public List<Tilemap> tilemaps;
             public List<TileBase> tiles;
             
-            [Header("Noise")]
+            [Header("Generation")]
+            public string seed;
             public Range noiseRange;
             public List<Noise.Layer> terrainNoise;
             public List<ResourceNoiseLayer> resourceNoise;
+            public Resource sandResource, stoneResource;
             public List<Noise.Layer> biomeNoise;
 
             [Header("Cells & Chunks")]
             public Chunk[,] chunks;
             public Cell lastCell;
-        }
-        [SerializeField] internal TileGrid.Data grid;
-
-        public string seed;
-        public bool showNeighbours = false;
-
-        public Resource sandResource, stoneResource;
         
+            [Space]
+            public bool showNeighbours = false;
+        }
+        [SerializeField] internal Data grid;
+
         private Camera camera;
         private readonly Stopwatch timer = new Stopwatch();
-        
 
-        //> EXTERNAL CALLS
+        //> DECOUPLE EXTERNAL FUNCTION CALLS
         public static Func<Cell> GetCellUnderMouse;
         public static Func<Vector3, Cell> GetCellAtPosition;
         public static Func<Vector2Int, Cell> GetCellAtCoordinates;
@@ -57,19 +56,27 @@ namespace ProcessControl.Procedural
         //> INITIALIZATION
         public void Awake()
         {
+            // initialize
             timer.Start();
             Initialize();
             float init = timer.ElapsedMilliseconds;
             timer.Restart();
+            
+            // generate the terrain
             GenerateAllChunks();
             float chunkGen = timer.ElapsedMilliseconds;
             timer.Restart();
+            
+            // generate the biomes
             GenerateAllBiomes();
             float biomeGen = timer.ElapsedMilliseconds;
             timer.Restart();
+            
+            // generate the resources
             GenerateAllResources();
             float resourceGen = timer.ElapsedMilliseconds;
             timer.Reset();
+            
             
             Debug.Log($"{init} | {chunkGen} | {resourceGen} | {biomeGen} |= {init+chunkGen+resourceGen} ms");
 
@@ -87,13 +94,15 @@ namespace ProcessControl.Procedural
             }
         }
 
-        private Cell GetCellFromCoordinates(Vector2Int coords)
+        //> GET THE CELL AT GIVEN COORDS
+        private Cell GetCellFromCoords(Vector2Int coords)
         {
-            var cells = GetChunkFromCoordinates(coords).cells.ToList();
+            var cells = GetChunkFromCoords(coords).cells.ToList();
             return cells.FirstOrDefault(cell => cell.coords == coords);
         }
 
-        private Chunk GetChunkFromCoordinates(Vector2Int coords)
+        //> GET THE CORRESPONDING CHUNK AT THE GIVEN COORDS
+        private Chunk GetChunkFromCoords(Vector2Int coords)
         {
             var floatCoords = coords.ToVector2();
             float bounds = (grid.size * grid.chunkSize) / 2f;
@@ -103,17 +112,18 @@ namespace ProcessControl.Procedural
             return chunk;
         }
 
+        //> INITIALIZE THE GRID
         public void Initialize()
         {
             camera = Camera.main;
 
             //- register events
-            GetCellAtCoordinates += GetCellFromCoordinates;
-            GetCellAtPosition += (position) => GetCellFromCoordinates(position.ToVector2().FloorToInt());
-            GetCellUnderMouse += () => GetCellFromCoordinates(camera.MousePosition2D().FloorToInt());
+            GetCellAtCoordinates += GetCellFromCoords;
+            GetCellUnderMouse += () => GetCellFromCoords(camera.MousePosition2D().FloorToInt());
+            GetCellAtPosition += (position) => GetCellFromCoords(position.ToVector2().FloorToInt());
 
             //- random seed noise layers
-            if (seed != "") Random.InitState(seed.GetHashCode());
+            if (grid.seed != "") Random.InitState(grid.seed.GetHashCode());
             grid.biomeNoise.ForEach(b => b.offset = Random.insideUnitSphere * (Random.value * 5));
             grid.terrainNoise.ForEach(t => t.offset = Random.insideUnitSphere * (Random.value * 10));
             grid.resourceNoise.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
@@ -315,13 +325,13 @@ namespace ProcessControl.Procedural
                 {
                     case Biome.Sand: cell.resourceDeposits.Add(new ResourceDeposit
                     {
-                        resource = sandResource,
+                        resource = grid.sandResource,
                         quantity = 10000,
                     }); break;
                     
                     case Biome.Stone: cell.resourceDeposits.Add(new ResourceDeposit
                     {
-                        resource = stoneResource,
+                        resource = grid.stoneResource,
                         quantity = 10000,
                     }); break;
                 }
@@ -330,7 +340,7 @@ namespace ProcessControl.Procedural
                 {
                     cell.resourceDeposits.Add(new ResourceDeposit
                     {
-                        resource = stoneResource,
+                        resource = grid.stoneResource,
                         quantity = 10000,
                     });
                 }
@@ -380,7 +390,7 @@ namespace ProcessControl.Procedural
         //> DRAW HELPFUL GIZMOS
         private void OnDrawGizmos()
         {
-            if (!showNeighbours || grid.lastCell is null) return;
+            if (!grid.showNeighbours || grid.lastCell is null) return;
          
             for (int i = 0; i < grid.lastCell.neighbours.Length; i++)
             {

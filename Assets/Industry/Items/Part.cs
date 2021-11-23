@@ -7,7 +7,7 @@ namespace ProcessControl.Industry
     [CreateAssetMenu(menuName = "Resources/Part")]
     public class Part : Item
     {
-        public GameObject prefab;
+        // public GameObject prefab;
         public Entity entity;
     }
 }

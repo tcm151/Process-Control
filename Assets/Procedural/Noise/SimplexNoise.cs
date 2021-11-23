@@ -42,7 +42,7 @@ namespace ProcessControl.Procedural
         };
 
         private int[] random;
-        
+
         private const int RandomSize = 256;
         private const double Sqrt3 = 1.7320508075688772935;
         private const double Sqrt5 = 2.2360679774997896964;
@@ -62,12 +62,12 @@ namespace ProcessControl.Procedural
         //> Gradient vectors for 3D (pointing to mid points of all edges of a unit cube
         private static readonly int[][] Grad3 =
         {
-            new[] {1,  1,  0}, new[] {-1,  1,  0},
-            new[] {1, -1,  0}, new[] {-1, -1,  0}, 
-            new[] {1,  0,  1}, new[] {-1,  0,  1}, 
-            new[] {1,  0, -1}, new[] {-1,  0, -1},
-            new[] {0,  1,  1}, new[] { 0, -1,  1}, 
-            new[] {0,  1, -1}, new[] { 0, -1, -1},
+            new[] { 1, 1, 0 }, new[] { -1, 1, 0 },
+            new[] { 1, -1, 0 }, new[] { -1, -1, 0 },
+            new[] { 1, 0, 1 }, new[] { -1, 0, 1 },
+            new[] { 1, 0, -1 }, new[] { -1, 0, -1 },
+            new[] { 0, 1, 1 }, new[] { 0, -1, 1 },
+            new[] { 0, 1, -1 }, new[] { 0, -1, -1 },
         };
 
         public SimplexNoise()
@@ -260,7 +260,7 @@ namespace ProcessControl.Procedural
 
                 for (int i = 0; i < Source.Length; i++)
                 {
-                    random[i] =  Source[i] ^ F[0];
+                    random[i] = Source[i] ^ F[0];
                     random[i] ^= F[1];
                     random[i] ^= F[2];
                     random[i] ^= F[3];

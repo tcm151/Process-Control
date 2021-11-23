@@ -8,17 +8,17 @@ using ProcessControl.Procedural;
 namespace ProcessControl.Tools.Editor
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(TileGrid))]
+    [CustomEditor(typeof(CellGrid))]
     public class TileGrid_Inspector : UnityEditor.Editor
     {
-        private TileGrid grid;
+        private CellGrid grid;
         private bool autoUpdateChunks;
         private bool autoUpdateBiomes;
         private bool autoUpdateOre;
 
         private void OnEnable()
         {
-            grid = target as TileGrid;
+            grid = target as CellGrid;
         }
 
         override public void OnInspectorGUI()

@@ -13,34 +13,36 @@ namespace ProcessControl.Jobs
         
         // must do prerequisite before current job
         public Job prerequisite;
-        
+
+
         public Vector3 location;
         public Func<Task> order;
+        public List<ItemAmount> requiredItems = new List<ItemAmount>();
         
         public bool complete;
     }
 
-    [Serializable] public class ConstructionJob : Job
-    {
-        public ConstructionJob(Vector3 position, IBuildable buildable, float constructionTime)
-        {
-            location = position;
-            order = () => buildable.Build(constructionTime);
-        }
-    }
-
-    [Serializable] public class DeliveryJob : Job
-    {
-        public DeliveryJob(IInventory recipient, ItemAmount itemAmount, Vector3 position)
-        {
-            location = position;
-            order = () =>
-            {
-                recipient.Deposit(itemAmount);
-                return Task.CompletedTask;
-            };
-        }
-    }
+    // [Serializable] public class ConstructionJob : Job
+    // {
+    //     public ConstructionJob(Vector3 position, IBuildable buildable, float constructionTime)
+    //     {
+    //         location = position;
+    //         order = () => buildable.Build(constructionTime);
+    //     }
+    // }
+    //
+    // [Serializable] public class DeliveryJob : Job
+    // {
+    //     public DeliveryJob(IInventory recipient, ItemAmount itemAmount, Vector3 position)
+    //     {
+    //         location = position;
+    //         order = () =>
+    //         {
+    //             recipient.Deposit(itemAmount);
+    //             return Task.CompletedTask;
+    //         };
+    //     }
+    // }
     
     public interface IWorker
     {

@@ -66,8 +66,8 @@ namespace ProcessControl.Pathfinding
             var timer = new Stopwatch();
             timer.Start();
             
-            var startCell = TileGrid.GetCellAtPosition(start);
-            var endCell = TileGrid.GetCellAtPosition(end);
+            var startCell = CellGrid.GetCellAtPosition(start);
+            var endCell = CellGrid.GetCellAtPosition(end);
             if (startCell is null || endCell is null)
             {
                 Debug.Log($"Start or End cell(s) did not exist...");

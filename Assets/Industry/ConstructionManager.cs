@@ -1,17 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Input = UnityEngine.Input;
 using ProcessControl.Jobs;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Procedural;
 using ProcessControl.Pathfinding;
-using Random = UnityEngine.Random;
-
 #pragma warning disable 108,114
 
 
@@ -83,7 +79,7 @@ namespace ProcessControl.Industry
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    var cell = TileGrid.GetCellAtPosition(TileSpawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100));
+                    var cell = CellGrid.GetCellAtPosition(TileSpawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100));
                     var node = BuildNodeOn(part.entity as Node, part.recipe, cell, false);
                     if (node is IBuildable buildable) buildable.Build(0);
                 }
@@ -107,7 +103,7 @@ namespace ProcessControl.Industry
                 return;
             }
 
-            var conveyor = Factory.Spawn("Conveyors", selectedEdge, Node.Center(firstNode, secondNode));
+            var conveyor = Factory.Spawn("Conveyors", selectedEdge, (firstNode.position + secondNode.position) / 2f);
             firstNode.ConnectOutput(conveyor);
             conveyor.ConnectInput(firstNode);
             conveyor.ConnectOutput(secondNode);
@@ -116,7 +112,7 @@ namespace ProcessControl.Industry
             var conveyorPath = AStar.FindPath(firstCell.position, secondCell.position);
             conveyorPath.ForEach(p =>
             {
-                var tile = TileGrid.GetCellAtPosition(p);
+                var tile = CellGrid.GetCellAtPosition(p);
                 tile.edges.Add(conveyor);
                 if (conveyor is Conveyor c) c.tilesCovered.Add(tile);
             });
@@ -162,11 +158,7 @@ namespace ProcessControl.Industry
                     {
                         description = $"deliver items to {node.name}",
                         location = cell.position,
-                        order = () =>
-                        {
-                            buildable.DeliverItems(nodeRecipe.inputItems);
-                            return Task.CompletedTask;
-                        },
+                        order = () => buildable.DeliverItems(nodeRecipe.inputItems),
                     };
                     AgentManager.QueueJob(deliveryJob);
                     
@@ -221,7 +213,7 @@ namespace ProcessControl.Industry
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     firstNode = secondNode = null;
-                    firstCell = TileGrid.GetCellUnderMouse();
+                    firstCell = CellGrid.GetCellUnderMouse();
                 }
 
                 //- left click released
@@ -236,7 +228,7 @@ namespace ProcessControl.Industry
                     
                     if (firstNode is null) return;
                      
-                    secondCell = TileGrid.GetCellUnderMouse();
+                    secondCell = CellGrid.GetCellUnderMouse();
                     if (firstCell is null || secondCell is null || !secondCell.buildable) Debug.Log("Invalid parentCell!");
                     else
                     {
@@ -245,8 +237,8 @@ namespace ProcessControl.Industry
                         //- if conveyor end points not parallel
                         if ((firstCell.coords.x == secondCell.coords.x) == (firstCell.coords.y == secondCell.coords.y))
                         {
-                            var cell1 = TileGrid.GetCellAtCoordinates(new Vector2Int(firstCell.coords.x, secondCell.coords.y));
-                            var cell2 = TileGrid.GetCellAtCoordinates(new Vector2Int(secondCell.coords.x, firstCell.coords.y));
+                            var cell1 = CellGrid.GetCellAtCoordinates(new Vector2Int(firstCell.coords.x, secondCell.coords.y));
+                            var cell2 = CellGrid.GetCellAtCoordinates(new Vector2Int(secondCell.coords.x, firstCell.coords.y));
 
                             Cell bestCell = cell1;
                             
@@ -280,7 +272,7 @@ namespace ProcessControl.Industry
             //- regular node building
             else if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                var cell = TileGrid.GetCellUnderMouse();
+                var cell = CellGrid.GetCellUnderMouse();
                 if (cell is null)
                 {
                     Debug.Log("Cell did not exist!");
@@ -330,7 +322,7 @@ namespace ProcessControl.Industry
             //- right click delete
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
-                var cell = TileGrid.GetCellUnderMouse();
+                var cell = CellGrid.GetCellUnderMouse();
                 if (cell is null)
                 {
                     Debug.Log("Cell did not exist!");
@@ -348,7 +340,7 @@ namespace ProcessControl.Industry
                     {
                         description = $"destroy a {cell.node.name}",
                         location = cell.position,
-                        order = () => node.Deconstruct(1),
+                        order = () => node.Disassemble(1),
                     });
                 }
                 else if (cell.edges.Count == 1 && cell.edges[0] is IBuildable conveyor)
@@ -357,7 +349,7 @@ namespace ProcessControl.Industry
                     {
                         description = $"destroy a {cell.edges[0].name}",
                         location = cell.position,
-                        order = () => conveyor.Deconstruct(1),
+                        order = () => conveyor.Disassemble(1),
                     });
                 }
                 

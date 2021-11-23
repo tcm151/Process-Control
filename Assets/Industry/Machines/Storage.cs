@@ -36,7 +36,7 @@ public class Storage : Node, IBuildable, IInventory
         enabled = true;
     }
         
-    public async Task Deconstruct(float deconstructionTime)
+    public async Task Disassemble(float deconstructionTime)
     {
         var time = 0f;
         while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();

@@ -36,8 +36,8 @@ namespace ProcessControl.Jobs
                 // setup protocol when workers finish their job
                 worker.onJobCompleted += () => 
                 {
-                    openWorkers.Add(worker);
                     busyWorkers.Remove(worker);
+                    openWorkers.Add(worker);
 
                     var job = worker.currentJob;
                     takenJobs.Remove(job);
