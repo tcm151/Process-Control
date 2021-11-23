@@ -45,7 +45,7 @@ namespace ProcessControl.Procedural
             return default;
         }
 
-        public static Vector2 GenerateSpawn(Func<Cell, bool> predicate, Vector2Int origin = default, int range = 0)
+        public static Vector2 GenerateRandomSpawn(Func<Cell, bool> predicate, Vector2Int origin = default, int range = 0)
         {
             var openList = new List<Cell>();
             var closedList = new List<Cell>();
@@ -57,7 +57,7 @@ namespace ProcessControl.Procedural
             var steps = 0;
             while ((openList.Count >= 1) && (steps++ < 10_000))
             {
-                var currentCell = openList.TakeFirst();
+                var currentCell = openList.TakeAndRemoveFirst();
                 
                 if (predicate(currentCell)) return currentCell.position;
 

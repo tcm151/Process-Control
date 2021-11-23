@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ProcessControl.Industry;
@@ -19,7 +20,7 @@ namespace ProcessControl.Jobs
         //> EVENTS
         public event Action onJobCompleted;
         
-        internal Job currentJob;
+        internal Order CurrentOrder;
         private CancellationTokenSource roamingCancellation;
 
         public int stackSize = 16;
@@ -27,23 +28,32 @@ namespace ProcessControl.Jobs
         internal Inventory inventory;
         
         //> TAKE A NEW JOB
-        public void TakeJob(Job newJob)
+        public void TakeJob(Order newOrder)
         {
-            currentJob = newJob;
-            currentPath = AStar.FindPath(transform.position, currentJob.location);
+            CurrentOrder = newOrder;
+            if (CurrentOrder.location is {}) currentPath = AStar.FindPath(transform.position, CurrentOrder.location);
+            // if (CurrentOrder.requiredItems.Any(itemAmount => !inventory.Contains(itemAmount)))
+            // {
+            //     CurrentOrder.requiredItems.ForEach(
+            //         i =>
+            //         {
+            //             var matchingContainers = ItemFactory.FindItemByClosest(transform.position, i);
+            //             if (matchingContainers.Count < i.amount) Debug.Log("NOT ENOUGH ITEMS...");
+            //         });
+            // }
         }
         
         //> COMPLETE ACTIVE JOB OR ROAM IF IDLE
         public async void CompleteJob()
         {
-            if (currentJob is null)
+            if (CurrentOrder is null)
             { 
                 Roam();
                 return;
             }
             
-            await currentJob.order();
-            currentJob.complete = true;
+            await CurrentOrder.order();
+            CurrentOrder.complete = true;
             onJobCompleted?.Invoke();
         }
 
@@ -72,12 +82,12 @@ namespace ProcessControl.Jobs
                 if (roamingCancellation.IsCancellationRequested) return;
                 await Task.Yield();
             }
-            if (currentJob is {complete: false}) return;
+            if (CurrentOrder is {complete: false}) return;
             currentPath = AStar.FindPath(transform.position, transform.position + Random.insideUnitCircle.ToVector3() * roamingDistance);
         }
 
         //> CLEAN UP & DESTROY
-        private void OnDestroy() => currentJob = null;
+        private void OnDestroy() => CurrentOrder = null;
 
         //> CANCEL ROAMING ON QUIT
         private void OnApplicationQuit() => roamingCancellation.Cancel();

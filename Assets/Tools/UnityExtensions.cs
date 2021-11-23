@@ -9,14 +9,14 @@ namespace ProcessControl.Tools
     {
         //> LISTS ==================================================================================
         //- Remove and return the item at the index position
-        public static T Take<T>(this List<T> list, int index)
+        public static T TakeAndRemove<T>(this List<T> list, int index)
         {
             var item = list[index];
             list.RemoveAt(index);
             return item;
         }
         //------------------------------------------------------------------------------------------
-        public static List<T> TakeRange<T>(this List<T> list, int start, int end)
+        public static List<T> TakeAndRemoveRange<T>(this List<T> list, int start, int end)
         {
             var items = new List<T>();
             for (int i = start; i <= end; i++) items.Add(list[i]);
@@ -24,7 +24,7 @@ namespace ProcessControl.Tools
         }
         //------------------------------------------------------------------------------------------
         //- Remove and return the first item in the list
-        public static T TakeFirst<T>(this List<T> list)
+        public static T TakeAndRemoveFirst<T>(this List<T> list)
         {
             if (list.Count == 0) return default;
             var item = list[0];
@@ -33,7 +33,7 @@ namespace ProcessControl.Tools
         }
         //------------------------------------------------------------------------------------------
         //- Remove and return the last item in the list
-        public static T TakeLast<T>(this List<T> list)
+        public static T TakeAndRemoveLast<T>(this List<T> list)
         {
             if (list.Count == 0) return default;
             var item = list[list.Count - 1];

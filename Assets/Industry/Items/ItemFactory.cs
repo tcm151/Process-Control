@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
-using ProcessControl.Industry;
 using UnityEngine.Serialization;
+using ProcessControl.Tools;
 
 
-namespace ProcessControl.Tools
+namespace ProcessControl.Industry
 {
     public class ItemFactory : Factory
     {
@@ -18,7 +18,7 @@ namespace ProcessControl.Tools
         //> EVENT HOOKS
         public static Func<string, Item> GetItem;
         public static Func<ItemAmount, bool> Exists;
-        public static Func<Vector3, int, List<Container>> FindClosest;
+        public static Func<Vector3, ItemAmount, List<Container>> FindItemByClosest;
         public static Func<Item, Vector3, Container> SpawnContainer;
         public static Action<Container> DisposeContainer;
 
@@ -39,10 +39,16 @@ namespace ProcessControl.Tools
                 return (matchingContainers.Count() >= itemAmount.amount);
             };
 
-            FindClosest += (position, amount) =>
+            FindItemByClosest += (position, itemAmount) =>
             {
-                return spawnedContainers.OrderBy(c => Vector3.Distance(c.position, position))
-                                        .Take(amount).ToList();
+                var matchingContainers = spawnedContainers.Where(c => c.item == itemAmount.item)
+                                        .OrderBy(c => Vector3.Distance(c.position, position))
+                                        .ToList();
+                    
+                if (matchingContainers.Count < itemAmount.amount)
+                    Debug.Log("NOT ENOUGH ITEMS IN ENVIRONMENT");
+
+                return matchingContainers.Take(itemAmount.amount).ToList();
             };
             
             SpawnContainer += (item, position) =>

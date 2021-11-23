@@ -68,7 +68,7 @@ namespace ProcessControl.Industry
             && inventory.Count >= 1
             && inventory.Last().ticks >= 2 * TicksPerSecond / itemsPerMinute;
         
-        override public Container Withdraw() => inventory.TakeFirst();
+        override public Container Withdraw() => inventory.TakeAndRemoveFirst();
         override public bool CanWithdraw()
             => inventory.Count >= 1
              && inventory[0].ticks > distanceBetweenIO * TicksPerSecond / itemsPerMinute;

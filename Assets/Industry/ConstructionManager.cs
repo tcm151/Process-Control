@@ -54,22 +54,29 @@ namespace ProcessControl.Industry
             var stone = ItemFactory.GetItem("Stone");
             for (int i = 0; i < 25; i++)
             {
-                var spawnPosition = TileSpawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                var spawnPosition = TileSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
                 ItemFactory.SpawnContainer(stone, spawnPosition);
             }
             
             var ironIngot = ItemFactory.GetItem("Iron Ingot");
             for (int i = 0; i < 25; i++)
             {
-                var spawnPosition = TileSpawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                var spawnPosition = TileSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
                 ItemFactory.SpawnContainer(ironIngot, spawnPosition);
             }
             
             var ironPlate = ItemFactory.GetItem("Iron Plate");
             for (int i = 0; i < 25; i++)
             {
-                var spawnPosition = TileSpawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                var spawnPosition = TileSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
                 ItemFactory.SpawnContainer(ironPlate, spawnPosition);
+            }
+
+            var coalOre = ItemFactory.GetItem("Coal Ore");
+            for (int i = 0; i < 25; i++)
+            {
+                var spawnPosition = TileSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                ItemFactory.SpawnContainer(coalOre, spawnPosition);
             }
             
             
@@ -79,7 +86,7 @@ namespace ProcessControl.Industry
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    var cell = CellGrid.GetCellAtPosition(TileSpawner.GenerateSpawn(c => c.buildable, startPosition.FloorToInt(), 100));
+                    var cell = CellGrid.GetCellAtPosition(TileSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100));
                     var node = BuildNodeOn(part.entity as Node, part.recipe, cell, false);
                     if (node is IBuildable buildable) buildable.Build(0);
                 }
@@ -119,7 +126,7 @@ namespace ProcessControl.Industry
 
             if (conveyor is IBuildable buildable)
             {
-                AgentManager.QueueJob(new Job
+                AgentManager.QueueJob(new Order
                 {
                     description = $"build a {conveyor.name}",
                     location = conveyor.Center,
@@ -132,6 +139,18 @@ namespace ProcessControl.Industry
         private Node BuildNodeOn(Node selectedNode, Recipe nodeRecipe, Cell cell, bool queueJob = true)
         {
             // if (!(selectedPart.entity is Node selectedNode)) return default;
+
+            if (queueJob)
+            {
+                nodeRecipe.inputItems.ForEach(
+                    i =>
+                    {
+                        var matchingContainers = ItemFactory.FindItemByClosest(selectedNode.position, i);
+                        if (matchingContainers.Count < i.amount) Debug.Log("NOT ENOUGH ITEMS...");
+                    });
+                // var matchingContainers = ItemFactory.FindItemByClosest(selectedNode.position, nodeRecipe.inputItems);
+                
+            }
             
             Node node;
             if (selectedNode is Machine) node = Factory.Spawn("Machines", selectedNode, cell.position);
@@ -145,16 +164,12 @@ namespace ProcessControl.Industry
             {
                 if (queueJob)
                 {
-                    // var collectJob = new Job
-                    // {
-                    //     description = $"gather items for {nodeRecipe.name}",
-                    //     order = () =>
-                    //     {
-                    //         
-                    
-                    //     },
-                    // };
-                    var deliveryJob = new Job
+                    var collectJob = new Order
+                    {
+                        description = $"gather items for {nodeRecipe.name}",
+                        // requiredItems = selectedPart.recipe.inputItems,
+                    };
+                    var deliveryJob = new Order
                     {
                         description = $"deliver items to {node.name}",
                         location = cell.position,
@@ -162,7 +177,7 @@ namespace ProcessControl.Industry
                     };
                     AgentManager.QueueJob(deliveryJob);
                     
-                    AgentManager.QueueJob(new Job
+                    AgentManager.QueueJob(new Order
                     {
                         description = $"build a {node.name}",
                         prerequisite = deliveryJob,
@@ -336,7 +351,7 @@ namespace ProcessControl.Industry
 
                 if (cell.node is IBuildable node)
                 {
-                    AgentManager.QueueJob(new Job
+                    AgentManager.QueueJob(new Order
                     {
                         description = $"destroy a {cell.node.name}",
                         location = cell.position,
@@ -345,7 +360,7 @@ namespace ProcessControl.Industry
                 }
                 else if (cell.edges.Count == 1 && cell.edges[0] is IBuildable conveyor)
                 {
-                    AgentManager.QueueJob(new Job
+                    AgentManager.QueueJob(new Order
                     {
                         description = $"destroy a {cell.edges[0].name}",
                         location = cell.position,
