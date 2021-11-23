@@ -28,6 +28,6 @@ namespace ProcessControl.Graphs
             renderer.color = disabledColor;
         }
 
-        protected void OnDestroy() => Destroy(gameObject);
+        virtual protected void OnDestroy() => Destroy(gameObject);
     }
 }

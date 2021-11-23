@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
 
 
 namespace ProcessControl.Graphs
 {
-    public class Graph : MonoBehaviour
+    public class Graph
     {
-        
+        public List<Node> nodes;
+        public List<Edge> edges;
     }
 }

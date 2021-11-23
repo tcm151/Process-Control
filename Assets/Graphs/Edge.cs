@@ -24,7 +24,5 @@ namespace ProcessControl.Graphs
 
         abstract public bool CanWithdraw();
         abstract public Container Withdraw();
-        
-        virtual public void OnDestroy() => Destroy(gameObject);
     }
 }
