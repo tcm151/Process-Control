@@ -18,7 +18,8 @@ namespace ProcessControl.Industry
         //> EVENT HOOKS
         public static Func<string, Item> GetItem;
         public static Func<ItemAmount, bool> Exists;
-        public static Func<Vector3, ItemAmount, List<Container>> FindItemByClosest;
+        public static Func<Vector3, ItemAmount, Container> FindItemByClosest;
+        public static Func<Vector3, ItemAmount, List<Container>> FindItemsByClosest;
         public static Func<Item, Vector3, Container> SpawnContainer;
         public static Action<Container> DisposeContainer;
 
@@ -39,7 +40,7 @@ namespace ProcessControl.Industry
                 return (matchingContainers.Count() >= itemAmount.amount);
             };
 
-            FindItemByClosest += (position, itemAmount) =>
+            FindItemsByClosest += (position, itemAmount) =>
             {
                 var matchingContainers = spawnedContainers.Where(c => c.item == itemAmount.item)
                                         .OrderBy(c => Vector3.Distance(c.position, position))
@@ -49,6 +50,14 @@ namespace ProcessControl.Industry
                     Debug.Log("NOT ENOUGH ITEMS IN ENVIRONMENT");
 
                 return matchingContainers.Take(itemAmount.amount).ToList();
+            };
+
+            FindItemByClosest += (position, itemAmount) =>
+            {
+                var matchingContainer = spawnedContainers.Where(c => c.item == itemAmount.item)
+                                                          .OrderBy(c => Vector3.Distance(c.position, position))
+                                                          .FirstOrDefault();
+                return matchingContainer;
             };
             
             SpawnContainer += (item, position) =>

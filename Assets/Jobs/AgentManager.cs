@@ -10,13 +10,13 @@ namespace ProcessControl.Jobs
 {
     public class AgentManager : MonoBehaviour
     {
-        public static Action<Order> QueueJob;
-        public static Action<List<Order>> QueueJobs;
+        public static Action<Job> QueueJob;
+        public static Action<List<Job>> QueueJobs;
         
         [Header("Jobs")]
-        [SerializeField] private List<Order> openJobs = new List<Order>();
-        [SerializeField] private List<Order> takenJobs = new List<Order>();
-        [SerializeField] private List<Order> completedJobs = new List<Order>();
+        [SerializeField] private List<Job> openJobs = new List<Job>();
+        [SerializeField] private List<Job> takenJobs = new List<Job>();
+        [SerializeField] private List<Job> completedJobs = new List<Job>();
         
         [Header("Workers")]
         [SerializeField] private List<Worker> openWorkers = new List<Worker>();
@@ -39,10 +39,10 @@ namespace ProcessControl.Jobs
                     busyWorkers.Remove(worker);
                     openWorkers.Add(worker);
 
-                    var job = worker.CurrentOrder;
+                    var job = worker.currentJob;
                     takenJobs.Remove(job);
                     completedJobs.Add(job);
-                    worker.CurrentOrder = null;
+                    worker.currentOrder = null;
                 };
             });
         }
@@ -55,7 +55,7 @@ namespace ProcessControl.Jobs
             
             // assign the job closest to the first available worker
             var worker = openWorkers.TakeAndRemoveFirst();
-            var closestJob = openJobs.OrderBy(j => Vector3.Distance(worker.position, j.location)).First();
+            var closestJob = openJobs.OrderBy(j => Vector3.Distance(worker.position, j.orders[0].location)).First();
             // var closestJob = openJobs.OrderBy(j => Vector3.Distance(worker.position, j.location)).First(j => j.prerequisite is {complete: true} || j.prerequisite is null);
             openJobs.Remove(closestJob);
             worker.TakeJob(closestJob);

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -40,8 +41,6 @@ namespace ProcessControl.Industry
             camera = Camera.main;
 
             SetPart += (part) => selectedPart = part;
-            // SetNode += (newSelection) => selectedNode = newSelection;
-            // SetEdge += (newSelection) => selectedEdge = newSelection;
             SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
 
             TileSpawner.onStartLocationDetermined += GenerateSpawnArea;
@@ -126,12 +125,25 @@ namespace ProcessControl.Industry
 
             if (conveyor is IBuildable buildable)
             {
-                AgentManager.QueueJob(new Order
+                AgentManager.QueueJob(new Job
                 {
-                    description = $"build a {conveyor.name}",
-                    location = conveyor.Center,
-                    order = () => buildable.Build(1),
+                    orders =
+                    {
+                        new Order
+                        {
+                            description = $"build a {conveyor.name}",
+                            location = conveyor.Center,
+                            action = () => buildable.Build(1),
+                        },
+                    },
                 });
+                
+                // AgentManager.QueueJob(new Order
+                // {
+                //     description = $"build a {conveyor.name}",
+                //     location = conveyor.Center,
+                //     action = () => buildable.Build(1),
+                // });
                 // AgentManager.QueueJob(new ConstructionJob(conveyor.Center, buildable, 1));
             }
         }
@@ -140,16 +152,15 @@ namespace ProcessControl.Industry
         {
             // if (!(selectedPart.entity is Node selectedNode)) return default;
 
+            var requiredContainers = new List<Container>();
             if (queueJob)
             {
-                nodeRecipe.inputItems.ForEach(
-                    i =>
-                    {
-                        var matchingContainers = ItemFactory.FindItemByClosest(selectedNode.position, i);
-                        if (matchingContainers.Count < i.amount) Debug.Log("NOT ENOUGH ITEMS...");
-                    });
-                // var matchingContainers = ItemFactory.FindItemByClosest(selectedNode.position, nodeRecipe.inputItems);
-                
+                nodeRecipe.inputItems.ForEach(i =>
+                {
+                    var matchingContainers = ItemFactory.FindItemsByClosest(selectedNode.position, i);
+                    if (matchingContainers.Count < i.amount) Debug.Log("NOT ENOUGH ITEMS...");
+                    else matchingContainers.ForEach(c => requiredContainers.Add(c));
+                });
             }
             
             Node node;
@@ -164,25 +175,59 @@ namespace ProcessControl.Industry
             {
                 if (queueJob)
                 {
-                    var collectJob = new Order
-                    {
-                        description = $"gather items for {nodeRecipe.name}",
-                        // requiredItems = selectedPart.recipe.inputItems,
-                    };
-                    var deliveryJob = new Order
+
+
+                    var collectJob = new Job();
+
+                    requiredContainers.ForEach(
+                        c =>
+                        {
+                            collectJob.orders.Add(new Order
+                            {
+                                description = $"gather {c.item.name} for {nodeRecipe.name}",
+                                location = c.position,
+                                action = () =>
+                                {
+                                    collectJob.activeWorker.Deposit(new ItemAmount{item = c.item, amount = 1});
+                                    ItemFactory.DisposeContainer(c);
+                                    return Task.CompletedTask;
+                                },
+                            });
+                        });
+
+                    AgentManager.QueueJob(collectJob);
+
+
+                    var deliveryJob = new Job();
+                    deliveryJob.orders.Add(new Order
                     {
                         description = $"deliver items to {node.name}",
                         location = cell.position,
-                        order = () => buildable.DeliverItems(nodeRecipe.inputItems),
-                    };
+                        action = () =>
+                        {
+                            var deliveryItems = new List<ItemAmount>();
+                            nodeRecipe.inputItems.ForEach(itemAmount =>
+                            {
+                                var withdrawnItems = deliveryJob.activeWorker.Withdraw(itemAmount);
+                                deliveryItems.Add(withdrawnItems);
+                            });
+                            return buildable.DeliverItems(deliveryItems);
+                        },
+                    });
                     AgentManager.QueueJob(deliveryJob);
                     
-                    AgentManager.QueueJob(new Order
+                    AgentManager.QueueJob(new Job
                     {
-                        description = $"build a {node.name}",
-                        prerequisite = deliveryJob,
-                        location = cell.position,
-                        order = () => buildable.Build(1),
+                        orders =
+                        {
+                            new Order
+                            {
+                                description = $"build a {node.name}",
+                                // prerequisite = deliveryJob,
+                                location = cell.position,
+                                action = () => buildable.Build(1),
+                            }
+                        }
                     });
                     // AgentManager.QueueJob(new ConstructionJob(cell.position, buildable, 1));
                 }
@@ -351,20 +396,32 @@ namespace ProcessControl.Industry
 
                 if (cell.node is IBuildable node)
                 {
-                    AgentManager.QueueJob(new Order
+                    AgentManager.QueueJob(new Job
                     {
-                        description = $"destroy a {cell.node.name}",
-                        location = cell.position,
-                        order = () => node.Disassemble(1),
+                        orders =
+                        {
+                            new Order
+                            {
+                                description = $"destroy a {cell.node.name}",
+                                location = cell.position,
+                                action = () => node.Disassemble(1),
+                            },
+                        },
                     });
                 }
                 else if (cell.edges.Count == 1 && cell.edges[0] is IBuildable conveyor)
                 {
-                    AgentManager.QueueJob(new Order
+                    AgentManager.QueueJob(new Job
                     {
-                        description = $"destroy a {cell.edges[0].name}",
-                        location = cell.position,
-                        order = () => conveyor.Disassemble(1),
+                        orders =
+                        {
+                            new Order
+                            {
+                                description = $"destroy a {cell.edges[0].name}",
+                                location = cell.position,
+                                action = () => conveyor.Disassemble(1),
+                            },
+                        },
                     });
                 }
                 

@@ -15,7 +15,7 @@ namespace ProcessControl.Pathfinding
         // public enum Movement { Idle, Moving }
         // public enum Task { DoingJob, AcceptingJob }
         
-        protected List<Vector3> currentPath = new List<Vector3>();
+        [SerializeField] protected List<Vector3> currentPath = new List<Vector3>();
         // protected Path<Vector3> currentPath;
 
         public event Action onReachedDestination;
@@ -46,8 +46,8 @@ namespace ProcessControl.Pathfinding
                 if (currentPath.Count == 0 || currentPosition.DistanceTo(currentPath.Last()) < 1.5f)
                 // if (currentPosition.DistanceTo(currentPath.Destination) < 1.5f)
                 {
-                    onReachedDestination?.Invoke();
                     currentPath = null;
+                    onReachedDestination?.Invoke();
                     return;
                 }
                 
