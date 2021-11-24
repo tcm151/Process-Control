@@ -14,16 +14,4 @@ namespace ProcessControl.Jobs
         public Task Build(float buildTime);
         public Task Disassemble(float deconstructionTime);
     }
-
-    public interface IInventory
-    {
-        public bool Contains(ItemAmount itemAmount);
-        public ItemAmount Withdraw(ItemAmount itemAmount);
-        public void Deposit(ItemAmount itemAmount);
-    }
-
-    public interface IRepairable
-    {
-        public void Repair();
-    }
 }
