@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEngine;
 
 
 namespace ProcessControl.Industry
 {
-    public class Inventory
+    [Serializable] public class Inventory
     {
         public Inventory(int slots, int stackSize)
         {
@@ -21,7 +22,7 @@ namespace ProcessControl.Industry
 
         private readonly int slots;
         private readonly int stackSize;
-        private readonly List<ItemAmount> items = new List<ItemAmount>();
+        [SerializeField] private List<ItemAmount> items = new List<ItemAmount>();
         
         public int Count => items.Sum(i => i.amount);
         public bool Full => Count >= slots * stackSize;

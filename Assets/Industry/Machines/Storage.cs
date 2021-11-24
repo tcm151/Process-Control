@@ -12,7 +12,7 @@ public class Storage : Node, IBuildable, IInventory
     private Conveyor input;
     private Conveyor output;
 
-    private readonly Inventory inventory = new Inventory(16, 16 * 64);
+    [SerializeField] private Inventory inventory = new Inventory(16, 16 * 64);
 
     override public IO Input => input;
     override public IO Output => output;
