@@ -15,7 +15,6 @@ namespace ProcessControl.Industry
     [SelectionBase]
     public class Conveyor : Edge, IBuildable
     {
-        public bool enabled;
         public bool sleeping;
         public int ticks;
         public int sleepThreshold = 256;
@@ -24,39 +23,32 @@ namespace ProcessControl.Industry
         public int itemsPerMinute = 8;
 
         [Header("IO")]
-        // public Node input;
         public IO input;
-        // public Node output;
         public IO output;
         public float distanceBetweenIO;
 
         [Header("Inventory")]
         public int inventorySize = 8;
         public List<Container> inventory = new List<Container>();
-
         public readonly List<Cell> tilesCovered = new List<Cell>();
 
-
-        // private SpriteRenderer renderer;
         public void SetLength(float size) => renderer.size = new Vector2(size, 1);
 
-        public Vector3 position
-        {
-            get => transform.position;
-            set => transform.position = value;
-        }
+        // public Vector3 position
+        // {
+        //     get => transform.position;
+        //     set => transform.position = value;
+        // }
         
         override public float Length { get
         {
             if (input is null || output is null) return 0;
-            // return Node.DistanceBetween(input, output);
             return Vector3.Distance(input.position, output.position);
         }}
         
         override public Vector3 Center { get
         {
             if (input is null || output is null) return default;
-            // return Node.Center(input, output);
             return (input.position + output.position) / 2f;
         }}
 
@@ -76,7 +68,6 @@ namespace ProcessControl.Industry
         override public IO Input => input;
         override public IO Output => output;
 
-        // public event Action onAllItemsDelivered;
 
         public Task DeliverItems(List<ItemAmount> itemAmounts)
         {
@@ -87,7 +78,6 @@ namespace ProcessControl.Industry
         {
             var time = 0f;
             while ((time += Time.deltaTime) < buildTime) await Task.Yield();
-            // renderer.color = enabledColor;
             enabled = true;
         }
         

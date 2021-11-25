@@ -11,7 +11,7 @@ using ProcessControl.Graphs;
 namespace ProcessControl.Industry
 {
     [SelectionBase]
-    public class Machine : Node , IBuildable
+    public class Machine : Node , IBuildable, IInventory
     {
         public int ticks;
         public bool sleeping;
@@ -174,5 +174,9 @@ namespace ProcessControl.Industry
             outputInventory.Clear();
             base.OnDestroy();
         }
+
+        public bool Contains(ItemAmount itemAmount) => inputInventory.Contains(itemAmount) || outputInventory.Contains(itemAmount);
+        public ItemAmount Withdraw(ItemAmount itemAmount) => outputInventory.Withdraw(itemAmount);
+        public void Deposit(ItemAmount itemAmount) => inputInventory.Deposit(itemAmount);
     }
 }
