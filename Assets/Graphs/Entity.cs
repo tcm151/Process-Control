@@ -9,7 +9,8 @@ namespace ProcessControl.Graphs
     {
         protected const int TicksPerSecond = 64;
         protected static int TicksPerMinute => TicksPerSecond * 60;
-        
+
+        new public bool enabled;
         public Color enabledColor = new Color(255, 255, 255, 255);
         public Color disabledColor = new Color(255, 255, 255, 100);
 
