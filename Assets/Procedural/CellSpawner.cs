@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace ProcessControl.Procedural
 {
-    public class TileSpawner
+    public static class CellSpawner
     {
         public static event Action<Vector2> onStartLocationDetermined;
 
@@ -50,7 +50,7 @@ namespace ProcessControl.Procedural
             var openList = new List<Cell>();
             var closedList = new List<Cell>();
 
-            var offset = (Random.insideUnitCircle.normalized * Random.value * range).FloorToInt();
+            var offset = (Random.insideUnitCircle.normalized * (Random.value * range)).FloorToInt();
             var startingCell = CellGrid.GetCellAtCoordinates(origin + offset);
             openList.Add(startingCell);
 

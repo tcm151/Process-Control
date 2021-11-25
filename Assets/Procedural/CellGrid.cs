@@ -80,7 +80,7 @@ namespace ProcessControl.Procedural
             
             Debug.Log($"{init} | {chunkGen} | {resourceGen} | {biomeGen} |= {init+chunkGen+resourceGen} ms");
 
-            TileSpawner.CalculateSpawnLocation();
+            CellSpawner.CalculateSpawnLocation();
         }
         
         //> EVENTS
@@ -411,10 +411,5 @@ namespace ProcessControl.Procedural
                 Gizmos.DrawSphere(chunkOffset, grid.chunkSize * 0.5f);
             }
         }
-    }
-
-    [Serializable] public class ResourceNoiseLayer : Noise.Layer
-    {
-        public Resource resource;
     }
 }
