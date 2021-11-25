@@ -22,12 +22,12 @@ namespace ProcessControl.Pathfinding
             if (startCell is null || endCell is null)
             {
                 Debug.Log($"Start or End cell(s) did not exist...");
-                return new List<Vector3> {start};
+                return default;
             }
             if (!endCell.buildable)
             {
                 Debug.Log("End tile was not navigable");
-                return new List<Vector3> {start};
+                return default;
             }
             if (!endCell.walkable)
             {
@@ -62,7 +62,7 @@ namespace ProcessControl.Pathfinding
                     if (finalPath is {}) return finalPath;
                     
                     Debug.Log($"Path did not exist between {startCell.coords} and {endCell.coords}");
-                    return new List<Vector3> {start};
+                    return default;
                 }
                 
                 // move cell to closed list if not walkable and continue
@@ -115,7 +115,7 @@ namespace ProcessControl.Pathfinding
             
             //- no open nodes left
             Debug.Log($"Open list emptied after {timer.ElapsedMilliseconds} ms");
-            return new List<Vector3> { start };
+            return default;
         }
         
         //> RETRACE THE AND RETURN SHORTEST PATH

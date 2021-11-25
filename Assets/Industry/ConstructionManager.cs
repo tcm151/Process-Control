@@ -28,12 +28,9 @@ namespace ProcessControl.Industry
         [SerializeField] private Part selectedPart;
         
         private Camera camera;
-        private Vector2 startPosition;
         public Node firstNode, secondNode;
         public Cell firstCell, secondCell;
         [SerializeField] private List<Machine> builtMachines = new List<Machine>();
-
-
 
         //> INITIALIZATION
         private void Awake()
@@ -43,39 +40,46 @@ namespace ProcessControl.Industry
             SetPart += (part) => selectedPart = part;
             SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
 
-            TileSpawner.onStartLocationDetermined += GenerateSpawnArea;
+            CellSpawner.onStartLocationDetermined += GenerateSpawnArea;
         }
-
-        private void GenerateSpawnArea(Vector2 position)
+        
+        private void GenerateSpawnArea(Vector2 startPosition)
         {
-            startPosition = position;
+            // startPosition = position;
             
             var stone = ItemFactory.GetItem("Stone");
             for (int i = 0; i < 25; i++)
             {
-                var spawnPosition = TileSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                var spawnPosition = CellSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
                 ItemFactory.SpawnContainer(stone, spawnPosition);
             }
             
             var ironIngot = ItemFactory.GetItem("Iron Ingot");
             for (int i = 0; i < 25; i++)
             {
-                var spawnPosition = TileSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                var spawnPosition = CellSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
                 ItemFactory.SpawnContainer(ironIngot, spawnPosition);
             }
             
             var ironPlate = ItemFactory.GetItem("Iron Plate");
             for (int i = 0; i < 25; i++)
             {
-                var spawnPosition = TileSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                var spawnPosition = CellSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
                 ItemFactory.SpawnContainer(ironPlate, spawnPosition);
             }
 
             var coalOre = ItemFactory.GetItem("Coal Ore");
             for (int i = 0; i < 25; i++)
             {
-                var spawnPosition = TileSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                var spawnPosition = CellSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
                 ItemFactory.SpawnContainer(coalOre, spawnPosition);
+            }
+
+            var ironBeam = ItemFactory.GetItem("Iron Beam");
+            for (int i = 0; i < 25; i++)
+            {
+                var spawnPosition = CellSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
+                ItemFactory.SpawnContainer(ironBeam, spawnPosition);
             }
             
             
@@ -85,16 +89,17 @@ namespace ProcessControl.Industry
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    var cell = CellGrid.GetCellAtPosition(TileSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100));
+                    var cell = CellGrid.GetCellAtPosition(CellSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100));
                     var node = BuildNodeOn(part.entity as Node, part.recipe, cell, false);
                     if (node is IBuildable buildable) buildable.Build(0);
+                    
                 }
             }
             
             var machines = FindObjectsOfType<Machine>();
             machines.ForEach(m => builtMachines.Add(m));
         }
-        
+
         //> BUILD EDGE BETWEEN TWO NODES
         private void BuildEdgeBetween(Node firstNode, Node secondNode)
         {
@@ -152,7 +157,9 @@ namespace ProcessControl.Industry
         {
             // if (!(selectedPart.entity is Node selectedNode)) return default;
 
+            var matchingEntities = new List<Entity>();
             var requiredContainers = new List<Container>();
+            var machinesWithItems = new List<Machine>();
             if (queueJob)
             {
                 nodeRecipe.inputItems.ForEach(i =>
@@ -160,8 +167,15 @@ namespace ProcessControl.Industry
                     var matchingContainers = ItemFactory.FindItemsByClosest(selectedNode.position, i);
                     if (matchingContainers.Count < i.amount) Debug.Log("NOT ENOUGH ITEMS...");
                     else matchingContainers.ForEach(c => requiredContainers.Add(c));
+
+                    var matchingMachines = builtMachines.Where(m => m.inputInventory.Contains(i) || m.outputInventory.Contains(i)).ToList();
+                    matchingMachines.ForEach(m => machinesWithItems.Add(m));
                 });
             }
+
+            requiredContainers.ForEach(c => matchingEntities.Add(c));
+            machinesWithItems.ForEach((m => matchingEntities.Add(m)));
+            matchingEntities = matchingEntities.OrderBy(e => Vector3.Distance(cell.position, e.position)).ToList();
             
             Node node;
             if (selectedNode is Machine) node = Factory.Spawn("Machines", selectedNode, cell.position);
@@ -177,28 +191,53 @@ namespace ProcessControl.Industry
                 {
 
 
-                    var collectJob = new Job();
+                    var collectJob = new Job
+                    {
+                        description = $"Collect resources for {selectedPart.entity.name}",
+                    };
 
                     requiredContainers.ForEach(
                         c =>
                         {
-                            collectJob.orders.Add(new Order
+                            // if (e is Container c)
                             {
-                                description = $"gather {c.item.name} for {nodeRecipe.name}",
-                                location = c.position,
-                                action = () =>
+                                collectJob.orders.Add(new Order
                                 {
-                                    collectJob.activeWorker.Deposit(new ItemAmount{item = c.item, amount = 1});
-                                    ItemFactory.DisposeContainer(c);
-                                    return Task.CompletedTask;
-                                },
-                            });
+                                    description = $"gather {c.item.name} for {nodeRecipe.name}",
+                                    location = c.position,
+                                    action = () =>
+                                    {
+                                        collectJob.activeWorker.Deposit(new ItemAmount{item = c.item, amount = 1});
+                                        ItemFactory.DisposeContainer(c);
+                                        return Task.CompletedTask;
+                                    },
+                                });
+                            }
+                            // if (e is Machine m)
+                            // {
+                            //     collectJob.orders.Add(new Order
+                            //     {
+                            //         description = $"gather {"temp"} for {nodeRecipe.name}",
+                            //         location = m.position,
+                            //         action = () =>
+                            //         {
+                            //             collectJob.activeWorker.Deposit(new ItemAmount{item = c.item, amount = 1});
+                            //             ItemFactory.DisposeContainer(c);
+                            //             return Task.CompletedTask;
+                            //         },
+                            //     });
+                            // }
                         });
 
                     JobManager.QueueJob(collectJob);
 
 
-                    var deliveryJob = new Job();
+                    var deliveryJob = new Job
+                    {
+                        description = $"deliver items to {node.name}",
+                        prerequisite = collectJob,
+                    };
+                    
                     deliveryJob.orders.Add(new Order
                     {
                         description = $"deliver items to {node.name}",
@@ -215,9 +254,11 @@ namespace ProcessControl.Industry
                         },
                     });
                     JobManager.QueueJob(deliveryJob);
-                    
-                    JobManager.QueueJob(new Job
+
+                    var constructionJob = new Job
                     {
+                        description = $"build a {node.name}",
+                        prerequisite = deliveryJob,
                         orders =
                         {
                             new Order
@@ -228,7 +269,8 @@ namespace ProcessControl.Industry
                                 action = () => buildable.Build(1),
                             }
                         }
-                    });
+                    };
+                    JobManager.QueueJob(constructionJob);
                     // JobManager.QueueJob(new ConstructionJob(cell.position, buildable, 1));
                 }
             }

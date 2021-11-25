@@ -95,21 +95,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38c4e781df9de0a45ac9252fd27289aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enabled: 0
-  sleeping: 0
+  enabledColor: {r: 1, g: 1, b: 1, a: 1}
+  disabledColor: {r: 1, g: 1, b: 1, a: 0.39215687}
   ticks: 0
-  sleepThreshold: 256
+  sleeping: 0
+  sleepThreshold: 2048
   currentRecipe: {fileID: 0}
   recipes: []
   inventorySize: 16
+  inputInventory:
+    items: []
+  outputInventory:
+    items: []
   inputEnabled: 0
   maxInputs: 0
-  currentInput: {fileID: 0}
-  inputs: []
   outputEnabled: 1
   maxOutputs: 1
-  currentOutput: {fileID: 0}
-  outputs: []
-  enabledColor: {r: 1, g: 1, b: 1, a: 1}
-  disabledColor: {r: 1, g: 1, b: 1, a: 0.39215687}
   extractionSpeed: 16

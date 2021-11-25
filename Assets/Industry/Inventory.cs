@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using ProcessControl.Jobs;
 using UnityEngine;
 
 
@@ -8,6 +9,7 @@ namespace ProcessControl.Industry
 {
     [Serializable] public class Inventory
     {
+        //> CONSTRUCTOR
         public Inventory(int slots, int stackSize)
         {
             this.slots = slots;
@@ -19,6 +21,8 @@ namespace ProcessControl.Industry
                 empties.ForEach(e => items.Remove(e));
             };
         }
+        
+        public event Action onModified;
 
         private readonly int slots;
         private readonly int stackSize;
@@ -27,16 +31,12 @@ namespace ProcessControl.Industry
         public int Count => items.Sum(i => i.amount);
         public bool Full => Count >= slots * stackSize;
         public bool Empty => items.Count == 0;
-
-
-        public event Action onModified;
         
         public void Clear() => items.Clear();
         public bool Contains(Item match, int amount = 1) => items.FirstOrDefault(i => i.item == match && i.amount >= amount) is {};
         public bool Contains(ItemAmount itemAmount) => Contains(itemAmount.item, itemAmount.amount);
-        
         public IReadOnlyList<ItemAmount> GetItems() => items.AsReadOnly();
-
+        
         public bool CanDeposit(Item item)
         {
             if (items.Count < slots) return true;
@@ -55,9 +55,11 @@ namespace ProcessControl.Industry
         {
             if (Contains(newItem))
             {
+                Debug.Log("Inventory has item stack");
                 var item = items.FirstOrDefault(i => i.item == newItem && i.amount < stackSize);
                 if (item is { })
                 {
+                    Debug.Log("Adding to stack.");
                     item.amount += amount;
                     onModified?.Invoke();
                     return;
@@ -66,6 +68,7 @@ namespace ProcessControl.Industry
             
             if (items.Count < slots)
             {
+                Debug.Log("Free slot adding new item");
                 items.Add(new ItemAmount
                 {
                     item = newItem,
@@ -73,6 +76,7 @@ namespace ProcessControl.Industry
                 });
                 onModified?.Invoke();
             }
+            else Debug.Log("Neither...");
         }
 
         public void Deposit(ItemAmount itemAmount)
@@ -134,6 +138,20 @@ namespace ProcessControl.Industry
             var i = items.FirstOrDefault(i => i.item == match && i.amount >= amount);
             if (i is null) return null;
             i.amount -= amount;
+            onModified?.Invoke();
+            return new ItemAmount
+            {
+                item = i.item,
+                amount = i.amount,
+            };
+        }
+        
+        public ItemAmount Withdraw(ItemAmount itemAmount)
+        {
+            // if (!items.Any(i => i.amount >= amount)) return default;
+            var i = items.FirstOrDefault(i => i.item == itemAmount.item && i.amount >= itemAmount.amount);
+            if (i is null) return null;
+            i.amount -= itemAmount.amount;
             onModified?.Invoke();
             return new ItemAmount
             {

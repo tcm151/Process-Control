@@ -37,8 +37,10 @@ namespace ProcessControl.Industry.Machines
         //> EXTRACT RESOURCE FROM THE GROUND
         private void ExtractResource()
         {
+            Debug.Log("Extracting Resource...");
             parentCell.resourceDeposits[0].quantity--;
             var resourceDeposit = parentCell.resourceDeposits[0];
+            Debug.Log($"Depositing {resourceDeposit.resource}");
             outputInventory.Deposit(resourceDeposit.resource);
         }
     }

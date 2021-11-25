@@ -81,7 +81,7 @@ namespace ProcessControl.Pathfinding
                 // if (currentPosition.DistanceTo(currentPath.currentPoint) < 0.25f) currentPath.NextPoint();
                 
                 // if (currentPosition.DistanceTo(currentPath.Destination) < 1.5f)
-                if (currentPath.Count == 0 || currentPosition.DistanceTo(currentPath.Last()) < 0.5f)
+                if (currentPath.Count == 0 || currentPosition.DistanceTo(currentPath.Last()) < 1f)
                 {
                     currentPath = null;
                     onReachedDestination?.Invoke();
