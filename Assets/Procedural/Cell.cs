@@ -1,22 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Graphs;
-using ProcessControl.Industry;
 
 
 namespace ProcessControl.Procedural
 {
-    public enum Biome { Empty, Grass, Forest, Ocean, Stone, Sand, Plains, Snow }
-    
-    [Serializable] public class ResourceDeposit
-    {
-        [HideInInspector] public float noiseValue;
-        
-        public int quantity;
-        public Resource resource;
-    }
-
     public class Cell
     {
         public enum Direction
@@ -41,29 +29,5 @@ namespace ProcessControl.Procedural
         public readonly Cell[] neighbours = new Cell[8];
         public readonly PathInfo pathInfo = new PathInfo();
         public readonly List<ResourceDeposit> resourceDeposits = new List<ResourceDeposit>();
-    }
-    
-    public class PathInfo
-    {
-        public float gCost = float.MaxValue;
-        public float hCost;
-        public float fCost;
-
-        public Cell previousInPath;
-
-        public void Set(float g, float h, Cell previousCell)
-        {
-            gCost = g;
-            hCost = h;
-            fCost = gCost + hCost;
-            previousInPath = previousCell;
-        }
-        
-        public void Reset()
-        {
-            hCost = 0;
-            gCost = int.MaxValue;
-            previousInPath = null;
-        }
     }
 }
