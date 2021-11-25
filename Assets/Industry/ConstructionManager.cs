@@ -125,7 +125,7 @@ namespace ProcessControl.Industry
 
             if (conveyor is IBuildable buildable)
             {
-                AgentManager.QueueJob(new Job
+                JobManager.QueueJob(new Job
                 {
                     orders =
                     {
@@ -138,13 +138,13 @@ namespace ProcessControl.Industry
                     },
                 });
                 
-                // AgentManager.QueueJob(new Order
+                // JobManager.QueueJob(new Order
                 // {
                 //     description = $"build a {conveyor.name}",
                 //     location = conveyor.Center,
                 //     action = () => buildable.Build(1),
                 // });
-                // AgentManager.QueueJob(new ConstructionJob(conveyor.Center, buildable, 1));
+                // JobManager.QueueJob(new ConstructionJob(conveyor.Center, buildable, 1));
             }
         }
 
@@ -195,7 +195,7 @@ namespace ProcessControl.Industry
                             });
                         });
 
-                    AgentManager.QueueJob(collectJob);
+                    JobManager.QueueJob(collectJob);
 
 
                     var deliveryJob = new Job();
@@ -214,9 +214,9 @@ namespace ProcessControl.Industry
                             return buildable.DeliverItems(deliveryItems);
                         },
                     });
-                    AgentManager.QueueJob(deliveryJob);
+                    JobManager.QueueJob(deliveryJob);
                     
-                    AgentManager.QueueJob(new Job
+                    JobManager.QueueJob(new Job
                     {
                         orders =
                         {
@@ -229,7 +229,7 @@ namespace ProcessControl.Industry
                             }
                         }
                     });
-                    // AgentManager.QueueJob(new ConstructionJob(cell.position, buildable, 1));
+                    // JobManager.QueueJob(new ConstructionJob(cell.position, buildable, 1));
                 }
             }
             
@@ -396,7 +396,7 @@ namespace ProcessControl.Industry
 
                 if (cell.node is IBuildable node)
                 {
-                    AgentManager.QueueJob(new Job
+                    JobManager.QueueJob(new Job
                     {
                         orders =
                         {
@@ -411,7 +411,7 @@ namespace ProcessControl.Industry
                 }
                 else if (cell.edges.Count == 1 && cell.edges[0] is IBuildable conveyor)
                 {
-                    AgentManager.QueueJob(new Job
+                    JobManager.QueueJob(new Job
                     {
                         orders =
                         {

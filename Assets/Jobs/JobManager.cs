@@ -8,7 +8,7 @@ using ProcessControl.Tools;
 
 namespace ProcessControl.Jobs
 {
-    public class AgentManager : MonoBehaviour
+    public class JobManager : MonoBehaviour
     {
         public static Action<Job> QueueJob;
         public static Action<List<Job>> QueueJobs;
@@ -42,6 +42,8 @@ namespace ProcessControl.Jobs
                     var job = worker.currentJob;
                     takenJobs.Remove(job);
                     completedJobs.Add(job);
+                    job.activeWorker = null;
+                    worker.currentJob = null;
                     worker.currentOrder = null;
                 };
             });
@@ -55,12 +57,11 @@ namespace ProcessControl.Jobs
             
             // assign the job closest to the first available worker
             var worker = openWorkers.TakeAndRemoveFirst();
-            var closestJob = openJobs.OrderBy(j => Vector3.Distance(worker.position, j.orders[0].location)).First();
-            // var closestJob = openJobs.OrderBy(j => Vector3.Distance(worker.position, j.location)).First(j => j.prerequisite is {complete: true} || j.prerequisite is null);
-            openJobs.Remove(closestJob);
+            var closestJob = openJobs.OrderBy(j => Vector3.Distance(worker.position, j.orders.First(o => !o.complete).location)).First();
             worker.TakeJob(closestJob);
-            takenJobs.Add(closestJob);
             busyWorkers.Add(worker);
+            openJobs.Remove(closestJob);
+            takenJobs.Add(closestJob);
         }
     }
 }
