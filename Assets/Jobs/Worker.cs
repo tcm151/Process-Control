@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using ProcessControl.Industry;
 using ProcessControl.Pathfinding;
@@ -19,7 +20,7 @@ namespace ProcessControl.Jobs
         [SerializeField] internal Order currentOrder;
 
         //> PROPERTIES
-        override protected bool Idle => (currentJob.complete);
+        override protected bool Idle => (currentJob is null) || (currentJob.complete);
         
         //> EVENTS
         public event Action onJobCompleted;
@@ -52,6 +53,9 @@ namespace ProcessControl.Jobs
         {
             currentJob = newJob;
             currentJob.activeWorker = this;
+            
+            CancelAction();
+            
             DoJob();
         }
         
@@ -66,6 +70,7 @@ namespace ProcessControl.Jobs
                 // Debug.Log("FULL JOB COMPLETE...");
                 currentJob.complete = true;
                 onJobCompleted?.Invoke();
+                Roam();
                 return;
             }
 
@@ -84,11 +89,15 @@ namespace ProcessControl.Jobs
         public async void DoOrder()
         {
             // Debug.Log("Destination Reached.");
-            if (currentJob.complete) return;
+            if (Idle)
+            {
+                Debug.Log("~IDLE~");
+                Roam();
+                return;
+            }
 
             await currentOrder.action();
             currentOrder.complete = true;
-            // Debug.Log("Order complete...");
             onOrderCompleted?.Invoke();
         }
 

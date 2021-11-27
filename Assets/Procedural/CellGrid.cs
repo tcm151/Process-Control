@@ -270,13 +270,13 @@ namespace ProcessControl.Procedural
         private void GenerateTerrain(Chunk chunk) => chunk.cells.ForEach(cell =>
         {
             var noiseValue = Noise.GenerateValue(grid.terrainNoise, cell.position);
+            var rainValue = Noise.GenerateValue(grid.biomeNoise[0], cell.position);
+            var heatValue = Noise.GenerateValue(grid.biomeNoise[1], cell.position);
             grid.noiseRange.Add(noiseValue);
+            rainRange.Add(rainValue);
+            heatRange.Add(heatValue);
             cell.terrainValue = noiseValue;
                 
-            var rainValue = Noise.GenerateValue(grid.biomeNoise[0], cell.position);
-            // rainRange.Add(rainValue);
-            var heatValue = Noise.GenerateValue(grid.biomeNoise[1], cell.position);
-            // heatRange.Add(heatValue);
                 
             if (heatValue < 0.25f && rainValue > 0.25f) cell.biome = Biome.Snow;
             if (heatValue < 0.50f && rainValue < 0.50f) cell.biome = Biome.Stone;
@@ -284,10 +284,12 @@ namespace ProcessControl.Procedural
             if (heatValue < 0.60f && heatValue > 0.25f && rainValue < 0.25f) cell.biome = Biome.Plains;
             if (heatValue > 0.25f && rainValue > 0.25f && rainValue < 0.75f) cell.biome = Biome.Grass;
             if (heatValue > 0.50f && rainValue > 0.25f) cell.biome = Biome.Forest;
-                
-            if (cell.terrainValue < grid.terrainNoise[0].threshold) cell.biome = Biome.Ocean;
-            // if (c.terrainValue < grid.terrainNoise[0].threshold) c.biome = Biome.Ocean;
-            // else c.biome = Biome.Stone;
+
+            if (cell.terrainValue < grid.terrainNoise[0].threshold)
+            {
+                cell.biome = Biome.Ocean;
+                cell.buildable = false;
+            }
         });
 
         //> GENERATE RESOURCES
@@ -339,8 +341,6 @@ namespace ProcessControl.Procedural
         public void ClearAllTiles() => grid.tilemaps.ForEach(t => t.ClearAllTiles());
         public void UpdateTileMaps(Chunk chunk) => chunk.cells.ForEach(cell =>
         {
-            if (cell.biome == Biome.Ocean) cell.buildable = false;
-
             var tile = (cell.biome) switch
             {
                 Biome.Sand   => grid.tiles[9],

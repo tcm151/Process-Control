@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -66,6 +67,16 @@ namespace ProcessControl.Tools
         {
             var index = list.IndexOf(currentItem);
             return (index < list.Count - 1) ? list[index + 1] : default;
+        }
+        //------------------------------------------------------------------------------------------
+        //- Combined ForEach with Where clause
+        public static void ForEachWhere<T>(this IEnumerable<T> enumerable, Predicate<T> predicate, Action<T> action)
+        {
+            enumerable.ToList().ForEach(
+                item =>
+                {
+                    if (predicate(item)) action(item);
+                });
         }
         //------------------------------------------------------------------------------------------
         

@@ -65,6 +65,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
@@ -102,7 +103,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 15
+  orthographic size: 12
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -152,11 +153,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minZoom: 1
-  maxZoom: 120
-  zoomKeySensitivity: 5
-  scrollWheelSensitivity: 5
-  dragSpeed: 0.05
-  maxPanSpeed: 80
-  maxAcceleration: 80
-  maxDeceleration: 150
+  maxZoom: 150
+  zoomKeySensitivity: 1
+  scrollWheelSensitivity: 25
+  dragSpeed: 0.15
+  maxPanSpeed: 250
+  maxAcceleration: 85
+  maxDeceleration: 120
   initialTarget: {fileID: 0}

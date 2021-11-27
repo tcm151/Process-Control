@@ -16,7 +16,7 @@ MonoBehaviour:
   energyCost: 64
   inputItems:
   - item: {fileID: 11400000, guid: e0fe1603f8c727b4a89208cc34e8afd2, type: 2}
-    amount: 1
+    amount: 2
   outputItems:
   - item: {fileID: 11400000, guid: 71ce7f169cba9884c82d9b46e0874827, type: 2}
-    amount: 2
+    amount: 4

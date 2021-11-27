@@ -43,8 +43,8 @@ namespace ProcessControl.Jobs
                     takenJobs.Remove(job);
                     completedJobs.Add(job);
                     job.activeWorker = null;
-                    worker.currentJob = null;
-                    worker.currentOrder = null;
+                    worker.currentJob = Job.emptyJob;
+                    worker.currentOrder = Job.emptyJob.orders[0];
                 };
             });
         }
@@ -63,7 +63,7 @@ namespace ProcessControl.Jobs
 
             if (closestJob is null)
             {
-                Debug.Log("Unable to do job...");
+                Debug.Log("One or more open jobs cannot be completed...");
                 return;
             }
             

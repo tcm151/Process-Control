@@ -15,8 +15,8 @@ MonoBehaviour:
   name: Junction
   energyCost: 0
   inputItems:
-  - item: {fileID: 11400000, guid: e0fe1603f8c727b4a89208cc34e8afd2, type: 2}
-    amount: 1
+  - item: {fileID: 11400000, guid: 9a0c8c00f7f48bb459036ad2f0d220e0, type: 2}
+    amount: 2
   outputItems:
   - item: {fileID: 11400000, guid: 949a177ca507f9f4a88f0ea4e257dd40, type: 2}
     amount: 1

@@ -14,7 +14,7 @@ namespace ProcessControl.Pathfinding
         [Header("Roaming")]
         public float roamingInterval = 2.5f;
         public float roamingDistance = 5f;
-        private CancellationTokenSource roamingCancellation;
+        internal CancellationTokenSource roamingCancel;
         
         [Header("Movement")]
         public float speed = 2.5f;
@@ -36,9 +36,14 @@ namespace ProcessControl.Pathfinding
         //> INITIALIZATION
         virtual protected void Awake()
         {
-            roamingCancellation = new CancellationTokenSource();
-
-            onReachedDestination += () => { if (Idle) Roam(); };
+            roamingCancel = new CancellationTokenSource();
+        }
+        
+        public void CancelAction()
+        {
+            // Debug.Log("Cancelling current action...");
+            roamingCancel.Cancel();
+            roamingCancel = new CancellationTokenSource();
         }
         
         //> ROAM WHEN ENTERING PLAYMODE
@@ -51,7 +56,7 @@ namespace ProcessControl.Pathfinding
         }
         
         //> ROAM AROUND RANDOMLY
-        private async void Roam()
+        protected async void Roam()
         {
             // maybe remove
             if (!Idle)
@@ -63,7 +68,7 @@ namespace ProcessControl.Pathfinding
             var waitTime = 0f;
             while ((waitTime += Time.deltaTime) < roamingInterval)
             {
-                if (roamingCancellation.IsCancellationRequested) return;
+                if (!Idle || roamingCancel.IsCancellationRequested) return;
                 await Task.Yield();
             }
 
@@ -110,6 +115,6 @@ namespace ProcessControl.Pathfinding
         }
         
         //> CANCEL ROAMING ON QUIT
-        private void OnApplicationQuit() => roamingCancellation.Cancel();
+        private void OnApplicationQuit() => roamingCancel.Cancel();
     }
 }

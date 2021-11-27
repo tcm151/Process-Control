@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Gold Plate Recipe
   m_EditorClassIdentifier: 
   name: Gold Plate
-  energyCost: 32
+  energyCost: 64
   inputItems:
   - item: {fileID: 11400000, guid: 59628736ae887454bb133175d6bb55c1, type: 2}
     amount: 1

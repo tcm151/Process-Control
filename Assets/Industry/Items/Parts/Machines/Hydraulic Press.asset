@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Hydraulic Press
   m_EditorClassIdentifier: 
   name: Hydraulic Press
-  recipe: {fileID: 0}
+  recipe: {fileID: 11400000, guid: a574d32ef731db444ac8114325e0e8fe, type: 2}
   sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
   description: 
   entity: {fileID: 163049205698065749, guid: 1c55ce35d7c3d7241915c42e6f4f3777, type: 3}

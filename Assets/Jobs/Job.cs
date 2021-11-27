@@ -6,6 +6,20 @@ namespace ProcessControl.Jobs
 {
     [Serializable] public class Job
     {
+        public static Job emptyJob => new Job
+        {
+            description = "Empty Job.",
+            orders =
+            {
+                new Order
+                {
+                    description = "Empty Order.",
+                    complete = true,
+                },
+            },
+            complete = true,
+        };
+        
         public string description = "no job.";
 
         public Job prerequisite;

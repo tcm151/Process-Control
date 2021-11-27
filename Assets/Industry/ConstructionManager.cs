@@ -598,24 +598,24 @@ namespace ProcessControl.Industry
                     Debug.Log("Replacing junction with machine...");
                     return;
 
-                    IO input = default;
-                    IO output = default;
-                    if (cell.node.Input is { })
-                    {
-                        input = cell.node.Input;
-                        cell.node.DisconnectInput(cell.node.Input);
-                    }
-                    if (cell.node.Output is { })
-                    {
-                        output = cell.node.Output;
-                        cell.node.DisconnectOutput(cell.node.Output);
-                    }
-                    Destroy(cell.node);
-                    
-                    var newNode = BuildNodeOn(selectedPart.entity as Node, selectedPart.recipe, cell);
-
-                    if (input is {}) newNode.ConnectInput(input);
-                    if (output is {}) newNode.ConnectOutput(output);
+                    // IO input = default;
+                    // IO output = default;
+                    // if (cell.node.Input is { })
+                    // {
+                    //     input = cell.node.Input;
+                    //     cell.node.DisconnectInput(cell.node.Input);
+                    // }
+                    // if (cell.node.Output is { })
+                    // {
+                    //     output = cell.node.Output;
+                    //     cell.node.DisconnectOutput(cell.node.Output);
+                    // }
+                    // Destroy(cell.node);
+                    //
+                    // var newNode = BuildNodeOn(selectedPart.entity as Node, selectedPart.recipe, cell);
+                    //
+                    // if (input is {}) newNode.ConnectInput(input);
+                    // if (output is {}) newNode.ConnectOutput(output);
 
                 }
                 else if (!cell.occupied)
