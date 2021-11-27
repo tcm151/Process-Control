@@ -6,22 +6,22 @@ namespace ProcessControl.Tools
 {
     [Serializable] public class Range
     {
-        private float min;
-        private float max;
+        [SerializeField] private float min = 999999999;
+        [SerializeField] private float max = -999999999;
 
         //> EMPTY CONSTRUCTOR
-        public Range()
-        {
-            min = 999999999;
-            max = -999999999;
-        }
+        // public Range()
+        // {
+        //     min = 999999999;
+        //     max = -999999999;
+        // }
 
         //> DEFINED RANGE CONSTRUCTOR
-        public Range(float min, float max)
-        {
-            this.min = min;
-            this.max = max;
-        }
+        // public Range(float min, float max)
+        // {
+        //     this.min = min;
+        //     this.max = max;
+        // }
 
         override public string ToString() => $"[{min},{max}]";
 

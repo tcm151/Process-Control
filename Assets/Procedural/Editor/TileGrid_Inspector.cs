@@ -33,11 +33,11 @@ namespace ProcessControl.Tools.Editor
             if (check.changed)
             {
                 if (autoUpdateChunks) grid.GenerateAllChunks();
-                if (autoUpdateBiomes) grid.GenerateAllBiomes();
+                if (autoUpdateBiomes) grid.GenerateAllTerrain();
                 if (autoUpdateOre) grid.GenerateAllResources();
             }
 
-            if (GUILayout.Button("Initialize & Generate"))
+            if (GUILayout.Button("CreateGrid & Generate"))
             {
                 grid.Awake();
             }

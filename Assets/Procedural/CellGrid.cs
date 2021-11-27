@@ -1,15 +1,10 @@
-using System;
 using System.Linq;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using ProcessControl.Industry;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using Debug = UnityEngine.Debug;
-using Random = UnityEngine.Random;
 using ProcessControl.Tools;
-
+using ProcessControl.Industry;
 #pragma warning disable 108, 114
 
 
@@ -18,7 +13,7 @@ namespace ProcessControl.Procedural
     [RequireComponent(typeof(Grid))]
     public class CellGrid : MonoBehaviour
     {
-        [Serializable]
+        [System.Serializable]
         public class Data
         {
             [Header("Resolution")]
@@ -39,46 +34,43 @@ namespace ProcessControl.Procedural
             [Header("Cells & Chunks")]
             public Chunk[,] chunks;
             public Cell lastCell;
-        
+
             [Space]
-            public bool showNeighbours = false;
+            public bool showNeighbours;
         }
         [SerializeField] internal Data grid;
 
+        
+        public int renderDistance = 128;
+        public Range rainRange = new Range();
+        public Range heatRange = new Range();
+        
         private Camera camera;
-        private readonly Stopwatch timer = new Stopwatch();
+        private readonly System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 
         //> DECOUPLE EXTERNAL FUNCTION CALLS
-        public static Func<Cell> GetCellUnderMouse;
-        public static Func<Vector3, Cell> GetCellAtPosition;
-        public static Func<Vector2Int, Cell> GetCellAtCoordinates;
+        public static System.Func<Cell> GetCellUnderMouse;
+        public static System.Func<Vector3, Cell> GetCellAtPosition;
+        public static System.Func<Vector2Int, Cell> GetCellAtCoordinates;
         
         //> INITIALIZATION
         public void Awake()
         {
             // initialize
             timer.Start();
-            Initialize();
+            CreateGrid();
             float init = timer.ElapsedMilliseconds;
             timer.Restart();
             
+            // get closest chunks to spawn
+            var closeChunks = grid.chunks.Where(c => Vector3.Distance(Vector3.zero, c.chunkCenter) < renderDistance);
+            
             // generate the terrain
-            GenerateAllChunks();
+            GenerateChunks(closeChunks);
             float chunkGen = timer.ElapsedMilliseconds;
-            timer.Restart();
-            
-            // generate the biomes
-            GenerateAllBiomes();
-            float biomeGen = timer.ElapsedMilliseconds;
-            timer.Restart();
-            
-            // generate the resources
-            GenerateAllResources();
-            float resourceGen = timer.ElapsedMilliseconds;
             timer.Reset();
             
-            
-            Debug.Log($"{init} | {chunkGen} | {resourceGen} | {biomeGen} |= {init+chunkGen+resourceGen} ms");
+            Debug.Log($"Generated: {init} | {chunkGen} |= {init+chunkGen} ms");
 
             CellSpawner.CalculateSpawnLocation();
         }
@@ -113,7 +105,7 @@ namespace ProcessControl.Procedural
         }
 
         //> INITIALIZE THE GRID
-        public void Initialize()
+        public void CreateGrid()
         {
             camera = Camera.main;
 
@@ -134,8 +126,6 @@ namespace ProcessControl.Procedural
 
             
             //- create chunk array
-            //@ requires dynamic chunk loading, so maybe can't use Chunk[,] and have to use list
-            /// unless you want to create a new chunk array whenever a new chunk is explored
             grid.chunks = new Chunk[grid.size, grid.size];
             for (int y = 0; y < grid.size; y++) {
                 for (int x = 0; x < grid.size; x++)
@@ -144,6 +134,13 @@ namespace ProcessControl.Procedural
                     float yOffset = (y - (grid.size / 2f)) * grid.chunkSize;
                     grid.chunks[x, y] = new Chunk
                     {
+                        chunkCenter = new Vector3
+                        {
+                            x = xOffset + grid.chunkSize / 2f,
+                            y = yOffset + grid.chunkSize / 2f,
+                            z = 0f,
+                        },
+                        
                         chunkOffset = new Vector2Int(xOffset.FloorToInt(), yOffset.FloorToInt()),
                         neighbours = new Chunk[8],
                         cells = new Cell[grid.chunkSize, grid.chunkSize],
@@ -248,150 +245,144 @@ namespace ProcessControl.Procedural
         }
 
         //> GENERATE CHUNKS
-        public void GenerateAllChunks() => GenerateChunks(grid.chunks);
-        private void GenerateChunks(Chunk[,] chunks)
+        public void GenerateAllChunks() => GenerateChunks(grid.chunks.ToList());
+        private void GenerateChunks(List<Chunk> chunks)
         {
             // multi-threaded chunk generation
             var tasks = new List<Task>();
-            chunks.ForEach(c => tasks.Add(Task.Factory.StartNew(() => GenerateCells(c.cells))));
+            chunks.ForEach(chunk =>
+            {
+                tasks.Add(Task.Run(() =>
+                {
+                    GenerateTerrain(chunk);
+                    GenerateResources(chunk);
+                }));
+            });
             Task.WaitAll(tasks.ToArray());
 
 
-            // apply triangulations on main thread
-            // chunks.ForEach(c => UpdateTerrainTiles(0, c.cells));
+            // update tile maps on main thread
+            chunks.ForEach(UpdateTileMaps);
         }
 
-        //> GENERATE CELLS
-        private void GenerateCells(Cell[,] cells) => cells.ForEach(c =>
+        //> GENERATE TERRAIN
+        public void GenerateAllTerrain() => grid.chunks.ForEach(GenerateTerrain);
+        private void GenerateTerrain(Chunk chunk) => chunk.cells.ForEach(cell =>
         {
-            var noiseValue = Noise.GenerateValue(grid.terrainNoise, c.position);
-            // grid.noiseRange.Add(noiseValue);
-            c.terrainValue = noiseValue;
+            var noiseValue = Noise.GenerateValue(grid.terrainNoise, cell.position);
+            grid.noiseRange.Add(noiseValue);
+            cell.terrainValue = noiseValue;
+                
+            var rainValue = Noise.GenerateValue(grid.biomeNoise[0], cell.position);
+            // rainRange.Add(rainValue);
+            var heatValue = Noise.GenerateValue(grid.biomeNoise[1], cell.position);
+            // heatRange.Add(heatValue);
+                
+            if (heatValue < 0.25f && rainValue > 0.25f) cell.biome = Biome.Snow;
+            if (heatValue < 0.50f && rainValue < 0.50f) cell.biome = Biome.Stone;
+            if (heatValue > 0.60f && rainValue < 0.25f) cell.biome = Biome.Sand;
+            if (heatValue < 0.60f && heatValue > 0.25f && rainValue < 0.25f) cell.biome = Biome.Plains;
+            if (heatValue > 0.25f && rainValue > 0.25f && rainValue < 0.75f) cell.biome = Biome.Grass;
+            if (heatValue > 0.50f && rainValue > 0.25f) cell.biome = Biome.Forest;
+                
+            if (cell.terrainValue < grid.terrainNoise[0].threshold) cell.biome = Biome.Ocean;
+            // if (c.terrainValue < grid.terrainNoise[0].threshold) c.biome = Biome.Ocean;
+            // else c.biome = Biome.Stone;
         });
 
-        public void GenerateAllBiomes() => grid.chunks.ForEach(c => GenerateBiomes(c.cells));
-        private void GenerateBiomes(Cell[,] cells)
-        {
-            // var rainRange = new Range();
-            // var heatRange = new Range();
-            cells.ForEach(c =>
-            {
-                var rainValue = Noise.GenerateValue(grid.biomeNoise[0], c.position);
-                // rainRange.Add(rainValue);
-                var heatValue = Noise.GenerateValue(grid.biomeNoise[1], c.position);
-                // heatRange.Add(heatValue);
-                
-                if (heatValue < 0.25f && rainValue > 0.25f) c.biome = Biome.Snow;
-                if (heatValue < 0.50f && rainValue < 0.50f) c.biome = Biome.Stone;
-                if (heatValue > 0.60f && rainValue < 0.25f) c.biome = Biome.Sand;
-                if (heatValue < 0.60f && heatValue > 0.25f && rainValue < 0.25f) c.biome = Biome.Plains;
-                if (heatValue > 0.25f && rainValue > 0.25f && rainValue < 0.75f) c.biome = Biome.Grass;
-                if (heatValue > 0.50f && rainValue > 0.25f) c.biome = Biome.Forest;
-                
-                if (c.terrainValue < grid.terrainNoise[0].threshold) c.biome = Biome.Ocean;
-                // if (c.terrainValue < grid.terrainNoise[0].threshold) c.biome = Biome.Ocean;
-                // else c.biome = Biome.Stone;
-            });
-
-            // Debug.Log($"RAIN: {rainRange} | HEAT: {heatRange}");
-
-            UpdateTerrainTiles(0, cells);
-        }
-
         //> GENERATE RESOURCES
-        // public void GenerateAllResources() => grid.chunks.ForEach(c => GenerateResources(c.cells));
-        public void GenerateAllResources() { foreach (var c in grid.chunks) GenerateResources(c.cells);}
-        public void GenerateResources(Cell[,] cells)
+        public void GenerateAllResources() => grid.chunks.ForEach(GenerateResources);
+        public void GenerateResources(Chunk chunk) => chunk.cells.ForEach(cell =>
         {
-            foreach (var cell in cells)
-            {
-                cell.resourceDeposits.Clear();
+            cell.resourceDeposits.Clear();
                 
-                grid.resourceNoise.ForEach(rnl =>
-                {
-                    var noiseValue = Noise.GenerateValue(rnl, cell.position);
-                    if (noiseValue >= rnl.threshold && cell.buildable)
-                    {
-                        cell.resourceDeposits.Add(new ResourceDeposit
-                        {
-                            noiseValue = noiseValue,
-                            quantity = (noiseValue * 16484f).FloorToInt(),
-                            resource = rnl.resource,
-                        });
-                    }
-                });
-
-                switch (cell.biome)
-                {
-                    case Biome.Sand: cell.resourceDeposits.Add(new ResourceDeposit
-                    {
-                        resource = grid.sandResource,
-                        quantity = 10000,
-                    }); break;
-                    
-                    case Biome.Stone: cell.resourceDeposits.Add(new ResourceDeposit
-                    {
-                        resource = grid.stoneResource,
-                        quantity = 10000,
-                    }); break;
-                }
-
-                if (cell.resourceDeposits.Count == 0)
+            grid.resourceNoise.ForEach(resourceLayer =>
+            {
+                var noiseValue = Noise.GenerateValue(resourceLayer, cell.position);
+                if (noiseValue >= resourceLayer.threshold && cell.buildable)
                 {
                     cell.resourceDeposits.Add(new ResourceDeposit
                     {
-                        resource = grid.stoneResource,
-                        quantity = 10000,
+                        noiseValue = noiseValue,
+                        quantity = (noiseValue * 16484f).FloorToInt(),
+                        resource = resourceLayer.resource,
                     });
                 }
-                
-                TileBase tile;
-                if (cell.resourceDeposits.Count == 0) tile = grid.tiles[3];
-                else
+            });
+
+            switch (cell.biome)
+            {
+                case Biome.Sand: cell.resourceDeposits.Add(new ResourceDeposit
                 {
-                    tile = (cell.resourceDeposits[0].resource.material) switch
-                    {
-                        Resource.Material.Iron     => grid.tiles[4],
-                        Resource.Material.Gold     => grid.tiles[6],
-                        Resource.Material.Coal     => grid.tiles[8],
-                        Resource.Material.Copper   => grid.tiles[2],
-                        Resource.Material.Platinum => grid.tiles[7],
-                                    _              => grid.tiles[3],
-                    };
-                }
-                grid.tilemaps[1].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
+                    resource = grid.sandResource,
+                    quantity = 10000,
+                }); break;
+                    
+                case Biome.Stone: cell.resourceDeposits.Add(new ResourceDeposit
+                {
+                    resource = grid.stoneResource,
+                    quantity = 10000,
+                }); break;
             }
-        }
+
+            if (cell.resourceDeposits.Count == 0)
+            {
+                cell.resourceDeposits.Add(new ResourceDeposit
+                {
+                    resource = grid.stoneResource,
+                    quantity = 10000,
+                });
+            }
+        });
 
         //> TILE MODIFICATION
         public void ClearAllTiles() => grid.tilemaps.ForEach(t => t.ClearAllTiles());
-        public void UpdateTerrainTiles(int map, Cell[,] cells)
+        public void UpdateTileMaps(Chunk chunk) => chunk.cells.ForEach(cell =>
         {
-            foreach (var cell in cells)
-            {
-                if (cell.biome == Biome.Ocean) cell.buildable = false;
+            if (cell.biome == Biome.Ocean) cell.buildable = false;
 
-                var tile = (cell.biome) switch
+            var tile = (cell.biome) switch
+            {
+                Biome.Sand   => grid.tiles[9],
+                Biome.Grass  => grid.tiles[5],
+                Biome.Stone  => grid.tiles[1],
+                Biome.Forest => grid.tiles[10],
+                Biome.Snow   => grid.tiles[11],
+                Biome.Plains => grid.tiles[12],
+                Biome.Ocean  => grid.tiles[0],
+                _            => grid.tiles[3],
+            };
+            grid.tilemaps[0].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
+            
+            if (cell.resourceDeposits.Count == 0) tile = grid.tiles[3];
+            else
+            {
+                tile = (cell.resourceDeposits[0].resource.material) switch
                 {
-                    Biome.Sand   => grid.tiles[9],
-                    Biome.Grass  => grid.tiles[5],
-                    Biome.Stone  => grid.tiles[1],
-                    Biome.Forest => grid.tiles[10],
-                    Biome.Snow   => grid.tiles[11],
-                    Biome.Plains => grid.tiles[12],
-                    Biome.Ocean  => grid.tiles[0],
-                    _ => grid.tiles[3],
+                    Resource.Material.Iron     => grid.tiles[4],
+                    Resource.Material.Gold     => grid.tiles[6],
+                    Resource.Material.Coal     => grid.tiles[8],
+                    Resource.Material.Copper   => grid.tiles[2],
+                    Resource.Material.Platinum => grid.tiles[7],
+                    _                          => grid.tiles[3],
                 };
-                grid.tilemaps[map].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
             }
-        }
-        
+            grid.tilemaps[1].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
+        });
 
         //> DRAW HELPFUL GIZMOS
         private void OnDrawGizmos()
         {
+            
             if (!grid.showNeighbours || grid.lastCell is null) return;
          
+            grid.chunks?.ForEach(
+                c =>
+                {
+                    if (c is null) return;
+                    Gizmos.DrawSphere(c.chunkCenter, 1f);
+                });
+            
             for (int i = 0; i < grid.lastCell.neighbours.Length; i++)
             {
                 if (grid.lastCell.neighbours[i] is null) continue;

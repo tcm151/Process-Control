@@ -6,8 +6,9 @@ namespace ProcessControl.Procedural
 {
     [Serializable] public class Chunk
     {
-        public Vector2Int chunkOffset;
         public Cell[,] cells;
+        public Vector3 chunkCenter;
+        public Vector2Int chunkOffset;
         
         public Chunk[] neighbours = new Chunk[8];
     }

@@ -100,6 +100,14 @@ namespace ProcessControl.Tools
                 }
             }
         }
+        
+        //------------------------------------------------------------------------------------------
+        public static List<T> Where<T>(this T[,] array2d, Predicate<T> predicate)
+        {
+            var matches = new List<T>();
+            array2d.ForEach(item => {if (predicate(item)) matches.Add(item);});
+            return matches;
+        }
         //------------------------------------------------------------------------------------------
         public static List<R> SelectMany<T, R>(this T[,] array2d, Func<T, R[,]> selector)
         {
