@@ -29,7 +29,7 @@ namespace ProcessControl.UI
                 ConstructionManager.SetEdgeMode(isEdge);
             });
 
-            if (part.entity is Node) return;
+            // if (part.entity is Node) return;
             images = GetComponentsInChildren<Image>();
             images[1].sprite = part.sprite;
         }
