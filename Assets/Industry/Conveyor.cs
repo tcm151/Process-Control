@@ -78,6 +78,9 @@ namespace ProcessControl.Industry
         {
             var time = 0f;
             while ((time += Time.deltaTime) < buildTime) await Task.Yield();
+            var enabledColor = renderer.color;
+            enabledColor.a = enabledAlpha / 255f;
+            renderer.color = enabledColor;
             enabled = true;
         }
         
@@ -121,10 +124,10 @@ namespace ProcessControl.Industry
         }
 
         //> INITIALIZATION
-        private void Awake()
-        {
-            renderer = GetComponent<SpriteRenderer>();
-        }
+        // private void Awake()
+        // {
+        //     renderer = GetComponent<SpriteRenderer>();
+        // }
 
         //> MODIFY PROPERTIES ON CONNECTION
         private void ManageConnection()

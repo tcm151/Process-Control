@@ -54,6 +54,8 @@ namespace ProcessControl.Industry
         {
             var time = 0f;
             while ((time += Time.deltaTime) < buildTime) await Task.Yield();
+            var enabledColor = renderer.color;
+            enabledColor.a = enabledAlpha / 255f;
             renderer.color = enabledColor;
             enabled = true;
         }

@@ -17,11 +17,11 @@ public class Storage : Node, IBuildable, IInventory
     override public IO Input => input;
     override public IO Output => output;
 
-    private void Awake()
-    {
-        renderer = GetComponent<SpriteRenderer>();
-        renderer.color = disabledColor;
-    }
+    // private void Awake()
+    // {
+    //     renderer = GetComponent<SpriteRenderer>();
+    //     renderer.color = disabledColor;
+    // }
 
     public Task DeliverItems(List<ItemAmount> itemAmounts)
     {
@@ -32,6 +32,8 @@ public class Storage : Node, IBuildable, IInventory
     {
         var time = 0f;
         while ((time += Time.deltaTime) < buildTime) await Task.Yield();
+        var enabledColor = renderer.color;
+        enabledColor.a = enabledAlpha;
         renderer.color = enabledColor;
         enabled = true;
     }

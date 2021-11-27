@@ -23,6 +23,8 @@ namespace ProcessControl.Industry
         override protected void Awake()
         {
             renderer = GetComponent<SpriteRenderer>();
+            var enabledColor = renderer.color;
+            enabledColor.a = enabledAlpha;
             renderer.color = enabledColor;
         }
     }
