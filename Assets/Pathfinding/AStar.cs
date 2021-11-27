@@ -12,7 +12,7 @@ namespace ProcessControl.Pathfinding
     public static class AStar
     {
         //> FIND THE SHORTEST PATH BETWEEN START AND END POSITIONS
-        public static List<Vector3> FindPath(Vector3 start, Vector3 end)
+        public static List<Vector3> FindPath(Vector3 start, Vector3 end, bool ignore = false)
         {
             var timer = new Stopwatch();
             timer.Start();
@@ -24,12 +24,12 @@ namespace ProcessControl.Pathfinding
                 Debug.Log($"Start or End cell(s) did not exist...");
                 return default;
             }
-            if (!endCell.buildable)
+            if (!ignore && !endCell.buildable)
             {
                 Debug.Log("End tile was not navigable");
                 return default;
             }
-            if (!endCell.walkable)
+            if (!ignore && !endCell.walkable)
             {
                 // Debug.Log("Destination was not walkable, using next closest walkable cell");
                 endCell = endCell.neighbours.ToList().OrderBy(n => DistanceBetween(startCell, n)).First();
@@ -66,7 +66,7 @@ namespace ProcessControl.Pathfinding
                 }
                 
                 // move cell to closed list if not walkable and continue
-                if (!currentCell.walkable)
+                if (!ignore && !currentCell.walkable)
                 {
                     openList.Remove(currentCell);
                     closedList.Add(currentCell);
@@ -85,7 +85,7 @@ namespace ProcessControl.Pathfinding
                     if (neighbourCell is null) continue;
                     
                     if (closedList.Contains(neighbourCell) || openList.Contains(neighbourCell)) continue;
-                    if (!neighbourCell.buildable || !neighbourCell.walkable)
+                    if (!ignore && (!neighbourCell.buildable || !neighbourCell.walkable))
                     {
                         closedList.Add(neighbourCell);
                         neighbourCell.pathInfo.Reset();

@@ -55,11 +55,11 @@ namespace ProcessControl.Industry
         {
             if (Contains(newItem))
             {
-                Debug.Log("Inventory has item stack");
+                // Debug.Log("Inventory has item stack");
                 var item = items.FirstOrDefault(i => i.item == newItem && i.amount < stackSize);
                 if (item is { })
                 {
-                    Debug.Log("Adding to stack.");
+                    // Debug.Log("Adding to stack.");
                     item.amount += amount;
                     onModified?.Invoke();
                     return;
@@ -68,7 +68,7 @@ namespace ProcessControl.Industry
             
             if (items.Count < slots)
             {
-                Debug.Log("Free slot adding new item");
+                // Debug.Log("Free slot adding new item");
                 items.Add(new ItemAmount
                 {
                     item = newItem,
@@ -76,7 +76,7 @@ namespace ProcessControl.Industry
                 });
                 onModified?.Invoke();
             }
-            else Debug.Log("Neither...");
+            // else Debug.Log("Neither...");
         }
 
         public void Deposit(ItemAmount itemAmount)

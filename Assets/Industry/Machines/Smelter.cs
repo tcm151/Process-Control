@@ -26,21 +26,21 @@ namespace ProcessControl.Industry.Machines
                     var match = acceptedFuels.FirstOrDefault(f => inputInventory.Contains(f));
                     if (match is null)
                     {
-                        Debug.Log("NO FUEL!");
+                        // Debug.Log("NO FUEL!");
                         return;
                     }
 
                     if (energy > maxEnergy - match.energy)
                     {
-                        Debug.Log("Already enough energy...");
+                        // Debug.Log("Already enough energy...");
                         return;
                     }
                     
                     var fuel = inputInventory.Withdraw(match);
-                    Debug.Log("Withdrawing fuel..");
+                    // Debug.Log("Withdrawing fuel..");
                     
                     energy += match.energy;
-                    Debug.Log($"Added {match.energy} energy...");
+                    // Debug.Log($"Added {match.energy} energy...");
                 }
                 
                 if (energy < currentRecipe.energyCost) return;
