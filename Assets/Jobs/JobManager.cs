@@ -59,7 +59,13 @@ namespace ProcessControl.Jobs
             var worker = openWorkers.TakeAndRemoveFirst();
             var closestJob = openJobs.Where(j => j.prerequisite is null || j.prerequisite is {complete: true})
                                      .OrderBy(j => Vector3.Distance(worker.position, j.orders.First(o => !o.complete).location))
-                                     .First();
+                                     .FirstOrDefault();
+
+            if (closestJob is null)
+            {
+                Debug.Log("Unable to do job...");
+                return;
+            }
             
             worker.TakeJob(closestJob);
             busyWorkers.Add(worker);
