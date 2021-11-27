@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Splitter
   m_EditorClassIdentifier: 
   name: 
-  recipe: {fileID: 0}
-  sprite: {fileID: 0}
+  recipe: {fileID: 11400000, guid: 1cac75c4b165c3e47ae5707ba1a44002, type: 2}
+  sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   description: 
-  prefab: {fileID: 0}
   entity: {fileID: 8606701852718631066, guid: 17d7d72e94b6bff43a29ee3057bd6891, type: 3}

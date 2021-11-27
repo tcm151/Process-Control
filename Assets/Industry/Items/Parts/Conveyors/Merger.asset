@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Merger
   m_EditorClassIdentifier: 
   name: 
-  recipe: {fileID: 0}
-  sprite: {fileID: 0}
+  recipe: {fileID: 11400000, guid: f6d4836ef98576145bec96fcbce802d8, type: 2}
+  sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   description: 
-  prefab: {fileID: 0}
   entity: {fileID: 308910016581926823, guid: 7a36556df2e1d0445aaac4b314153e4b, type: 3}

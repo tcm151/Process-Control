@@ -10,15 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35d848c6829d42318c5d9b620c46c96f, type: 3}
-  m_Name: Conveyor x64 Recipe
+  m_Name: Splitter Recipe
   m_EditorClassIdentifier: 
-  name: Conveyor
-  energyCost: 64
+  name: Splitter
+  energyCost: 0
   inputItems:
   - item: {fileID: 11400000, guid: e0fe1603f8c727b4a89208cc34e8afd2, type: 2}
     amount: 1
-  - item: {fileID: 11400000, guid: 9a0c8c00f7f48bb459036ad2f0d220e0, type: 2}
-    amount: 2
   outputItems:
-  - item: {fileID: 11400000, guid: 04108836106950044b2243783a507520, type: 2}
-    amount: 1
+  - item: {fileID: 11400000, guid: b1027d3d7d999e740878e48f6f79ac91, type: 2}
+    amount: 0

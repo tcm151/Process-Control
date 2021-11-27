@@ -22,7 +22,8 @@ namespace ProcessControl.Industry
 
         //> EVENT SUBSCRIPTIONS
         public static Action<bool> OnBuildModeChanged;
-        
+
+        public bool queueJobGlobal = true;
         [SerializeField] private bool buildMode;
         [SerializeField] private bool conveyorMode;
         [SerializeField] private Part selectedPart;
@@ -32,6 +33,9 @@ namespace ProcessControl.Industry
         public Cell firstCell, secondCell;
         [SerializeField] private List<Machine> builtMachines = new List<Machine>();
         [SerializeField] private List<IInventory> inventories = new List<IInventory>();
+
+        public Junction defaultJunction;
+        public Recipe defaultJunctionRecipe;
 
         //> INITIALIZATION
         private void Awake()
@@ -80,15 +84,17 @@ namespace ProcessControl.Industry
             //     var spawnPosition = CellSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 100);
             //     ItemFactory.SpawnContainer(ironBeam, spawnPosition);
             // }
+
+            var ironGear = ItemFactory.GetItem("Iron Gear");
             
             
 
             var storage = ItemFactory.GetItem("Storage Container");
             if (storage is Part part)
             {
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 1; i++)
                 {
-                    var cell = CellGrid.GetCellAtPosition(CellSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 50));
+                    var cell = CellGrid.GetCellAtPosition(CellSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 25));
                     var node = BuildNodeOn(part.entity as Node, part.recipe, cell, false);
                     if (node is IBuildable buildable) buildable.Build(0);
 
@@ -99,31 +105,37 @@ namespace ProcessControl.Industry
                         inventory.Deposit(new ItemAmount
                         {
                             item = ironPlate,
-                            amount = 64,
+                            amount = 128,
                         });
                         
                         inventory.Deposit(new ItemAmount
                         {
                             item = coalOre,
-                            amount = 64,
+                            amount = 128,
                         });
                         
                         inventory.Deposit(new ItemAmount
                         {
                             item = ironBeam,
-                            amount = 64,
+                            amount = 128,
                         });
                         
                         inventory.Deposit(new ItemAmount
                         {
                             item = ironIngot,
-                            amount = 64,
+                            amount = 128,
                         });
                         
                         inventory.Deposit(new ItemAmount
                         {
                             item = stone,
-                            amount = 64,
+                            amount = 128,
+                        });
+                        
+                        inventory.Deposit(new ItemAmount
+                        {
+                            item = ironGear,
+                            amount = 128,
                         });
                     }
                     
@@ -135,9 +147,46 @@ namespace ProcessControl.Industry
         }
 
         //> BUILD EDGE BETWEEN TWO NODES
-        private void BuildEdgeBetween(Node firstNode, Node secondNode)
+        private void BuildEdgeBetween(Recipe conveyorRecipe, Node firstNode, Node secondNode)
         {
             if (!(selectedPart.entity is Edge selectedEdge)) return;
+            
+            bool cannotBuild = false;
+            // var matchingEntities = new List<Entity>();
+            // var requiredContainers = new List<Container>();
+            var matchingInventories = new List<(IInventory inventory, ItemAmount itemAmount)>();
+            if (queueJobGlobal)
+            {
+                conveyorRecipe.inputItems.ForEach(itemAmount =>
+                {
+                    // var matchingContainers = ItemFactory.FindItemsByClosest(selectedNode.position, i);
+                    // if (matchingContainers.Count < i.amount)
+                    // {
+                    // Debug.Log("NOT ENOUGH FOR RECIPE ITEMS...");
+                    // cannotBuild = true;
+                    // return;
+                    // }
+                    
+                    // matchingContainers.ForEach(c => requiredContainers.Add(c));
+                    // var matchingMachines = builtMachines.Where(m => m.inputInventory.Contains(i) || m.outputInventory.Contains(i)).ToList();
+                    // matchingMachines.ForEach(m => matchingInventories.Add(m));
+                    // Debug.Log($"Matching machines length: {matchingMachines.Count}");
+
+                    var bestMatch = inventories.Where(inv => inv.Contains(itemAmount))
+                                               .OrderBy(inv => Vector3.Distance((firstNode.position + secondNode.position) / 2f, inv.position))
+                                               .FirstOrDefault();
+
+                    if (bestMatch is null) cannotBuild = true;
+                   
+                    matchingInventories.Add((bestMatch, itemAmount));
+                });
+            }
+
+            if (cannotBuild)
+            {
+                Debug.Log($"Unable to build {selectedPart.entity.name}");
+                return;
+            }
             
             firstCell = firstNode.parentCell;
             secondCell = secondNode.parentCell;
@@ -149,12 +198,14 @@ namespace ProcessControl.Industry
             }
 
             var conveyor = Factory.Spawn("Conveyors", selectedEdge, (firstNode.position + secondNode.position) / 2f);
+            conveyor.enabled = false;
+            
             firstNode.ConnectOutput(conveyor);
             conveyor.ConnectInput(firstNode);
             conveyor.ConnectOutput(secondNode);
             secondNode.ConnectInput(conveyor);
 
-            var conveyorPath = AStar.FindPath(firstCell.position, secondCell.position);
+            var conveyorPath = AStar.FindPath(firstCell.position, secondCell.position, true);
             conveyorPath.ForEach(p =>
             {
                 var tile = CellGrid.GetCellAtPosition(p);
@@ -164,18 +215,79 @@ namespace ProcessControl.Industry
 
             if (conveyor is IBuildable buildable)
             {
-                JobManager.QueueJob(new Job
+                if (queueJobGlobal)
                 {
-                    orders =
+                    var collectJob = new Job
                     {
+                        description = $"Collect resources for {selectedPart.entity.name}",
+                    };
+
+                    matchingInventories.ForEach
+                    (
+                        match =>
+                        {
+                            collectJob.orders.Add
+                            (
+                                new Order
+                                {
+                                    description = $"gather {match.itemAmount.amount} {match.itemAmount.item}(s) for {conveyorRecipe.name}",
+                                    location = match.inventory.position,
+                                    action = () =>
+                                    {
+                                        match.inventory.Withdraw(match.itemAmount);
+                                        collectJob.activeWorker.Deposit(match.itemAmount);
+                                        return Task.CompletedTask;
+                                    },
+                                }
+                            );
+                        }
+                    );
+                    
+                    var deliveryJob = new Job
+                    {
+                        description = $"deliver items to {conveyor.name}",
+                        prerequisite = collectJob,
+                    };
+
+                    deliveryJob.orders.Add
+                    (
                         new Order
                         {
-                            description = $"build a {conveyor.name}",
+                            description = $"deliver items to {conveyor.name}",
                             location = conveyor.Center,
-                            action = () => buildable.Build(1),
+                            action = () =>
+                            {
+                                var deliveryItems = new List<ItemAmount>();
+                                conveyorRecipe.inputItems.ForEach
+                                (
+                                    itemAmount =>
+                                    {
+                                        var withdrawnItems = deliveryJob.activeWorker.Withdraw(itemAmount);
+                                        deliveryItems.Add(withdrawnItems);
+                                    }
+                                );
+                                return buildable.DeliverItems(deliveryItems);
+                            },
+                        }
+                    );
+                    JobManager.QueueJob(deliveryJob);
+                    
+                    JobManager.QueueJob(new Job
+                    {
+                        description = $"build a {conveyor.name}",
+                        prerequisite = deliveryJob,
+                        orders =
+                        {
+                            new Order
+                            {
+                                description = $"build a {conveyor.name}",
+                                location = conveyor.Center,
+                                action = () => buildable.Build(1),
+                            },
                         },
-                    },
-                });
+                    });
+                }
+                else buildable.Build(0);
                 
                 // JobManager.QueueJob(new Order
                 // {
@@ -195,7 +307,7 @@ namespace ProcessControl.Industry
             // var matchingEntities = new List<Entity>();
             // var requiredContainers = new List<Container>();
             var matchingInventories = new List<(IInventory inventory, ItemAmount itemAmount)>();
-            if (queueJob)
+            if (queueJob && queueJobGlobal)
             {
                 nodeRecipe.inputItems.ForEach(itemAmount =>
                 {
@@ -214,18 +326,31 @@ namespace ProcessControl.Industry
 
                     var bestMatch = inventories.Where(inv => inv.Contains(itemAmount))
                                                .OrderBy(inv => Vector3.Distance(cell.position, inv.position))
-                                               .First();
+                                               .FirstOrDefault();
+
+                    if (bestMatch is null) cannotBuild = true;
                    
                     matchingInventories.Add((bestMatch, itemAmount));
                 });
             }
 
-            if (cannotBuild) return default;
+            if (cannotBuild)
+            {
+                Debug.Log($"Unable to build {selectedPart.entity.name}");
+                return default;
+            }
             
             // requiredContainers.ForEach(c => matchingEntities.Add(c));
             // matchingInventories.ForEach((m => matchingEntities.Add(m)));
             // matchingEntities = matchingEntities.OrderBy(e => Vector3.Distance(cell.position, e.position)).ToList();
-            
+
+            // Node node = (selectedNode) switch
+            // {
+            //     Machine m  => Factory.Spawn("Machines", selectedNode, cell.position),
+            //     Junction j => Factory.Spawn("Junctions", selectedNode, cell.position),
+            //          _     => Factory.Spawn("Nodes", selectedNode, cell.position),
+            // };
+
             Node node;
             if (selectedNode is Machine) node = Factory.Spawn("Machines", selectedNode, cell.position);
             else if (selectedNode is Junction) node = Factory.Spawn("Junctions", selectedNode, cell.position);
@@ -236,7 +361,7 @@ namespace ProcessControl.Industry
             
             if (node is IBuildable buildable)
             {
-                if (queueJob)
+                if (queueJob && queueJobGlobal)
                 {
 
 
@@ -244,22 +369,27 @@ namespace ProcessControl.Industry
                     {
                         description = $"Collect resources for {selectedPart.entity.name}",
                     };
-                    
-                    matchingInventories.ForEach(
+
+                    matchingInventories.ForEach
+                    (
                         match =>
                         {
-                            collectJob.orders.Add(new Order
-                            {
-                                description = $"gather {match.itemAmount.amount} {match.itemAmount.item}(s) for {nodeRecipe.name}",
-                                location = match.inventory.position,
-                                action = () =>
+                            collectJob.orders.Add
+                            (
+                                new Order
                                 {
-                                    match.inventory.Withdraw(match.itemAmount);
-                                    collectJob.activeWorker.Deposit(match.itemAmount);
-                                    return Task.CompletedTask;
-                                },
-                            });
-                        });
+                                    description = $"gather {match.itemAmount.amount} {match.itemAmount.item}(s) for {nodeRecipe.name}",
+                                    location = match.inventory.position,
+                                    action = () =>
+                                    {
+                                        match.inventory.Withdraw(match.itemAmount);
+                                        collectJob.activeWorker.Deposit(match.itemAmount);
+                                        return Task.CompletedTask;
+                                    },
+                                }
+                            );
+                        }
+                    );
 
                     // requiredContainers.ForEach(
                     //     c =>
@@ -302,22 +432,28 @@ namespace ProcessControl.Industry
                         description = $"deliver items to {node.name}",
                         prerequisite = collectJob,
                     };
-                    
-                    deliveryJob.orders.Add(new Order
-                    {
-                        description = $"deliver items to {node.name}",
-                        location = cell.position,
-                        action = () =>
+
+                    deliveryJob.orders.Add
+                    (
+                        new Order
                         {
-                            var deliveryItems = new List<ItemAmount>();
-                            nodeRecipe.inputItems.ForEach(itemAmount =>
+                            description = $"deliver items to {node.name}",
+                            location = cell.position,
+                            action = () =>
                             {
-                                var withdrawnItems = deliveryJob.activeWorker.Withdraw(itemAmount);
-                                deliveryItems.Add(withdrawnItems);
-                            });
-                            return buildable.DeliverItems(deliveryItems);
-                        },
-                    });
+                                var deliveryItems = new List<ItemAmount>();
+                                nodeRecipe.inputItems.ForEach
+                                (
+                                    itemAmount =>
+                                    {
+                                        var withdrawnItems = deliveryJob.activeWorker.Withdraw(itemAmount);
+                                        deliveryItems.Add(withdrawnItems);
+                                    }
+                                );
+                                return buildable.DeliverItems(deliveryItems);
+                            },
+                        }
+                    );
                     JobManager.QueueJob(deliveryJob);
 
                     var constructionJob = new Job
@@ -338,6 +474,7 @@ namespace ProcessControl.Industry
                     JobManager.QueueJob(constructionJob);
                     // JobManager.QueueJob(new ConstructionJob(cell.position, buildable, 1));
                 }
+                else buildable.Build(0);
             }
             
             if (node is Machine machine) builtMachines.Add(machine);
@@ -362,6 +499,11 @@ namespace ProcessControl.Industry
             
             //- return is paused
             if (Time.timeScale == 0f) return;
+
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                queueJobGlobal = !queueJobGlobal;
+            }
             
             //- toggle build mode
             if (Input.GetKeyDown(KeyCode.B))
@@ -391,7 +533,7 @@ namespace ProcessControl.Industry
                         Debug.Log("Invalid parentCell!");
                         return;
                     }
-                    firstNode = (firstCell.occupied) ? firstCell.node : BuildNodeOn(selectedPart.entity as Node, selectedPart.recipe, firstCell);
+                    firstNode = (firstCell.occupied) ? firstCell.node : BuildNodeOn(defaultJunction, defaultJunctionRecipe, firstCell);
                     
                     if (firstNode is null) return;
                      
@@ -399,7 +541,7 @@ namespace ProcessControl.Industry
                     if (firstCell is null || secondCell is null || !secondCell.buildable) Debug.Log("Invalid parentCell!");
                     else
                     {
-                        secondNode = (secondCell.occupied) ? secondCell.node : BuildNodeOn(selectedPart.entity as Node, selectedPart.recipe, secondCell);
+                        secondNode = (secondCell.occupied) ? secondCell.node : BuildNodeOn(defaultJunction, defaultJunctionRecipe, secondCell);
 
                         //- if conveyor end points not parallel
                         if ((firstCell.coords.x == secondCell.coords.x) == (firstCell.coords.y == secondCell.coords.y))
@@ -421,16 +563,16 @@ namespace ProcessControl.Industry
                                 return;
                             }
 
-                            var junction = BuildNodeOn(selectedPart.entity as Node, selectedPart.recipe, bestCell);
+                            var junction = BuildNodeOn(defaultJunction, defaultJunctionRecipe, bestCell);
                             // bestCell.node = junction;
                             // junction.parentCell = bestCell;
                             
-                            BuildEdgeBetween(firstNode, junction);
-                            BuildEdgeBetween(junction, secondNode);
+                            BuildEdgeBetween(selectedPart.recipe, firstNode, junction);
+                            BuildEdgeBetween(selectedPart.recipe, junction, secondNode);
                         }
                         else
                         {
-                            BuildEdgeBetween(firstNode, secondNode);
+                            BuildEdgeBetween(selectedPart.recipe, firstNode, secondNode);
                         }
                     }
                 }
@@ -454,6 +596,7 @@ namespace ProcessControl.Industry
                 {
                     //@ issue here when replacing junctions
                     Debug.Log("Replacing junction with machine...");
+                    return;
 
                     IO input = default;
                     IO output = default;
@@ -503,33 +646,41 @@ namespace ProcessControl.Industry
 
                 if (cell.node is IBuildable node)
                 {
-                    JobManager.QueueJob(new Job
+                    if (queueJobGlobal)
                     {
-                        orders =
+                        JobManager.QueueJob(new Job
                         {
-                            new Order
+                            orders =
                             {
-                                description = $"destroy a {cell.node.name}",
-                                location = cell.position,
-                                action = () => node.Disassemble(1),
+                                new Order
+                                {
+                                    description = $"destroy a {cell.node.name}",
+                                    location = cell.position,
+                                    action = () => node.Disassemble(1),
+                                },
                             },
-                        },
-                    });
+                        });
+                    }
+                    else node.Disassemble(0);
                 }
                 else if (cell.edges.Count == 1 && cell.edges[0] is IBuildable conveyor)
                 {
-                    JobManager.QueueJob(new Job
+                    if (queueJobGlobal)
                     {
-                        orders =
+                        JobManager.QueueJob(new Job
                         {
-                            new Order
+                            orders =
                             {
-                                description = $"destroy a {cell.edges[0].name}",
-                                location = cell.position,
-                                action = () => conveyor.Disassemble(1),
+                                new Order
+                                {
+                                    description = $"destroy a {cell.edges[0].name}",
+                                    location = cell.position,
+                                    action = () => conveyor.Disassemble(1),
+                                },
                             },
-                        },
-                    });
+                        });
+                    }
+                    else conveyor.Disassemble(0);
                 }
                 
             }

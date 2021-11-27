@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
   m_Name: Hydraulic Press
   m_EditorClassIdentifier: 
-  name: 
+  name: Hydraulic Press
   recipe: {fileID: 0}
-  sprite: {fileID: 0}
+  sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
   description: 
-  prefab: {fileID: 0}
   entity: {fileID: 163049205698065749, guid: 1c55ce35d7c3d7241915c42e6f4f3777, type: 3}

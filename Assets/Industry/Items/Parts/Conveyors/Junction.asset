@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
-  m_Name: Incinerator
+  m_Name: Junction
   m_EditorClassIdentifier: 
-  name: Incinerator
-  recipe: {fileID: 0}
-  sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
+  name: Junction
+  recipe: {fileID: 11400000, guid: 28c199b1a8642bf4fae80a9aa284fc22, type: 2}
+  sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   description: 
-  entity: {fileID: 2145074843609341928, guid: 8562c3572e812664b9706e4aa3e9df28, type: 3}
+  entity: {fileID: 8663364071117963412, guid: d378e936cf1730a40877dde68bce6d7a, type: 3}
