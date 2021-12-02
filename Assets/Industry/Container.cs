@@ -9,7 +9,7 @@ namespace ProcessControl.Industry
     public class Container : Entity
     {
         [SerializeField] internal Item item;
-        [SerializeField] internal int ticks;
+        // [SerializeField] internal int ticks;
         
         public void SetVisible(bool isVisible) => renderer.enabled = isVisible;
 
@@ -24,7 +24,7 @@ namespace ProcessControl.Industry
         {
             renderer = GetComponent<SpriteRenderer>();
             var enabledColor = renderer.color;
-            enabledColor.a = enabledAlpha;
+            enabledColor.a = EnabledAlpha;
             renderer.color = enabledColor;
         }
     }

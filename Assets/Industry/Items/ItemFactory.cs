@@ -46,17 +46,14 @@ namespace ProcessControl.Industry
                                         .OrderBy(c => Vector3.Distance(c.position, position))
                                         .ToList();
                     
-                // if (matchingContainers.Count < itemAmount.amount)
-                    // Debug.Log("NOT ENOUGH ITEMS IN ENVIRONMENT");
-
                 return matchingContainers.Take(itemAmount.amount).ToList();
             };
 
             FindItemByClosest += (position, itemAmount) =>
             {
                 var matchingContainer = spawnedContainers.Where(c => c.item == itemAmount.item)
-                                                          .OrderBy(c => Vector3.Distance(c.position, position))
-                                                          .FirstOrDefault();
+                                                         .OrderBy(c => Vector3.Distance(c.position, position))
+                                                         .FirstOrDefault();
                 return matchingContainer;
             };
             

@@ -1,4 +1,5 @@
 ﻿using System;
+using ProcessControl.Industry;
 using UnityEngine;
 #pragma warning disable 108,114
 
@@ -7,17 +8,23 @@ namespace ProcessControl.Graphs
 {
     public class Entity : MonoBehaviour
     {
-        protected const int TicksPerSecond = 64;
-        protected static int TicksPerMinute => TicksPerSecond * 60;
+        internal const int TicksPerSecond = 64;
+        internal static int TicksPerMinute => TicksPerSecond * 60;
 
+        [Header("Entity")]
         new public bool enabled;
-        public int enabledAlpha = 255;
-        public int disabledAlpha = 100;
-        // public Color enabledColor = new Color(255, 255, 255, 255);
-        // public Color disabledColor = new Color(255, 255, 255, 100);
+        public bool sleeping;
+        public int ticks;
+        public int sleepThreshold = 2048;
+
+        protected const int EnabledAlpha = 255;
+        protected const int DisabledAlpha = 100;
 
         internal SpriteRenderer renderer;
         public Sprite sprite => renderer.sprite;
+
+        [Header("Schematic")]
+        public Schematic schematic;
         
         public Vector3 position
         {
@@ -28,8 +35,13 @@ namespace ProcessControl.Graphs
         virtual protected void Awake()
         {
             renderer = GetComponent<SpriteRenderer>();
+            if (schematic is { })
+            {
+                renderer.sprite = schematic.sprite;
+            }
+            
             var disabledColor = renderer.color;
-            disabledColor.a = disabledAlpha / 255f;
+            disabledColor.a = DisabledAlpha / 255f;
             renderer.color = disabledColor;
         }
 

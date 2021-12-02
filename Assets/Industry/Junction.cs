@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Jobs;
@@ -10,28 +11,26 @@ namespace ProcessControl.Industry
 {
     public class Junction : Node, IBuildable
     {
-        public bool sleeping;
-        public int ticks;
-        public int sleepThreshold = 256;
-        
-        [Header("Input")]
+        [Header("IO")]
+        //- input
         public bool inputEnabled = true;
         public int maxInputs = 1;
-        public IO currentInput;
-        public readonly List<IO> inputs = new List<IO>();
-        
-        [Header("Output")]
+        private IO currentInput;
+        private readonly List<IO> inputs = new List<IO>();
+        //- output
         public bool outputEnabled = true;
         public int maxOutputs = 1;
-        public IO currentOutput;
-        public readonly List<IO> outputs = new List<IO>();
-
-        [Header("Inventory")]
+        private IO currentOutput;
+        private readonly List<IO> outputs = new List<IO>();
+        //- inventory
         public Container inventory;
         
         public Task DeliverItems(List<ItemAmount> itemAmounts)
         {
-            return Task.CompletedTask;
+            if (schematic.recipe.inputItems.TrueForAll(itemAmounts.Contains)) return Task.CompletedTask;
+            
+            Debug.Log($"Failed delivery to {schematic.name}", this);
+            return Task.FromException(new Exception($"Failed delivery to {schematic.name}"));
         }
         
         public async Task Build(float buildTime)
@@ -39,7 +38,7 @@ namespace ProcessControl.Industry
             var time = 0f;
             while ((time += Time.deltaTime) < buildTime) await Task.Yield();
             var enabledColor = renderer.color;
-            enabledColor.a = enabledAlpha / 255f;
+            enabledColor.a = EnabledAlpha / 255f;
             renderer.color = enabledColor;
             enabled = true;
         }

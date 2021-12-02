@@ -9,6 +9,8 @@ using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Procedural;
 using ProcessControl.Pathfinding;
+using UnityEngine.Serialization;
+
 #pragma warning disable 108,114
 
 
@@ -17,7 +19,7 @@ namespace ProcessControl.Industry
     public class ConstructionManager : MonoBehaviour
     {
         //> EVENT TRIGGERS
-        public static Action<Part> SetPart;
+        public static Action<Schematic> SetPart;
         public static Action<bool> SetEdgeMode;
 
         //> EVENT SUBSCRIPTIONS
@@ -26,7 +28,7 @@ namespace ProcessControl.Industry
         public bool queueJobGlobal = true;
         [SerializeField] private bool buildMode;
         [SerializeField] private bool conveyorMode;
-        [SerializeField] private Part selectedPart;
+        [FormerlySerializedAs("selectedPart")][SerializeField] private Schematic selectedSchematic;
         
         private Camera camera;
         public Node firstNode, secondNode;
@@ -42,7 +44,7 @@ namespace ProcessControl.Industry
         {
             camera = Camera.main;
 
-            SetPart += (part) => selectedPart = part;
+            SetPart += (part) => selectedSchematic = part;
             SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
 
             CellSpawner.onStartLocationDetermined += GenerateSpawnArea;
@@ -90,7 +92,7 @@ namespace ProcessControl.Industry
             
 
             var storage = ItemFactory.GetItem("Storage Container");
-            if (storage is Part part)
+            if (storage is Schematic part)
             {
                 for (int i = 0; i < 1; i++)
                 {
@@ -149,7 +151,7 @@ namespace ProcessControl.Industry
         //> BUILD EDGE BETWEEN TWO NODES
         private void BuildEdgeBetween(Recipe conveyorRecipe, Node firstNode, Node secondNode)
         {
-            if (!(selectedPart.entity is Edge selectedEdge)) return;
+            if (!(selectedSchematic.entity is Edge selectedEdge)) return;
             
             bool cannotBuild = false;
             // var matchingEntities = new List<Entity>();
@@ -184,7 +186,7 @@ namespace ProcessControl.Industry
 
             if (cannotBuild)
             {
-                Debug.Log($"Unable to build {selectedPart.entity.name}");
+                Debug.Log($"Unable to build {selectedSchematic.entity.name}");
                 return;
             }
             
@@ -219,7 +221,7 @@ namespace ProcessControl.Industry
                 {
                     var collectJob = new Job
                     {
-                        description = $"Collect resources for {selectedPart.entity.name}",
+                        description = $"Collect resources for {selectedSchematic.entity.name}",
                     };
 
                     matchingInventories.ForEach
@@ -336,7 +338,7 @@ namespace ProcessControl.Industry
 
             if (cannotBuild)
             {
-                Debug.Log($"Unable to build {selectedPart.entity.name}");
+                Debug.Log($"Unable to build {selectedSchematic.entity.name}");
                 return default;
             }
             
@@ -367,7 +369,7 @@ namespace ProcessControl.Industry
 
                     var collectJob = new Job
                     {
-                        description = $"Collect resources for {selectedPart.entity.name}",
+                        description = $"Collect resources for {selectedSchematic.entity.name}",
                     };
 
                     matchingInventories.ForEach
@@ -513,7 +515,7 @@ namespace ProcessControl.Industry
             }
             
             //- ignore if over UI
-            if (!buildMode || selectedPart is null || EventSystem.current.IsPointerOverGameObject()) return;
+            if (!buildMode || selectedSchematic is null || EventSystem.current.IsPointerOverGameObject()) return;
             
             //- handle conveyor building
             if (conveyorMode)
@@ -567,12 +569,12 @@ namespace ProcessControl.Industry
                             // bestCell.node = junction;
                             // junction.parentCell = bestCell;
                             
-                            BuildEdgeBetween(selectedPart.recipe, firstNode, junction);
-                            BuildEdgeBetween(selectedPart.recipe, junction, secondNode);
+                            BuildEdgeBetween(selectedSchematic.recipe, firstNode, junction);
+                            BuildEdgeBetween(selectedSchematic.recipe, junction, secondNode);
                         }
                         else
                         {
-                            BuildEdgeBetween(selectedPart.recipe, firstNode, secondNode);
+                            BuildEdgeBetween(selectedSchematic.recipe, firstNode, secondNode);
                         }
                     }
                 }
@@ -620,7 +622,7 @@ namespace ProcessControl.Industry
                 }
                 else if (!cell.occupied)
                 {
-                    var node = BuildNodeOn(selectedPart.entity as Node, selectedPart.recipe, cell);
+                    var node = BuildNodeOn(selectedSchematic.entity as Node, selectedSchematic.recipe, cell);
                     if (node is null)
                     {
                         Debug.Log("Node was null.");

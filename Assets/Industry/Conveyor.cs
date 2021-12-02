@@ -15,20 +15,18 @@ namespace ProcessControl.Industry
     [SelectionBase]
     public class Conveyor : Edge, IBuildable
     {
-        public bool sleeping;
-        public int ticks;
-        public int sleepThreshold = 256;
+        // public bool sleeping;
+        // public int ticks;
+        // public int sleepThreshold = 256;
         
-        [Header("Conveyor Speed")]
+        [Header("Conveyor")]
         public int itemsPerMinute = 8;
 
-        [Header("IO")]
-        public IO input;
-        public IO output;
-        public float distanceBetweenIO;
+        private IO input;
+        private IO output;
+        private float distanceBetweenIO;
 
-        [Header("Inventory")]
-        public int inventorySize = 8;
+        private int inventorySize = 8;
         public List<Container> inventory = new List<Container>();
         public readonly List<Cell> tilesCovered = new List<Cell>();
 
@@ -79,7 +77,7 @@ namespace ProcessControl.Industry
             var time = 0f;
             while ((time += Time.deltaTime) < buildTime) await Task.Yield();
             var enabledColor = renderer.color;
-            enabledColor.a = enabledAlpha / 255f;
+            enabledColor.a = EnabledAlpha / 255f;
             renderer.color = enabledColor;
             enabled = true;
         }

@@ -2,13 +2,14 @@
 using UnityEngine.UI;
 using ProcessControl.Graphs;
 using ProcessControl.Industry;
+using UnityEngine.Serialization;
 
 
 namespace ProcessControl.UI
 {
     public class ConstructionToolbarSlotUI : MonoBehaviour
     {
-        public Part part;
+        [FormerlySerializedAs("part")] public Schematic schematic;
         public bool isEdge;
         public bool isNode => !isEdge;
         
@@ -20,18 +21,18 @@ namespace ProcessControl.UI
 
         private void Initialize()
         {
-            if (part is null) return;
+            if (schematic is null) return;
 
             button = GetComponent<Button>();
             button.onClick.AddListener(() =>
             {
-                ConstructionManager.SetPart(part);
+                ConstructionManager.SetPart(schematic);
                 ConstructionManager.SetEdgeMode(isEdge);
             });
 
             // if (part.entity is Node) return;
             images = GetComponentsInChildren<Image>();
-            images[1].sprite = part.sprite;
+            images[1].sprite = schematic.sprite;
         }
         
     }

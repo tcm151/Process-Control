@@ -91,7 +91,7 @@ namespace ProcessControl.Jobs
             // Debug.Log("Destination Reached.");
             if (Idle)
             {
-                Debug.Log("~IDLE~");
+                // Debug.Log("~IDLE~");
                 Roam();
                 return;
             }

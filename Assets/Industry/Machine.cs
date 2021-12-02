@@ -13,9 +13,9 @@ namespace ProcessControl.Industry
     [SelectionBase]
     public class Machine : Node , IBuildable, IInventory
     {
-        public int ticks;
-        public bool sleeping;
-        public int sleepThreshold = 256;
+        // public int ticks;
+        // public bool sleeping;
+        // public int sleepThreshold = 256;
 
         [Header("Recipes")]
         public Recipe currentRecipe;
@@ -55,7 +55,7 @@ namespace ProcessControl.Industry
             var time = 0f;
             while ((time += Time.deltaTime) < buildTime) await Task.Yield();
             var enabledColor = renderer.color;
-            enabledColor.a = enabledAlpha / 255f;
+            enabledColor.a = EnabledAlpha / 255f;
             renderer.color = enabledColor;
             enabled = true;
         }
