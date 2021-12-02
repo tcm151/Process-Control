@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
+  m_Name: Merger
+  m_EditorClassIdentifier: 
+  name: 
+  recipe: {fileID: 11400000, guid: f6d4836ef98576145bec96fcbce802d8, type: 2}
+  sprite: {fileID: 8216710035026873855, guid: ae24ff13f179fc04c8c104e8f5b50308, type: 3}
+  description: 
+  entity: {fileID: 308910016581926823, guid: 7a36556df2e1d0445aaac4b314153e4b, type: 3}

@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
-  m_Name: Merger
+  m_Name: Splitter
   m_EditorClassIdentifier: 
   name: 
-  recipe: {fileID: 11400000, guid: f6d4836ef98576145bec96fcbce802d8, type: 2}
-  sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  recipe: {fileID: 11400000, guid: 1cac75c4b165c3e47ae5707ba1a44002, type: 2}
+  sprite: {fileID: 8199771426994200264, guid: ae24ff13f179fc04c8c104e8f5b50308, type: 3}
   description: 
-  entity: {fileID: 308910016581926823, guid: 7a36556df2e1d0445aaac4b314153e4b, type: 3}
+  entity: {fileID: 8606701852718631066, guid: 17d7d72e94b6bff43a29ee3057bd6891, type: 3}

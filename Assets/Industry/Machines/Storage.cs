@@ -33,7 +33,7 @@ public class Storage : Node, IBuildable, IInventory
         var time = 0f;
         while ((time += Time.deltaTime) < buildTime) await Task.Yield();
         var enabledColor = renderer.color;
-        enabledColor.a = enabledAlpha;
+        enabledColor.a = EnabledAlpha;
         renderer.color = enabledColor;
         enabled = true;
     }

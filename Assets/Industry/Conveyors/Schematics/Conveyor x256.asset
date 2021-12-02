@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
-  m_Name: Splitter
+  m_Name: Conveyor x256
   m_EditorClassIdentifier: 
-  name: 
-  recipe: {fileID: 11400000, guid: 1cac75c4b165c3e47ae5707ba1a44002, type: 2}
-  sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  description: 
-  entity: {fileID: 8606701852718631066, guid: 17d7d72e94b6bff43a29ee3057bd6891, type: 3}
+  name: Conveyor x256
+  recipe: {fileID: 0}
+  sprite: {fileID: -6424201123812103037, guid: ae24ff13f179fc04c8c104e8f5b50308, type: 3}
+  description: Move items from machine to machine at a very fast speed.
+  entity: {fileID: 1894979649076250451, guid: 3442689b2ba06d548807fc54c6e05887, type: 3}

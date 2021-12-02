@@ -5,9 +5,8 @@ using UnityEngine;
 namespace ProcessControl.Industry
 {
     [CreateAssetMenu(menuName = "Resources/Part")]
-    public class Part : Item
+    public class Schematic : Item
     {
-        // public GameObject prefab;
         public Entity entity;
     }
 }
