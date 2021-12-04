@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
+  m_Name: Assembler
+  m_EditorClassIdentifier: 
+  name: Assembler
+  recipe: {fileID: 11400000, guid: 412ed49a973ea8b4b9b5872197d7dfbf, type: 2}
+  sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
+  description: Assembler components together to form more complex machinery.
+  entity: {fileID: 4131297871508864436, guid: 54e387d2f55054b45837075bf791f229, type: 3}
