@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using ProcessControl.Jobs;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 namespace ProcessControl.Industry
@@ -17,8 +18,8 @@ namespace ProcessControl.Industry
 
             onModified += () =>
             {
-                var empties = items.Where(i => i.amount <= 0).ToList();
-                empties.ForEach(e => items.Remove(e));
+                var empties = inventory.Where(i => i.amount <= 0).ToList();
+                empties.ForEach(e => inventory.Remove(e));
             };
         }
         
@@ -26,28 +27,28 @@ namespace ProcessControl.Industry
 
         private readonly int slots;
         private readonly int stackSize;
-        [SerializeField] private List<Stack> items = new List<Stack>();
+        [FormerlySerializedAs("items")][SerializeField] private List<Stack> inventory = new List<Stack>();
         
-        public int Count => items.Sum(i => i.amount);
+        public int Count => inventory.Sum(i => i.amount);
         public bool Full => Count >= slots * stackSize;
-        public bool Empty => items.Count == 0;
+        public bool Empty => inventory.Count == 0;
         
-        public void Clear() => items.Clear();
-        public bool Contains(Item match, int amount = 1) => items.FirstOrDefault(i => i.item == match && i.amount >= amount) is {};
+        public void Clear() => inventory.Clear();
+        public bool Contains(Item match, int amount = 1) => inventory.FirstOrDefault(s => s.item == match && s.amount >= amount) is {};
         public bool Contains(Stack stack) => Contains(stack.item, stack.amount);
-        public IReadOnlyList<Stack> GetItems() => items.AsReadOnly();
+        public IReadOnlyList<Stack> GetItems() => inventory.AsReadOnly();
         
         public bool CanDeposit(Item item)
         {
-            if (items.Count < slots) return true;
-            if (items.FirstOrDefault(i => i.item == item && i.amount < stackSize) is {}) return true;
+            if (inventory.Count < slots) return true;
+            if (inventory.FirstOrDefault(s => s.item == item && s.amount < stackSize) is {}) return true;
             return false;
         }
 
         public bool CanDeposit(Stack stack)
         {
-            if (items.Count < slots) return true;
-            if (items.FirstOrDefault(i => i.item == stack.item && i.amount + stack.amount <= stackSize) is { }) return true;
+            if (inventory.Count < slots) return true;
+            if (inventory.FirstOrDefault(s => s.item == stack.item && s.amount + stack.amount <= stackSize) is { }) return true;
             return false;
         }
         
@@ -55,21 +56,21 @@ namespace ProcessControl.Industry
         {
             if (Contains(newItem))
             {
-                // Debug.Log("Inventory has item stack");
-                var item = items.FirstOrDefault(i => i.item == newItem && i.amount < stackSize);
+                // Debug.Log("Inventory has item match");
+                var item = inventory.FirstOrDefault(s => s.item == newItem && s.amount < stackSize);
                 if (item is { })
                 {
-                    // Debug.Log("Adding to stack.");
+                    // Debug.Log("Adding to match.");
                     item.amount += amount;
                     onModified?.Invoke();
                     return;
                 }
             }
             
-            if (items.Count < slots)
+            if (inventory.Count < slots)
             {
                 // Debug.Log("Free slot adding new item");
-                items.Add(new Stack
+                inventory.Add(new Stack
                 {
                     item = newItem,
                     amount = amount,
@@ -83,7 +84,7 @@ namespace ProcessControl.Industry
         {
             if (Contains(stack.item))
             {
-                var item = items.FirstOrDefault(i => i.item == stack.item && i.amount + stack.amount <= stackSize);
+                var item = inventory.FirstOrDefault(s => s.item == stack.item && s.amount + stack.amount <= stackSize);
                 if (item is { })
                 {
                     item.amount += item.amount;
@@ -92,71 +93,71 @@ namespace ProcessControl.Industry
                 }
             }
             
-            if (items.Count < slots)
+            if (inventory.Count < slots)
             {
-                items.Add(stack);
+                inventory.Add(stack);
                 onModified?.Invoke();
             }
         }
 
         public Item Withdraw()
         {
-            var i = items.FirstOrDefault(i => i.amount >= 1);
-            if (i is null) return null;
-            i.amount--;
+            var stack = inventory.FirstOrDefault(s => s.amount >= 1);
+            if (stack is null) return null;
+            stack.amount--;
             onModified?.Invoke();
-            return i.item;
+            return stack.item;
         }
 
         public Stack WithdrawFirst()
         {
-            var i = items.FirstOrDefault(i => i.amount >= 1);
-            if (i is null) return null;
-            i.amount--;
+            var stack = inventory.FirstOrDefault(s => s.amount >= 1);
+            if (stack is null) return null;
+            stack.amount--;
             onModified?.Invoke();
             return new Stack
             {
-                item = i.item,
+                item = stack.item,
                 amount = 1,
             };
         }
         
         public Item Withdraw(Item match)
         {
-            var i = items.FirstOrDefault(i => i.item == match && i.amount >= 1);
-            if (i is null) return null;
-            i.amount--;
+            var stack = inventory.FirstOrDefault(s => s.item == match && s.amount >= 1);
+            if (stack is null) return null;
+            stack.amount--;
             onModified?.Invoke();
-            return i.item;
+            return stack.item;
         }
         
         
         //@ not in use...
         public Stack Withdraw(Item match, int amount)
         {
-            // if (!items.Any(i => i.amount >= amount)) return default;
-            var i = items.FirstOrDefault(i => i.item == match && i.amount >= amount);
-            if (i is null) return null;
-            i.amount -= amount;
+            // if (!inventory.Any(i => i.amount >= amount)) return default;
+            var stack = inventory.FirstOrDefault(s => s.item == match && s.amount >= amount);
+            if (stack is null) return null;
+            stack.amount -= amount;
             onModified?.Invoke();
             return new Stack
             {
-                item = i.item,
-                amount = i.amount,
+                item = stack.item,
+                amount = stack.amount,
             };
         }
         
-        public Stack Withdraw(Stack stack)
+        public Stack Withdraw(Stack match)
         {
-            // if (!items.Any(i => i.amount >= amount)) return default;
-            var i = items.FirstOrDefault(i => i.item == stack.item && i.amount >= stack.amount);
-            if (i is null) return null;
-            i.amount -= stack.amount;
+            // if (!inventory.Any(i => i.amount >= amount)) return default;
+            var stack = inventory.FirstOrDefault(s => s.item == match.item && s.amount >= match.amount);
+            if (stack is null) return null;
+            stack.amount -= match.amount;
             onModified?.Invoke();
             return new Stack
             {
-                item = i.item,
-                amount = i.amount,
+                item = stack.item,
+                amount = stack.amount,
             };
         }
     }

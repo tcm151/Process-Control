@@ -7,9 +7,11 @@ namespace ProcessControl.Industry
     {
         public Item item;
         public int amount = 1;
+        
+        // protected bool Equals(Stack other) => (item == other.item) && (amount == other.amount);
     }
 
-    [Serializable] public class Amount<T>
+    [Serializable] public class Stack<T>
     {
         public T item;
         public int amount;
