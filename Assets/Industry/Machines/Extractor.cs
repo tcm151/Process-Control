@@ -8,7 +8,7 @@ namespace ProcessControl.Industry.Machines
         [Range(0, 64)] public float extractionSpeed;
 
         //> FIXED CALCULATION INTERVAL
-        override protected void FixedUpdate()
+        virtual protected void FixedUpdate()
         {
             if (!enabled || sleeping) return;
             if (ticks >= sleepThreshold)

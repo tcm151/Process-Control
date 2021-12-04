@@ -7,15 +7,13 @@ namespace ProcessControl.Industry.Machines
     public class Smelter : Machine
     {
         [Header("Smelter")]
-        public int energy;
-        public int maxEnergy;
+        public float energy;
+        public float maxEnergy;
         public List<Resource> acceptedFuels;
         [Range(1, 64)] public float smeltingSpeed;
         
-        override protected void FixedUpdate()
+        virtual protected void FixedUpdate()
         {
-            base.FixedUpdate();
-            
             if (++ticks % (TicksPerMinute / smeltingSpeed) == 0)
             {
                 ticks = 0;

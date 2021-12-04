@@ -13,7 +13,7 @@ using ProcessControl.Procedural;
 namespace ProcessControl.Industry
 {
     [SelectionBase]
-    public class Conveyor : Edge, IBuildable
+    public class Conveyor : Edge, IO, Buildable
     {
         // public bool sleeping;
         // public int ticks;
@@ -51,23 +51,23 @@ namespace ProcessControl.Industry
         }}
 
         //> ADD AND REMOVE RESOURCES
-        override public void Deposit(Container container) => inventory.Add(container);
-        override public bool CanDeposit(Item item)
+        virtual public void Deposit(Container container) => inventory.Add(container);
+        virtual public bool CanDeposit(Item item)
             => inventory.Count == 0
             || inventory.Count < inventorySize
             && inventory.Count >= 1
             && inventory.Last().ticks >= 2 * TicksPerSecond / itemsPerMinute;
         
-        override public Container Withdraw() => inventory.TakeAndRemoveFirst();
-        override public bool CanWithdraw()
+        virtual public Container Withdraw() => inventory.TakeAndRemoveFirst();
+        virtual public bool CanWithdraw()
             => inventory.Count >= 1
              && inventory[0].ticks > distanceBetweenIO * TicksPerSecond / itemsPerMinute;
         
-        override public IO Input => input;
-        override public IO Output => output;
+        virtual public IO Input => input;
+        virtual public IO Output => output;
 
 
-        public Task DeliverItems(List<ItemAmount> itemAmounts)
+        public Task DeliverItems(List<Stack> itemAmounts)
         {
             return Task.CompletedTask;
         }
@@ -90,14 +90,14 @@ namespace ProcessControl.Industry
         }
 
         //> CONNECT INPUT
-        override public bool ConnectInput(IO newInput)
+        virtual public bool ConnectInput(IO newInput)
         {
             if (input == newInput) return false;
             input = newInput;
             ManageConnection();
             return true;
         }
-        override public bool DisconnectInput(IO oldInput)
+        virtual public bool DisconnectInput(IO oldInput)
         {
             if (input != oldInput) return false;
             input = null;
@@ -106,14 +106,14 @@ namespace ProcessControl.Industry
         }
 
         //> CONNECT OUTPUT
-        override public bool ConnectOutput(IO newOutput)
+        virtual public bool ConnectOutput(IO newOutput)
         {
             if (output == newOutput) return false;
             output = newOutput;
             ManageConnection();
             return true;
         }
-        override public bool DisconnectOutput(IO oldOutput)
+        virtual public bool DisconnectOutput(IO oldOutput)
         {
             if (output != oldOutput) return false;
             output = null;

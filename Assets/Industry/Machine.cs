@@ -11,7 +11,7 @@ using ProcessControl.Graphs;
 namespace ProcessControl.Industry
 {
     [SelectionBase]
-    public class Machine : Node , IBuildable, IInventory
+    public class Machine : Node, IO, Buildable, Jobs.Inventory
     {
         // public int ticks;
         // public bool sleeping;
@@ -31,7 +31,7 @@ namespace ProcessControl.Industry
         public int maxInputs = 1;
         // public Conveyor currentInput;
         private IO currentInput;
-        override public IO Input => currentInput;
+        virtual public IO Input => currentInput;
         // public List<Conveyor> inputs = new List<Conveyor>();
         public readonly List<IO> inputs = new List<IO>();
 
@@ -40,12 +40,12 @@ namespace ProcessControl.Industry
         public int maxOutputs = 1;
         // public Conveyor currentOutput;
         private IO currentOutput;
-        override public IO Output => currentOutput;
+        virtual public IO Output => currentOutput;
         // public List<Conveyor> outputs = new List<Conveyor>();
         public readonly List<IO> outputs = new List<IO>();
 
         
-        public Task DeliverItems(List<ItemAmount> itemAmounts)
+        public Task DeliverItems(List<Stack> itemAmounts)
         {
             return Task.CompletedTask;
         }
@@ -78,7 +78,7 @@ namespace ProcessControl.Industry
 
         
         //> CONNECT INPUT
-        override public bool ConnectInput(IO input)
+        virtual public bool ConnectInput(IO input)
         {
             if (inputs.Count >= maxInputs) return false;
             if (inputs.Contains(input)) return false;
@@ -88,7 +88,7 @@ namespace ProcessControl.Industry
         }
         
         //> DISCONNECT INPUT
-        override public bool DisconnectInput(IO input)
+        virtual public bool DisconnectInput(IO input)
         {
             if (!inputs.Contains(input)) return false;
             inputs.Remove(input);
@@ -104,7 +104,7 @@ namespace ProcessControl.Industry
         }
         
         //> CONNECT OUTPUT
-        override public bool ConnectOutput(IO output)
+        virtual public bool ConnectOutput(IO output)
         {
             if (outputs.Count >= maxOutputs) return false;
             if (outputs.Contains(output)) return false;
@@ -114,7 +114,7 @@ namespace ProcessControl.Industry
         }
         
         //> DISCONNECT OUTPUT
-        override public bool DisconnectOutput(IO output)
+        virtual public bool DisconnectOutput(IO output)
         {
             if (!outputs.Contains(output)) return false;
             outputs.Remove(output);
@@ -131,8 +131,8 @@ namespace ProcessControl.Industry
 
 
         //> DEPOSIT RESOURCES
-        override public bool CanDeposit(Item item) => inputInventory.CanDeposit(item);
-        override public void Deposit(Container container)
+        virtual public bool CanDeposit(Item item) => inputInventory.CanDeposit(item);
+        virtual public void Deposit(Container container)
         {
             container.position = this.position;
             container.SetVisible(false);
@@ -143,8 +143,8 @@ namespace ProcessControl.Industry
 
 
         //> WITHDRAW RESOURCES
-        override public bool CanWithdraw() => outputInventory.Count >= 1;
-        override public Container Withdraw()
+        virtual public bool CanWithdraw() => outputInventory.Count >= 1;
+        virtual public Container Withdraw()
         {
             var item = outputInventory.Withdraw();
             var container = ItemFactory.SpawnContainer(item, position);
@@ -154,16 +154,16 @@ namespace ProcessControl.Industry
         }
 
         //> SLEEP IF IDLE
-        virtual protected void FixedUpdate()
-        {
-            //! these may not work properly
-            if (!enabled || sleeping) return;
-            if (ticks >= sleepThreshold)
-            {
-                sleeping = true;
-                return;
-            }
-        }
+        // virtual protected void FixedUpdate()
+        // {
+        //     //! these may not work properly
+        //     // if (!enabled || sleeping) return;
+        //     // if (ticks >= sleepThreshold)
+        //     // {
+        //     //     sleeping = true;
+        //     //     return;
+        //     // }
+        // }
         
         //> DESTROY AND CLEANUP MACHINE
         override public void OnDestroy()
@@ -177,8 +177,8 @@ namespace ProcessControl.Industry
             base.OnDestroy();
         }
 
-        public bool Contains(ItemAmount itemAmount) => inputInventory.Contains(itemAmount) || outputInventory.Contains(itemAmount);
-        public ItemAmount Withdraw(ItemAmount itemAmount) => outputInventory.Withdraw(itemAmount);
-        public void Deposit(ItemAmount itemAmount) => inputInventory.Deposit(itemAmount);
+        public bool Contains(Stack stack) => inputInventory.Contains(stack) || outputInventory.Contains(stack);
+        public Stack Withdraw(Stack stack) => outputInventory.Withdraw(stack);
+        public void Deposit(Stack stack) => inputInventory.Deposit(stack);
     }
 }

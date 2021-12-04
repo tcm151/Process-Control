@@ -9,7 +9,7 @@ using ProcessControl.Tools;
 
 namespace ProcessControl.Industry
 {
-    public class Junction : Node, IBuildable
+    public class Junction : Node, IO, Buildable
     {
         [Header("IO")]
         //- input
@@ -25,7 +25,7 @@ namespace ProcessControl.Industry
         //- inventory
         public Container inventory;
         
-        public Task DeliverItems(List<ItemAmount> itemAmounts)
+        public Task DeliverItems(List<Stack> itemAmounts)
         {
             if (schematic.recipe.inputItems.TrueForAll(itemAmounts.Contains)) return Task.CompletedTask;
             
@@ -51,11 +51,11 @@ namespace ProcessControl.Industry
         }
         
         
-        override public IO Input => currentInput;
-        override public IO Output => currentOutput;
+        virtual public IO Input => currentInput;
+        virtual public IO Output => currentOutput;
 
         //> CONNECT INPUT
-        override public bool ConnectInput(IO input)
+        virtual public bool ConnectInput(IO input)
         {
             if (inputs.Contains(input)) return false;
             inputs.Add(input);
@@ -63,7 +63,7 @@ namespace ProcessControl.Industry
             return true;
         }
 
-        override public bool DisconnectInput(IO input)
+        virtual public bool DisconnectInput(IO input)
         {
             if (!inputs.Contains(input)) return false;
             inputs.Remove(input);
@@ -78,7 +78,7 @@ namespace ProcessControl.Industry
         }
         
         //> CONNECT OUTPUT
-        override public bool ConnectOutput(IO output)
+        virtual public bool ConnectOutput(IO output)
         {
             if (outputs.Contains(output)) return false;
             outputs.Add(output);
@@ -86,7 +86,7 @@ namespace ProcessControl.Industry
             return true;
         }
         
-        override public bool DisconnectOutput(IO output)
+        virtual public bool DisconnectOutput(IO output)
         {
             if (!outputs.Contains(output)) return false;
             outputs.Remove(output);
@@ -102,8 +102,8 @@ namespace ProcessControl.Industry
 
 
         //> DEPOSIT RESOURCES
-        override public bool CanDeposit(Item item) => inventory is null;
-        override public void Deposit(Container container)
+        virtual public bool CanDeposit(Item item) => inventory is null;
+        virtual public void Deposit(Container container)
         {
             container.position = position;
             inventory = container;
@@ -111,8 +111,8 @@ namespace ProcessControl.Industry
 
 
         //> WITHDRAW RESOURCES
-        override public bool CanWithdraw() => inventory is { };
-        override public Container Withdraw()
+        virtual public bool CanWithdraw() => inventory is { };
+        virtual public Container Withdraw()
         {
             var resource = inventory;
             inventory = null;

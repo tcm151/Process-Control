@@ -5,17 +5,19 @@ using ProcessControl.Jobs;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Industry;
+using Inventory = ProcessControl.Jobs.Inventory;
+
 #pragma warning disable 108,114
 
-public class Storage : Node, IBuildable, IInventory
+public class Storage : Node, IO, Buildable, Inventory
 {
     private Conveyor input;
     private Conveyor output;
 
-    [SerializeField] private Inventory inventory = new Inventory(16, 16 * 64);
+    [SerializeField] private ProcessControl.Industry.Inventory inventory = new ProcessControl.Industry.Inventory(16, 16 * 64);
 
-    override public IO Input => input;
-    override public IO Output => output;
+    virtual public IO Input => input;
+    virtual public IO Output => output;
 
     // private void Awake()
     // {
@@ -23,7 +25,7 @@ public class Storage : Node, IBuildable, IInventory
     //     renderer.color = disabledColor;
     // }
 
-    public Task DeliverItems(List<ItemAmount> itemAmounts)
+    public Task DeliverItems(List<Stack> itemAmounts)
     {
         return Task.CompletedTask;
     }
@@ -46,36 +48,36 @@ public class Storage : Node, IBuildable, IInventory
     }
 
     
-    override public bool ConnectInput(IO newInput)
+    virtual public bool ConnectInput(IO newInput)
     {
         if (input is { }) return false;
         input = newInput as Conveyor;
         return true;
     }
 
-    override public bool DisconnectInput(IO oldInput)
+    virtual public bool DisconnectInput(IO oldInput)
     {
         if (input != oldInput as Conveyor) return false;
         input = null;
         return true;
     }
 
-    override public bool ConnectOutput(IO newOutput)
+    virtual public bool ConnectOutput(IO newOutput)
     {
         if (output is { }) return false;
         output = newOutput as Conveyor;
         return true;
     }
 
-    override public bool DisconnectOutput(IO oldOutput)
+    virtual public bool DisconnectOutput(IO oldOutput)
     {
         if (output != oldOutput as Conveyor) return false;
         output = null;
         return true;
     }
 
-    override public bool CanWithdraw() => !inventory.Empty;
-    override public Container Withdraw()
+    virtual public bool CanWithdraw() => !inventory.Empty;
+    virtual public Container Withdraw()
     {
         var resource = inventory.Withdraw();
         if (resource is null) Debug.Log("Inventory empty.");
@@ -83,14 +85,14 @@ public class Storage : Node, IBuildable, IInventory
         return container;
     }
 
-    override public bool CanDeposit(Item item) => !inventory.Full;
-    override public void Deposit(Container container)
+    virtual public bool CanDeposit(Item item) => !inventory.Full;
+    virtual public void Deposit(Container container)
     {
         inventory.Deposit(container.item);
         ItemFactory.DisposeContainer(container);
     }
 
-    public bool Contains(ItemAmount itemAmount) => inventory.Contains(itemAmount);
-    public ItemAmount Withdraw(ItemAmount itemAmount) => inventory.Withdraw(itemAmount.item, itemAmount.amount);
-    public void Deposit(ItemAmount itemAmount) => inventory.Deposit(itemAmount.item, itemAmount.amount);
+    public bool Contains(Stack stack) => inventory.Contains(stack);
+    public Stack Withdraw(Stack stack) => inventory.Withdraw(stack.item, stack.amount);
+    public void Deposit(Stack stack) => inventory.Deposit(stack.item, stack.amount);
 }
