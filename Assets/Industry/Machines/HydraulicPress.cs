@@ -4,10 +4,8 @@
     {
         public float speed;
 
-        override protected void FixedUpdate()
+        virtual protected void FixedUpdate()
         {
-            base.FixedUpdate();
-
             if ((++ticks % (TicksPerMinute / speed)) == 0)
             {
                 ticks = 0;
