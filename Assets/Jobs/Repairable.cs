@@ -1,6 +1,6 @@
 ﻿namespace ProcessControl.Jobs
 {
-    public interface IRepairable
+    public interface Repairable
     {
         public void Repair();
     }

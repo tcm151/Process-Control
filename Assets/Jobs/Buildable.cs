@@ -6,11 +6,11 @@ using ProcessControl.Industry;
 
 namespace ProcessControl.Jobs
 {
-    public interface IBuildable
+    public interface Buildable
     {
         // public event Action onAllItemsDelivered;
         
-        public Task DeliverItems(List<ItemAmount> itemAmounts);
+        public Task DeliverItems(List<Stack> itemAmounts);
         public Task Build(float buildTime);
         public Task Disassemble(float deconstructionTime);
     }
