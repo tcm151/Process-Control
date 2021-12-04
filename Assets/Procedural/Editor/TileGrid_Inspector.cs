@@ -13,8 +13,8 @@ namespace ProcessControl.Tools.Editor
     {
         private CellGrid grid;
         private bool autoUpdateChunks;
-        private bool autoUpdateBiomes;
-        private bool autoUpdateOre;
+        private bool autoUpdateTerrain;
+        private bool autoUpdateResources;
 
         private void OnEnable()
         {
@@ -28,16 +28,16 @@ namespace ProcessControl.Tools.Editor
             base.OnInspectorGUI();
 
             autoUpdateChunks = EditorGUILayout.Toggle("Auto Update Chunks", autoUpdateChunks);
-            autoUpdateBiomes = EditorGUILayout.Toggle("Auto Update Biomes", autoUpdateBiomes);
-            autoUpdateOre = EditorGUILayout.Toggle("Auto Update Ore", autoUpdateOre);
+            autoUpdateTerrain = EditorGUILayout.Toggle("Auto Update Biomes", autoUpdateTerrain);
+            autoUpdateResources = EditorGUILayout.Toggle("Auto Update Ore", autoUpdateResources);
             if (check.changed)
             {
                 if (autoUpdateChunks) grid.GenerateAllChunks();
-                if (autoUpdateBiomes) grid.GenerateAllTerrain();
-                if (autoUpdateOre) grid.GenerateAllResources();
+                if (autoUpdateTerrain) grid.GenerateAllTerrain();
+                if (autoUpdateResources) grid.GenerateAllResources();
             }
 
-            if (GUILayout.Button("CreateGrid & Generate"))
+            if (GUILayout.Button("Generate Grid"))
             {
                 grid.Awake();
             }

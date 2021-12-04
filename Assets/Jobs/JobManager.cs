@@ -2,6 +2,9 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using ProcessControl.Industry;
+using ProcessControl.Procedural;
 using UnityEngine;
 using ProcessControl.Tools;
 
@@ -72,6 +75,162 @@ namespace ProcessControl.Jobs
             openJobs.Remove(closestJob);
             takenJobs.Add(closestJob);
         }
+
+        public static void QueueConstructionJob(Cell cell, Recipe recipe, Buildable buildable, List<Inventory> inventories)
+        {
+            bool cannotBuild = false;
+            // var matchingEntities = new List<Entity>();
+            // var requiredContainers = new List<Container>();
+            var matchingInventories = new List<(Inventory inventory, Stack stack)>();
+            recipe.inputItems.ForEach(itemAmount =>
+            {
+                // var matchingContainers = ItemFactory.FindItemsByClosest(selectedNode.position, i);
+                // if (matchingContainers.Count < i.amount)
+                // {
+                // Debug.Log("NOT ENOUGH FOR RECIPE ITEMS...");
+                // cannotBuild = true;
+                // return;
+                // }
+                
+                // matchingContainers.ForEach(c => requiredContainers.Add(c));
+                // var matchingMachines = builtMachines.Where(m => m.inputInventory.Contains(i) || m.outputInventory.Contains(i)).ToList();
+                // matchingMachines.ForEach(m => matchingInventories.Add(m));
+                // Debug.Log($"Matching machines length: {matchingMachines.Count}");
+
+                var bestMatch = inventories.Where(inv => inv.Contains(itemAmount))
+                                           .OrderBy(inv => Vector3.Distance(cell.position, inv.position))
+                                           .FirstOrDefault();
+
+                if (bestMatch is null) cannotBuild = true;
+               
+                matchingInventories.Add((bestMatch, itemAmount));
+            });
+
+            if (cannotBuild)
+            {
+                Debug.Log($"Unable to build {recipe.name}");
+                return;
+            }
+            
+            // if (node is Buildable buildable)
+            // {
+                // if (queueJob && queueJobGlobal)
+                // {
+
+
+                    var collectJob = new Job
+                    {
+                        description = $"Collect resources for {recipe.name}",
+                    };
+
+                    matchingInventories.ForEach
+                    (
+                        match =>
+                        {
+                            collectJob.orders.Add
+                            (
+                                new Order
+                                {
+                                    description = $"gather {match.stack.amount} {match.stack.item}(s) for {recipe.name}",
+                                    location = match.inventory.position,
+                                    action = () =>
+                                    {
+                                        match.inventory.Withdraw(match.stack);
+                                        collectJob.activeWorker.Deposit(match.stack);
+                                        return Task.CompletedTask;
+                                    },
+                                }
+                            );
+                        }
+                    );
+
+                    // requiredContainers.ForEach(
+                    //     c =>
+                    //     {
+                    //         // if (e is Container c)
+                    //         {
+                    //             collectJob.orders.Add(new Order
+                    //             {
+                    //                 description = $"gather {c.item.name} for {nodeRecipe.name}",
+                    //                 location = c.position,
+                    //                 action = () =>
+                    //                 {
+                    //                     collectJob.activeWorker.Deposit(new Stack{item = c.item, amount = 1});
+                    //                     ItemFactory.DisposeContainer(c);
+                    //                     return Task.CompletedTask;
+                    //                 },
+                    //             });
+                    //         }
+                    //         // if (e is Machine m)
+                    //         // {
+                    //         //     collectJob.orders.Add(new Order
+                    //         //     {
+                    //         //         description = $"gather {"temp"} for {nodeRecipe.name}",
+                    //         //         location = m.position,
+                    //         //         action = () =>
+                    //         //         {
+                    //         //             collectJob.activeWorker.Deposit(new Stack{item = c.item, amount = 1});
+                    //         //             ItemFactory.DisposeContainer(c);
+                    //         //             return Task.CompletedTask;
+                    //         //         },
+                    //         //     });
+                    //         // }
+                    //     });
+
+                    JobManager.QueueJob(collectJob);
+
+
+                    var deliveryJob = new Job
+                    {
+                        description = $"deliver items to {recipe.name}",
+                        prerequisite = collectJob,
+                    };
+
+                    deliveryJob.orders.Add
+                    (
+                        new Order
+                        {
+                            description = $"deliver items to {recipe.name}",
+                            location = cell.position,
+                            action = () =>
+                            {
+                                var deliveryItems = new List<Stack>();
+                                recipe.inputItems.ForEach
+                                (
+                                    itemAmount =>
+                                    {
+                                        var withdrawnItems = deliveryJob.activeWorker.Withdraw(itemAmount);
+                                        deliveryItems.Add(withdrawnItems);
+                                    }
+                                );
+                                return buildable.DeliverItems(deliveryItems);
+                            },
+                        }
+                    );
+                    JobManager.QueueJob(deliveryJob);
+
+                    var constructionJob = new Job
+                    {
+                        description = $"build a {recipe.name}",
+                        prerequisite = deliveryJob,
+                        orders =
+                        {
+                            new Order
+                            {
+                                description = $"build a {recipe.name}",
+                                // prerequisite = deliveryJob,
+                                location = cell.position,
+                                action = () => buildable.Build(1),
+                            },
+                        },
+                    };
+                    JobManager.QueueJob(constructionJob);
+                    // JobManager.QueueJob(new ConstructionJob(cell.position, buildable, 1));
+                }
+                // else buildable.Build(0);
+            // }
+        // }
     }
+    
 }
 

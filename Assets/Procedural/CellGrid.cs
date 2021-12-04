@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -5,6 +6,8 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using ProcessControl.Tools;
 using ProcessControl.Industry;
+using Random = UnityEngine.Random;
+
 #pragma warning disable 108, 114
 
 
@@ -54,20 +57,23 @@ namespace ProcessControl.Procedural
         public static System.Func<Vector2Int, Cell> GetCellAtCoordinates;
         
         //> INITIALIZATION
-        public void Awake()
+        public async void Awake()
         {
+            Debug.Log("Awake!");
+            
             // initialize
             timer.Start();
             CreateGrid();
             float init = timer.ElapsedMilliseconds;
-            timer.Restart();
             
             // get closest chunks to spawn
             var closeChunks = grid.chunks.Where(c => Vector3.Distance(Vector3.zero, c.chunkCenter) < renderDistance);
+            timer.Restart();
             
             // generate the terrain
-            GenerateChunks(closeChunks);
+            await GenerateChunks(closeChunks);
             float chunkGen = timer.ElapsedMilliseconds;
+            timer.Stop();
             timer.Reset();
             
             Debug.Log($"Generated: {init} | {chunkGen} |= {init+chunkGen} ms");
@@ -245,8 +251,8 @@ namespace ProcessControl.Procedural
         }
 
         //> GENERATE CHUNKS
-        public void GenerateAllChunks() => GenerateChunks(grid.chunks.ToList());
-        private void GenerateChunks(List<Chunk> chunks)
+        public async void GenerateAllChunks() => await GenerateChunks(grid.chunks.ToList());
+        private async Task GenerateChunks(List<Chunk> chunks)
         {
             // multi-threaded chunk generation
             var tasks = new List<Task>();
@@ -258,9 +264,8 @@ namespace ProcessControl.Procedural
                     GenerateResources(chunk);
                 }));
             });
-            Task.WaitAll(tasks.ToArray());
-
-
+            await Task.WhenAll(tasks.ToArray());
+            
             // update tile maps on main thread
             chunks.ForEach(UpdateTileMaps);
         }
@@ -293,7 +298,12 @@ namespace ProcessControl.Procedural
         });
 
         //> GENERATE RESOURCES
-        public void GenerateAllResources() => grid.chunks.ForEach(GenerateResources);
+        public void GenerateAllResources()
+        {
+            // Parallel.ForEach(grid.chunks.ToList(), GenerateResources);
+            grid.chunks.ForEach(GenerateResources);
+        }
+
         public void GenerateResources(Chunk chunk) => chunk.cells.ForEach(cell =>
         {
             cell.resourceDeposits.Clear();

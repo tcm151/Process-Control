@@ -73,7 +73,7 @@ namespace ProcessControl.Pathfinding
             }
 
             var currentPosition = transform.position;
-            currentPath = AStar.FindPath(currentPosition, currentPosition + UnityEngine.Random.insideUnitCircle.ToVector3() * roamingDistance);
+            currentPath = await AStar.FindPath_Async(currentPosition, currentPosition + UnityEngine.Random.insideUnitCircle.ToVector3() * roamingDistance);
         }
 
         //> MOVE ALONG CURRENT PATH IF ONE EXISTS

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using UnityEngine;
 using ProcessControl.Tools;
 using ProcessControl.Procedural;
@@ -11,6 +12,10 @@ namespace ProcessControl.Pathfinding
 {
     public static class AStar
     {
+        //> FIND SHORTEST PATH ASYNCHRONOUSLY
+        public static Task<List<Vector3>> FindPath_Async(Vector3 start, Vector3 end, bool ignore = false)
+            => Task.Run(() => FindPath(start, end, ignore));
+        
         //> FIND THE SHORTEST PATH BETWEEN START AND END POSITIONS
         public static List<Vector3> FindPath(Vector3 start, Vector3 end, bool ignore = false)
         {

@@ -12,6 +12,8 @@ namespace ProcessControl.Industry
         [Header("Resource")]
         public Material material;
 
-        public int energy;
+        public float energy;
+        public float burnTime;
+        public float energyPerTick;
     }
 }
