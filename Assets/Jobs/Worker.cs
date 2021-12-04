@@ -8,12 +8,12 @@ using ProcessControl.Pathfinding;
 
 namespace ProcessControl.Jobs
 {
-    public class Worker : Agent, IWorker, IInventory
+    public class Worker : Agent, IWorker, Inventory
     {
         [Header("Inventory")]
         public int stackSize = 16;
         public int inventorySlots = 4;
-        [SerializeField] internal Inventory inventory;
+        [SerializeField] internal Industry.Inventory inventory;
 
         [Header("Job")]
         [SerializeField] internal Job currentJob;
@@ -27,9 +27,9 @@ namespace ProcessControl.Jobs
         public event Action onOrderCompleted;
         
         //> INVENTORY
-        public bool Contains(ItemAmount itemAmount) => inventory.Contains(itemAmount);
-        public void Deposit(ItemAmount itemAmount) => inventory.Deposit(itemAmount.item, itemAmount.amount);
-        public ItemAmount Withdraw(ItemAmount itemAmount) => inventory.Withdraw(itemAmount.item, itemAmount.amount);
+        public bool Contains(Stack stack) => inventory.Contains(stack);
+        public void Deposit(Stack stack) => inventory.Deposit(stack.item, stack.amount);
+        public Stack Withdraw(Stack stack) => inventory.Withdraw(stack.item, stack.amount);
 
         // private Action currentAction;
         // public void DoAction() => currentAction.Invoke();
@@ -42,7 +42,7 @@ namespace ProcessControl.Jobs
             currentJob = new Job { complete = true };
             currentOrder = new Order { complete = true };
             
-            inventory = new Inventory(inventorySlots, stackSize);
+            inventory = new Industry.Inventory(inventorySlots, stackSize);
             
             onOrderCompleted += DoJob;
             onReachedDestination += DoOrder;
@@ -57,17 +57,18 @@ namespace ProcessControl.Jobs
             CancelAction();
             
             DoJob();
+            Debug.Log("Job Taken Successfully.");
         }
         
         //> CHECK STATUS ON CURRENT JOB
-        private void DoJob()
+        private async void DoJob()
         {
             // Debug.Log("Doing job.");
             
             //- all orders in job are completed
             if (currentJob.orders.TrueForAll(o => o.complete))
             {
-                // Debug.Log("FULL JOB COMPLETE...");
+                Debug.Log("Job Complete.");
                 currentJob.complete = true;
                 onJobCompleted?.Invoke();
                 Roam();
@@ -75,14 +76,13 @@ namespace ProcessControl.Jobs
             }
 
             // get closest incomplete order
-            currentOrder = currentJob.orders
-                                     .Where(o => !o.complete)
-                                     .OrderBy(o => Vector3.Distance(position, o.location))
-                                     .First();
+            currentOrder = currentJob.orders.Where(o => !o.complete)
+                                            .OrderBy(o => Vector3.Distance(position, o.location))
+                                            .First();
             
-            currentPath = AStar.FindPath(position, currentOrder.location);
-            // Debug.Log($"path is {currentPath.Count} nodes long");
-            // Debug.Log("starting next order...");
+            currentPath = await AStar.FindPath_Async(position, currentOrder.location);
+            Debug.Log($"path is {currentPath.Count} nodes long");
+            Debug.Log($"Starting: {currentOrder.description}");
         }
 
         //> COMPLETE ACTIVE JOB OR ROAM IF IDLE

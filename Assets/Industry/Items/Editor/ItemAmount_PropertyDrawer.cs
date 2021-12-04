@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ProcessControl.Industry.Items.Editor
 {
-    [CustomPropertyDrawer(typeof(ItemAmount))]
+    [CustomPropertyDrawer(typeof(Stack))]
     public class ItemAmount_PropertyDrawer : PropertyDrawer
     {
         private SerializedProperty item, amount;

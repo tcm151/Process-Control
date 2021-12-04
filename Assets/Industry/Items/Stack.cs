@@ -3,7 +3,7 @@
 
 namespace ProcessControl.Industry
 {
-    [Serializable] public class ItemAmount
+    [Serializable] public class Stack
     {
         public Item item;
         public int amount = 1;

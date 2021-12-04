@@ -17,9 +17,9 @@ namespace ProcessControl.Industry
 
         //> EVENT HOOKS
         public static Func<string, Item> GetItem;
-        public static Func<ItemAmount, bool> Exists;
-        public static Func<Vector3, ItemAmount, Container> FindItemByClosest;
-        public static Func<Vector3, ItemAmount, List<Container>> FindItemsByClosest;
+        public static Func<Stack, bool> Exists;
+        public static Func<Vector3, Stack, Container> FindItemByClosest;
+        public static Func<Vector3, Stack, List<Container>> FindItemsByClosest;
         public static Func<Item, Vector3, Container> SpawnContainer;
         public static Action<Container> DisposeContainer;
 

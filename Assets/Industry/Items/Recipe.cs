@@ -10,7 +10,8 @@ namespace ProcessControl.Industry
     {
         new public string name;
         public int energyCost;
-        [FormerlySerializedAs("requiredItems")] public List<ItemAmount> inputItems;
-        [FormerlySerializedAs("resultingItems")] public List<ItemAmount> outputItems;
+        public int assemblyTime;
+        [FormerlySerializedAs("requiredItems")] public List<Stack> inputItems;
+        [FormerlySerializedAs("resultingItems")] public List<Stack> outputItems;
     }
 }

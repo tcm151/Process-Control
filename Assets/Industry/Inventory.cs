@@ -26,7 +26,7 @@ namespace ProcessControl.Industry
 
         private readonly int slots;
         private readonly int stackSize;
-        [SerializeField] private List<ItemAmount> items = new List<ItemAmount>();
+        [SerializeField] private List<Stack> items = new List<Stack>();
         
         public int Count => items.Sum(i => i.amount);
         public bool Full => Count >= slots * stackSize;
@@ -34,8 +34,8 @@ namespace ProcessControl.Industry
         
         public void Clear() => items.Clear();
         public bool Contains(Item match, int amount = 1) => items.FirstOrDefault(i => i.item == match && i.amount >= amount) is {};
-        public bool Contains(ItemAmount itemAmount) => Contains(itemAmount.item, itemAmount.amount);
-        public IReadOnlyList<ItemAmount> GetItems() => items.AsReadOnly();
+        public bool Contains(Stack stack) => Contains(stack.item, stack.amount);
+        public IReadOnlyList<Stack> GetItems() => items.AsReadOnly();
         
         public bool CanDeposit(Item item)
         {
@@ -44,10 +44,10 @@ namespace ProcessControl.Industry
             return false;
         }
 
-        public bool CanDeposit(ItemAmount itemAmount)
+        public bool CanDeposit(Stack stack)
         {
             if (items.Count < slots) return true;
-            if (items.FirstOrDefault(i => i.item == itemAmount.item && i.amount + itemAmount.amount <= stackSize) is { }) return true;
+            if (items.FirstOrDefault(i => i.item == stack.item && i.amount + stack.amount <= stackSize) is { }) return true;
             return false;
         }
         
@@ -69,7 +69,7 @@ namespace ProcessControl.Industry
             if (items.Count < slots)
             {
                 // Debug.Log("Free slot adding new item");
-                items.Add(new ItemAmount
+                items.Add(new Stack
                 {
                     item = newItem,
                     amount = amount,
@@ -79,11 +79,11 @@ namespace ProcessControl.Industry
             // else Debug.Log("Neither...");
         }
 
-        public void Deposit(ItemAmount itemAmount)
+        public void Deposit(Stack stack)
         {
-            if (Contains(itemAmount.item))
+            if (Contains(stack.item))
             {
-                var item = items.FirstOrDefault(i => i.item == itemAmount.item && i.amount + itemAmount.amount <= stackSize);
+                var item = items.FirstOrDefault(i => i.item == stack.item && i.amount + stack.amount <= stackSize);
                 if (item is { })
                 {
                     item.amount += item.amount;
@@ -94,7 +94,7 @@ namespace ProcessControl.Industry
             
             if (items.Count < slots)
             {
-                items.Add(itemAmount);
+                items.Add(stack);
                 onModified?.Invoke();
             }
         }
@@ -108,13 +108,13 @@ namespace ProcessControl.Industry
             return i.item;
         }
 
-        public ItemAmount WithdrawFirst()
+        public Stack WithdrawFirst()
         {
             var i = items.FirstOrDefault(i => i.amount >= 1);
             if (i is null) return null;
             i.amount--;
             onModified?.Invoke();
-            return new ItemAmount
+            return new Stack
             {
                 item = i.item,
                 amount = 1,
@@ -132,28 +132,28 @@ namespace ProcessControl.Industry
         
         
         //@ not in use...
-        public ItemAmount Withdraw(Item match, int amount)
+        public Stack Withdraw(Item match, int amount)
         {
             // if (!items.Any(i => i.amount >= amount)) return default;
             var i = items.FirstOrDefault(i => i.item == match && i.amount >= amount);
             if (i is null) return null;
             i.amount -= amount;
             onModified?.Invoke();
-            return new ItemAmount
+            return new Stack
             {
                 item = i.item,
                 amount = i.amount,
             };
         }
         
-        public ItemAmount Withdraw(ItemAmount itemAmount)
+        public Stack Withdraw(Stack stack)
         {
             // if (!items.Any(i => i.amount >= amount)) return default;
-            var i = items.FirstOrDefault(i => i.item == itemAmount.item && i.amount >= itemAmount.amount);
+            var i = items.FirstOrDefault(i => i.item == stack.item && i.amount >= stack.amount);
             if (i is null) return null;
-            i.amount -= itemAmount.amount;
+            i.amount -= stack.amount;
             onModified?.Invoke();
-            return new ItemAmount
+            return new Stack
             {
                 item = i.item,
                 amount = i.amount,

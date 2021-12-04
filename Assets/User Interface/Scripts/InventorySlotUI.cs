@@ -11,13 +11,13 @@ namespace ProcessControl.UI
         [SerializeField] private Image icon;
         [SerializeField] private TextMeshProUGUI count;
 
-        public void Set(ItemAmount itemAmount)
+        public void Set(Stack stack)
         {
-            if (itemAmount is {})
+            if (stack is {})
             {
                 icon.enabled = true;
-                icon.sprite = itemAmount.item.sprite;
-                count.text = itemAmount.amount.ToString();
+                icon.sprite = stack.item.sprite;
+                count.text = stack.amount.ToString();
             }
             else
             {
