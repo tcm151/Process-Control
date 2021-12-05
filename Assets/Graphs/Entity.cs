@@ -9,7 +9,7 @@ namespace ProcessControl.Graphs
     public class Entity : MonoBehaviour
     {
         internal const int TicksPerSecond = 64;
-        internal static int TicksPerMinute => TicksPerSecond * 60;
+        static internal int TicksPerMinute => TicksPerSecond * 60;
 
         [Header("Entity")]
         new public bool enabled;

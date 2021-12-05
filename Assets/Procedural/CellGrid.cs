@@ -4,10 +4,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Random = UnityEngine.Random;
 using ProcessControl.Tools;
 using ProcessControl.Industry;
-using Random = UnityEngine.Random;
-
 #pragma warning disable 108, 114
 
 
@@ -16,19 +15,22 @@ namespace ProcessControl.Procedural
     [RequireComponent(typeof(Grid))]
     public class CellGrid : MonoBehaviour
     {
-        [System.Serializable]
+        [Serializable]
         public class Data
         {
             [Header("Resolution")]
             public int chunkSize = 64;
             public int size = 4;
+            public int renderDistance = 128;
             
             public List<Tilemap> tilemaps;
             public List<TileBase> tiles;
             
             [Header("Generation")]
             public string seed;
-            public Range noiseRange;
+            public Range noiseRange = new Range();
+            public Range rainRange = new Range();
+            public Range heatRange = new Range();
             public List<Noise.Layer> terrainNoise;
             public List<ResourceNoiseLayer> resourceNoise;
             public Resource sandResource, stoneResource;
@@ -43,23 +45,18 @@ namespace ProcessControl.Procedural
         }
         [SerializeField] internal Data grid;
 
-        
-        public int renderDistance = 128;
-        public Range rainRange = new Range();
-        public Range heatRange = new Range();
-        
         private Camera camera;
         private readonly System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 
         //> DECOUPLE EXTERNAL FUNCTION CALLS
-        public static System.Func<Cell> GetCellUnderMouse;
-        public static System.Func<Vector3, Cell> GetCellAtPosition;
-        public static System.Func<Vector2Int, Cell> GetCellAtCoordinates;
+        public static Func<Cell> GetCellUnderMouse;
+        public static Func<Vector3, Cell> GetCellAtPosition;
+        public static Func<Vector2Int, Cell> GetCellAtCoordinates;
         
         //> INITIALIZATION
         public async void Awake()
         {
-            Debug.Log("Awake!");
+            // Debug.Log("Awake!");
             
             // initialize
             timer.Start();
@@ -67,7 +64,7 @@ namespace ProcessControl.Procedural
             float init = timer.ElapsedMilliseconds;
             
             // get closest chunks to spawn
-            var closeChunks = grid.chunks.Where(c => Vector3.Distance(Vector3.zero, c.chunkCenter) < renderDistance);
+            var closeChunks = grid.chunks.Where(c => Vector3.Distance(Vector3.zero, c.chunkCenter) < grid.renderDistance);
             timer.Restart();
             
             // generate the terrain
@@ -81,8 +78,6 @@ namespace ProcessControl.Procedural
             CellSpawner.CalculateSpawnLocation();
         }
         
-        //> EVENTS
-
         //> CACHE LAST TOUCHED CELL
         private void Update()
         {
@@ -251,7 +246,7 @@ namespace ProcessControl.Procedural
         }
 
         //> GENERATE CHUNKS
-        public async void GenerateAllChunks() => await GenerateChunks(grid.chunks.ToList());
+        // public async void GenerateAllChunks() => await GenerateChunks(grid.chunks.ToList());
         private async Task GenerateChunks(List<Chunk> chunks)
         {
             // multi-threaded chunk generation
@@ -271,81 +266,191 @@ namespace ProcessControl.Procedural
         }
 
         //> GENERATE TERRAIN
-        public void GenerateAllTerrain() => grid.chunks.ForEach(GenerateTerrain);
-        private void GenerateTerrain(Chunk chunk) => chunk.cells.ForEach(cell =>
+        // public void GenerateAllTerrain() => grid.chunks.ForEach(GenerateTerrain);
+        private async void GenerateTerrain(Chunk chunk)
         {
-            var noiseValue = Noise.GenerateValue(grid.terrainNoise, cell.position);
-            var rainValue = Noise.GenerateValue(grid.biomeNoise[0], cell.position);
-            var heatValue = Noise.GenerateValue(grid.biomeNoise[1], cell.position);
-            grid.noiseRange.Add(noiseValue);
-            rainRange.Add(rainValue);
-            heatRange.Add(heatValue);
-            cell.terrainValue = noiseValue;
-                
-                
-            if (heatValue < 0.25f && rainValue > 0.25f) cell.biome = Biome.Snow;
-            if (heatValue < 0.50f && rainValue < 0.50f) cell.biome = Biome.Stone;
-            if (heatValue > 0.60f && rainValue < 0.25f) cell.biome = Biome.Sand;
-            if (heatValue < 0.60f && heatValue > 0.25f && rainValue < 0.25f) cell.biome = Biome.Plains;
-            if (heatValue > 0.25f && rainValue > 0.25f && rainValue < 0.75f) cell.biome = Biome.Grass;
-            if (heatValue > 0.50f && rainValue > 0.25f) cell.biome = Biome.Forest;
-
-            if (cell.terrainValue < grid.terrainNoise[0].threshold)
+            // multi-threaded chunk generation
+            var tasks = new List<Task>();
+            chunk.cells.ForEach(cell =>
             {
-                cell.biome = Biome.Ocean;
-                cell.buildable = false;
-            }
-        });
+                tasks.Add(Task.Run(() =>
+                {
+                    var noiseValue = Noise.GenerateValue(grid.terrainNoise, cell.position);
+                    var rainValue = Noise.GenerateValue(grid.biomeNoise[0], cell.position);
+                    var heatValue = Noise.GenerateValue(grid.biomeNoise[1], cell.position);
+                    grid.noiseRange.Add(noiseValue);
+                    grid.rainRange.Add(rainValue);
+                    grid.heatRange.Add(heatValue);
+                    cell.terrainValue = noiseValue;
 
-        //> GENERATE RESOURCES
-        public void GenerateAllResources()
-        {
-            // Parallel.ForEach(grid.chunks.ToList(), GenerateResources);
-            grid.chunks.ForEach(GenerateResources);
+
+                    if (heatValue < 0.25f && rainValue > 0.25f) cell.biome = Biome.Snow;
+                    if (heatValue < 0.50f && rainValue < 0.50f) cell.biome = Biome.Stone;
+                    if (heatValue > 0.60f && rainValue < 0.25f) cell.biome = Biome.Sand;
+                    if (heatValue < 0.60f && heatValue > 0.25f && rainValue < 0.25f) cell.biome = Biome.Plains;
+                    if (heatValue > 0.25f && rainValue > 0.25f && rainValue < 0.75f) cell.biome = Biome.Grass;
+                    if (heatValue > 0.50f && rainValue > 0.25f) cell.biome = Biome.Forest;
+
+                    if (cell.terrainValue < grid.terrainNoise[0].threshold)
+                    {
+                        cell.biome = Biome.Ocean;
+                        cell.buildable = false;
+                    }
+                }));
+            });
+            await Task.WhenAll(tasks.ToArray());
+            
+            // chunk.cells.ForEach
+            // (
+            //     cell =>
+            //     {
+            //         var noiseValue = Noise.GenerateValue(grid.terrainNoise, cell.position);
+            //         var rainValue = Noise.GenerateValue(grid.biomeNoise[0], cell.position);
+            //         var heatValue = Noise.GenerateValue(grid.biomeNoise[1], cell.position);
+            //         grid.noiseRange.Add(noiseValue);
+            //         grid.rainRange.Add(rainValue);
+            //         grid.heatRange.Add(heatValue);
+            //         cell.terrainValue = noiseValue;
+            //
+            //
+            //         if (heatValue < 0.25f && rainValue > 0.25f) cell.biome = Biome.Snow;
+            //         if (heatValue < 0.50f && rainValue < 0.50f) cell.biome = Biome.Stone;
+            //         if (heatValue > 0.60f && rainValue < 0.25f) cell.biome = Biome.Sand;
+            //         if (heatValue < 0.60f && heatValue > 0.25f && rainValue < 0.25f) cell.biome = Biome.Plains;
+            //         if (heatValue > 0.25f && rainValue > 0.25f && rainValue < 0.75f) cell.biome = Biome.Grass;
+            //         if (heatValue > 0.50f && rainValue > 0.25f) cell.biome = Biome.Forest;
+            //
+            //         if (cell.terrainValue < grid.terrainNoise[0].threshold)
+            //         {
+            //             cell.biome = Biome.Ocean;
+            //             cell.buildable = false;
+            //         }
+            //     }
+            // );
         }
 
-        public void GenerateResources(Chunk chunk) => chunk.cells.ForEach(cell =>
+        //> GENERATE RESOURCES
+        // public void GenerateAllResources() => grid.chunks.ForEach(GenerateResources);
+        public async void GenerateResources(Chunk chunk)
         {
-            cell.resourceDeposits.Clear();
-                
-            grid.resourceNoise.ForEach(resourceLayer =>
+            // multi-threaded chunk generation
+            var tasks = new List<Task>();
+            chunk.cells.ForEach(cell =>
             {
-                var noiseValue = Noise.GenerateValue(resourceLayer, cell.position);
-                if (noiseValue >= resourceLayer.threshold && cell.buildable)
+                tasks.Add(Task.Run(() =>
                 {
-                    cell.resourceDeposits.Add(new ResourceDeposit
+                    cell.resourceDeposits.Clear();
+
+                    grid.resourceNoise.ForEach(resourceLayer =>
                     {
-                        noiseValue = noiseValue,
-                        quantity = (noiseValue * 16484f).FloorToInt(),
-                        resource = resourceLayer.resource,
+                        var noiseValue = Noise.GenerateValue(resourceLayer, cell.position);
+                        if (noiseValue >= resourceLayer.threshold && cell.buildable)
+                        {
+                            cell.resourceDeposits.Add(new ResourceDeposit
+                            {
+                                noiseValue = noiseValue,
+                                quantity = (noiseValue * 16484f).FloorToInt(),
+                                resource = resourceLayer.resource,
+                            });
+                        }
                     });
-                }
+
+                    switch (cell.biome)
+                    {
+                        case Biome.Sand:
+                            cell.resourceDeposits.Add(new ResourceDeposit
+                            {
+                                resource = grid.sandResource,
+                                quantity = 10000,
+                            });
+                            break;
+
+                        case Biome.Stone:
+                            cell.resourceDeposits.Add(new ResourceDeposit
+                            {
+                                resource = grid.stoneResource,
+                                quantity = 10000,
+                            });
+                            break;
+                    }
+
+                    if (cell.resourceDeposits.Count == 0)
+                    {
+                        cell.resourceDeposits.Add(new ResourceDeposit
+                        {
+                            resource = grid.stoneResource,
+                            quantity = 10000,
+                        });
+                    }
+                }));
             });
-
-            switch (cell.biome)
-            {
-                case Biome.Sand: cell.resourceDeposits.Add(new ResourceDeposit
-                {
-                    resource = grid.sandResource,
-                    quantity = 10000,
-                }); break;
-                    
-                case Biome.Stone: cell.resourceDeposits.Add(new ResourceDeposit
-                {
-                    resource = grid.stoneResource,
-                    quantity = 10000,
-                }); break;
-            }
-
-            if (cell.resourceDeposits.Count == 0)
-            {
-                cell.resourceDeposits.Add(new ResourceDeposit
-                {
-                    resource = grid.stoneResource,
-                    quantity = 10000,
-                });
-            }
-        });
+            await Task.WhenAll(tasks.ToArray());
+            
+            // chunk.cells.ForEach
+            // (
+            //     cell =>
+            //     {
+            //         cell.resourceDeposits.Clear();
+            //
+            //         grid.resourceNoise.ForEach
+            //         (
+            //             resourceLayer =>
+            //             {
+            //                 var noiseValue = Noise.GenerateValue(resourceLayer, cell.position);
+            //                 if (noiseValue >= resourceLayer.threshold && cell.buildable)
+            //                 {
+            //                     cell.resourceDeposits.Add
+            //                     (
+            //                         new ResourceDeposit
+            //                         {
+            //                             noiseValue = noiseValue,
+            //                             quantity = (noiseValue * 16484f).FloorToInt(),
+            //                             resource = resourceLayer.resource,
+            //                         }
+            //                     );
+            //                 }
+            //             }
+            //         );
+            //
+            //         switch (cell.biome)
+            //         {
+            //             case Biome.Sand:
+            //                 cell.resourceDeposits.Add
+            //                 (
+            //                     new ResourceDeposit
+            //                     {
+            //                         resource = grid.sandResource,
+            //                         quantity = 10000,
+            //                     }
+            //                 );
+            //                 break;
+            //
+            //             case Biome.Stone:
+            //                 cell.resourceDeposits.Add
+            //                 (
+            //                     new ResourceDeposit
+            //                     {
+            //                         resource = grid.stoneResource,
+            //                         quantity = 10000,
+            //                     }
+            //                 );
+            //                 break;
+            //         }
+            //
+            //         if (cell.resourceDeposits.Count == 0)
+            //         {
+            //             cell.resourceDeposits.Add
+            //             (
+            //                 new ResourceDeposit
+            //                 {
+            //                     resource = grid.stoneResource,
+            //                     quantity = 10000,
+            //                 }
+            //             );
+            //         }
+            //     }
+            // );
+        }
 
         //> TILE MODIFICATION
         public void ClearAllTiles() => grid.tilemaps.ForEach(t => t.ClearAllTiles());

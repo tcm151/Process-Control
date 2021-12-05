@@ -32,9 +32,9 @@ namespace ProcessControl.Tools.Editor
             autoUpdateResources = EditorGUILayout.Toggle("Auto Update Ore", autoUpdateResources);
             if (check.changed)
             {
-                if (autoUpdateChunks) grid.GenerateAllChunks();
-                if (autoUpdateTerrain) grid.GenerateAllTerrain();
-                if (autoUpdateResources) grid.GenerateAllResources();
+                // if (autoUpdateChunks) grid.GenerateAllChunks();
+                // if (autoUpdateTerrain) grid.GenerateAllTerrain();
+                // if (autoUpdateResources) grid.GenerateAllResources();
             }
 
             if (GUILayout.Button("Generate Grid"))

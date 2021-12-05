@@ -16,6 +16,7 @@ namespace ProcessControl.Procedural
         
         public Node node;
         public readonly List<Edge> edges = new List<Edge>();
+        
         public bool occupied => (node is {}) || (edges.Count >= 1);
         public bool walkable => buildable && (node is null || node is {enabled: false});
         public bool buildable = true;
@@ -27,7 +28,8 @@ namespace ProcessControl.Procedural
         
         public float terrainValue;
         public readonly Cell[] neighbours = new Cell[8];
-        public readonly PathInfo pathInfo = new PathInfo();
         public readonly List<ResourceDeposit> resourceDeposits = new List<ResourceDeposit>();
+        
+        public readonly PathInfo pathInfo = new PathInfo();
     }
 }

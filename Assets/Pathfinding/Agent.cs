@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 using ProcessControl.Tools;
 
 
@@ -14,7 +15,7 @@ namespace ProcessControl.Pathfinding
         [Header("Roaming")]
         public float roamingInterval = 2.5f;
         public float roamingDistance = 5f;
-        internal CancellationTokenSource roamingCancel;
+        private CancellationTokenSource roamingCancel;
         
         [Header("Movement")]
         public float speed = 2.5f;
@@ -52,7 +53,7 @@ namespace ProcessControl.Pathfinding
             if (!Idle) return;
             
             Roam();
-            Debug.Log("Roam on play.");
+            // Debug.Log("Roam on play.");
         }
         
         //> ROAM AROUND RANDOMLY
@@ -73,7 +74,7 @@ namespace ProcessControl.Pathfinding
             }
 
             var currentPosition = transform.position;
-            currentPath = await AStar.FindPath_Async(currentPosition, currentPosition + UnityEngine.Random.insideUnitCircle.ToVector3() * roamingDistance);
+            currentPath = await AStar.FindPath_Async(currentPosition, currentPosition + Random.insideUnitCircle.ToVector3() * roamingDistance);
         }
 
         //> MOVE ALONG CURRENT PATH IF ONE EXISTS

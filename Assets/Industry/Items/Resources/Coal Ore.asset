@@ -17,4 +17,6 @@ MonoBehaviour:
   sprite: {fileID: 8155883353306805422, guid: 297aa51e7dcfbfe4e9291bf59a63df06, type: 3}
   description: Compressed carbon ripped from the ground. An excellent fuel.
   material: 4
-  energy: 256
+  energy: 512
+  burnTime: 512
+  energyPerTick: 1
