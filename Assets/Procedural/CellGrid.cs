@@ -43,6 +43,7 @@ namespace ProcessControl.Procedural
         }
         [SerializeField] internal Data grid;
 
+        private bool Initialized => grid.chunks is { };
         
         public int renderDistance = 128;
         public Range rainRange = new Range();
@@ -63,14 +64,14 @@ namespace ProcessControl.Procedural
             
             // initialize
             timer.Start();
-            CreateGrid();
+            if (!Initialized) CreateGrid();
             float init = timer.ElapsedMilliseconds;
             
             // get closest chunks to spawn
             var closeChunks = grid.chunks.Where(c => Vector3.Distance(Vector3.zero, c.chunkCenter) < renderDistance);
-            timer.Restart();
             
             // generate the terrain
+            timer.Restart();
             await GenerateChunks(closeChunks);
             float chunkGen = timer.ElapsedMilliseconds;
             timer.Stop();
@@ -248,6 +249,7 @@ namespace ProcessControl.Procedural
                     }
                 }
             });
+            
         }
 
         //> GENERATE CHUNKS
