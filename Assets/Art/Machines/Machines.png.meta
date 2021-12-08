@@ -1,25 +1,10 @@
 fileFormatVersion: 2
-guid: ae24ff13f179fc04c8c104e8f5b50308
+guid: 3d6e2cdcde22b81458fb6288e0572b44
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4807843519496421934
-    second: Conveyors0
-  - first:
-      213: 1992827507389386230
-    second: Conveyors_0
-  - first:
-      213: 6588283335923157485
-    second: Conveyors_1
-  - first:
-      213: -6424201123812103037
-    second: Conveyors_2
-  - first:
-      213: 8216710035026873855
-    second: Conveyors_3
-  - first:
-      213: 8199771426994200264
-    second: Conveyors_4
+      213: -9125386323298617416
+    second: Machines0
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -64,7 +49,7 @@ TextureImporter:
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -109,13 +94,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Conveyors0
+      name: Machines0
       rect:
         serializedVersion: 2
         x: 1
         y: 1
-        width: 128
-        height: 128
+        width: 64
+        height: 96
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -123,8 +108,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e228f3b3534e8b240800000000000000
-      internalID: 4807843519496421934
+      spriteID: 8b7f391cc7d1c5180800000000000000
+      internalID: -9125386323298617416
       vertices: []
       indices: 
       edges: []

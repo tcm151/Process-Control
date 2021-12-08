@@ -6,17 +6,10 @@ namespace ProcessControl.Jobs
 {
     [Serializable] public class Job
     {
-        public static Job emptyJob => new Job
+        public static Job EmptyJob => new Job
         {
             description = "Empty Job.",
-            orders =
-            {
-                new Order
-                {
-                    description = "Empty Order.",
-                    complete = true,
-                },
-            },
+            orders = { Order.EmptyOrder },
             complete = true,
         };
         
@@ -25,6 +18,7 @@ namespace ProcessControl.Jobs
         public Job prerequisite;
         public Worker activeWorker;
         // public List<Worker> activeWorkers;
+        
         public List<Order> orders = new List<Order>();
 
         public bool complete;

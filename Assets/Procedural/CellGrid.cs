@@ -45,6 +45,8 @@ namespace ProcessControl.Procedural
         }
         [SerializeField] internal Data grid;
 
+        private bool Initialized => grid.chunks is { };
+        
         private Camera camera;
         private readonly System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 
@@ -60,14 +62,14 @@ namespace ProcessControl.Procedural
             
             // initialize
             timer.Start();
-            CreateGrid();
+            if (!Initialized) CreateGrid();
             float init = timer.ElapsedMilliseconds;
             
             // get closest chunks to spawn
             var closeChunks = grid.chunks.Where(c => Vector3.Distance(Vector3.zero, c.chunkCenter) < grid.renderDistance);
-            timer.Restart();
             
             // generate the terrain
+            timer.Restart();
             await GenerateChunks(closeChunks);
             float chunkGen = timer.ElapsedMilliseconds;
             timer.Stop();
@@ -243,6 +245,7 @@ namespace ProcessControl.Procedural
                     }
                 }
             });
+            
         }
 
         //> GENERATE CHUNKS
