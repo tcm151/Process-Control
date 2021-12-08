@@ -1,12 +1,13 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ProcessControl.Industry;
-using ProcessControl.Procedural;
 using UnityEngine;
 using ProcessControl.Tools;
+using ProcessControl.Industry;
+using ProcessControl.Procedural;
+using Stack = ProcessControl.Industry.Stack;
 
 
 namespace ProcessControl.Jobs
@@ -46,8 +47,8 @@ namespace ProcessControl.Jobs
                     takenJobs.Remove(job);
                     completedJobs.Add(job);
                     job.activeWorker = null;
-                    worker.currentJob = Job.emptyJob;
-                    worker.currentOrder = Job.emptyJob.orders[0];
+                    worker.currentJob = Job.EmptyJob;
+                    worker.currentOrder = Job.EmptyJob.orders[0];
                 };
             });
         }
