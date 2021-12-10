@@ -56,7 +56,7 @@ namespace ProcessControl.Industry
         {
             if (Contains(newItem))
             {
-                // Debug.Log("Inventory has item match");
+                // Debug.Log("HasInventory has item match");
                 var item = inventory.FirstOrDefault(s => s.item == newItem && s.amount < stackSize);
                 if (item is { })
                 {

@@ -8,9 +8,9 @@ using ProcessControl.Pathfinding;
 
 namespace ProcessControl.Jobs
 {
-    public class Worker : Agent, IWorker, Inventory
+    public class Worker : Agent, IWorker, HasInventory
     {
-        [Header("Inventory")]
+        [Header("HasInventory")]
         public int stackSize = 16;
         public int inventorySlots = 4;
         [SerializeField] internal Industry.Inventory inventory;

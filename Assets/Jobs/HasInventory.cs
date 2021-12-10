@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ProcessControl.Jobs
 {
-    public interface Inventory
+    public interface HasInventory
     {
         public Vector3 position {get;}
         

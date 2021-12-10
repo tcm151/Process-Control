@@ -11,7 +11,7 @@ using ProcessControl.Graphs;
 namespace ProcessControl.Industry
 {
     [SelectionBase]
-    public class Machine : Node, IO, Buildable, Jobs.Inventory
+    public class Machine : Node, IO, Buildable, Jobs.HasInventory
     {
         // public int ticks;
         // public bool sleeping;
@@ -21,7 +21,7 @@ namespace ProcessControl.Industry
         public Recipe currentRecipe;
         public List<Recipe> recipes;
 
-        [Header("Inventory")]
+        [Header("HasInventory")]
         public int inventorySize = 16;
         public Inventory inputInventory;
         public Inventory outputInventory;

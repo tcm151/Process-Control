@@ -5,11 +5,10 @@ using ProcessControl.Jobs;
 using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Industry;
-using Inventory = ProcessControl.Jobs.Inventory;
 
 #pragma warning disable 108,114
 
-public class Storage : Node, IO, Buildable, Inventory
+public class Storage : Node, IO, Buildable, HasInventory
 {
     private Conveyor input;
     private Conveyor output;
@@ -80,7 +79,7 @@ public class Storage : Node, IO, Buildable, Inventory
     virtual public Container Withdraw()
     {
         var resource = inventory.Withdraw();
-        if (resource is null) Debug.Log("Inventory empty.");
+        if (resource is null) Debug.Log("HasInventory empty.");
         var container = ItemFactory.SpawnContainer(resource, position);
         return container;
     }

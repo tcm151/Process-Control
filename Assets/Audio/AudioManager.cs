@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using ProcessControl.Tools;
 
@@ -29,9 +30,8 @@ namespace ProcessControl.Audio
             FindAndPlayTrack += OnPlayTrack;
         }
 
-        //@ convert to async/await
         //> PLAY A PLAYLIST OF MUSIC
-        private IEnumerator CR_PlayPlaylist(List<SFX> tracks, int channel, bool shuffle, bool loop)
+        private async void StartPlaylist(List<SFX> tracks, int channel, bool shuffle = false, bool loop = false)
         {
             if (tracks.Count <= 0) Debug.LogWarning("Provided <colors=yellow>NO SONGS</color> in Playlist!");
             if (shuffle) tracks = tracks.Shuffle();
@@ -39,7 +39,8 @@ namespace ProcessControl.Audio
             foreach (var track in tracks)
             {
                 OnPlayTrack(track, channel);
-                yield return new WaitForSeconds(track.clip.length);
+                // yield return new WaitForSeconds(track.clip.length);
+                await Task.Delay((int)(track.clip.length * 1000f));
             }
         }
 

@@ -77,12 +77,12 @@ namespace ProcessControl.Jobs
             takenJobs.Add(closestJob);
         }
 
-        public static void QueueConstructionJob(Cell cell, Recipe recipe, Buildable buildable, List<Inventory> inventories)
+        public static void QueueConstructionJob(Cell cell, Recipe recipe, Buildable buildable, List<HasInventory> inventories)
         {
             bool cannotBuild = false;
             // var matchingEntities = new List<Entity>();
             // var requiredContainers = new List<Container>();
-            var matchingInventories = new List<(Inventory inventory, Stack stack)>();
+            var matchingInventories = new List<(HasInventory inventory, Stack stack)>();
             recipe.inputItems.ForEach(itemAmount =>
             {
                 // var matchingContainers = ItemFactory.FindItemsByClosest(selectedNode.position, i);
