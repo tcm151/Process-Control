@@ -51,7 +51,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -96,11 +96,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enabled: 0
-  enabledAlpha: 255
-  disabledAlpha: 100
-  ticks: 0
   sleeping: 0
+  ticks: 0
   sleepThreshold: 2048
+  schematic: {fileID: 0}
   currentRecipe: {fileID: 0}
   recipes:
   - {fileID: 11400000, guid: 1c61227c2c18f9a4f92478c58af39a50, type: 2}
@@ -111,9 +110,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 379152cffe101f84fa269c0d8341ea41, type: 2}
   inventorySize: 16
   inputInventory:
-    items: []
+    inventory: []
   outputInventory:
-    items: []
+    inventory: []
   inputEnabled: 1
   maxInputs: 1
   outputEnabled: 1

@@ -51,7 +51,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -95,5 +95,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f105504a5ee4b9aa4a6831859b73749, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enabledColor: {r: 255, g: 255, b: 255, a: 255}
-  disabledColor: {r: 255, g: 255, b: 255, a: 100}
+  enabled: 0
+  sleeping: 0
+  ticks: 0
+  sleepThreshold: 2048
+  schematic: {fileID: 0}
+  inventory:
+    inventory: []
