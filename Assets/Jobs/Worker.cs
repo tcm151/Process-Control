@@ -8,12 +8,12 @@ using ProcessControl.Pathfinding;
 
 namespace ProcessControl.Jobs
 {
-    public class Worker : Agent, IWorker, HasInventory
+    public class Worker : Agent, IWorker, IInventory
     {
-        [Header("HasInventory")]
+        [Header("IInventory")]
         public int stackSize = 16;
         public int inventorySlots = 4;
-        [SerializeField] internal Industry.Inventory inventory;
+        [SerializeField] internal Inventory inventory;
 
         [Header("Job")]
         [SerializeField] internal Job currentJob;
@@ -42,7 +42,7 @@ namespace ProcessControl.Jobs
             currentJob = new Job { complete = true };
             currentOrder = new Order { complete = true };
             
-            inventory = new Industry.Inventory(inventorySlots, stackSize);
+            inventory = new Inventory(inventorySlots, stackSize);
             
             onOrderCompleted += DoJob;
             onReachedDestination += DoOrder;
@@ -57,7 +57,7 @@ namespace ProcessControl.Jobs
             CancelAction();
             
             DoJob();
-            Debug.Log("Job Taken Successfully.");
+            // Debug.Log("Job Taken Successfully.");
         }
         
         //> CHECK STATUS ON CURRENT JOB
@@ -68,7 +68,7 @@ namespace ProcessControl.Jobs
             //- all orders in job are completed
             if (currentJob.orders.TrueForAll(o => o.complete))
             {
-                Debug.Log("Job Complete.");
+                // Debug.Log("Job Complete.");
                 currentJob.complete = true;
                 onJobCompleted?.Invoke();
                 Roam();
@@ -81,8 +81,8 @@ namespace ProcessControl.Jobs
                                             .First();
             
             currentPath = await AStar.FindPath_Async(position, currentOrder.location);
-            Debug.Log($"path is {currentPath.Count} nodes long");
-            Debug.Log($"Starting: {currentOrder.description}");
+            // Debug.Log($"path is {currentPath.Count} nodes long");
+            // Debug.Log($"Starting: {currentOrder.description}");
         }
 
         //> COMPLETE ACTIVE JOB OR ROAM IF IDLE

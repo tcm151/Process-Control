@@ -15,5 +15,5 @@ MonoBehaviour:
   name: Incinerator
   recipe: {fileID: 0}
   sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
-  description: 
+  description: Destroys any unwanted items
   entity: {fileID: 2145074843609341928, guid: 8562c3572e812664b9706e4aa3e9df28, type: 3}

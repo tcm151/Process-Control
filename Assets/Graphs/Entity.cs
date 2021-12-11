@@ -34,6 +34,8 @@ namespace ProcessControl.Graphs
 
         virtual protected void Awake()
         {
+            enabled = false;
+            
             renderer = GetComponent<SpriteRenderer>();
             if (schematic is { })
             {

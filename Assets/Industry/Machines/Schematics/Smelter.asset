@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
   m_Name: Smelter
   m_EditorClassIdentifier: 
-  name: Industrial Smelter
-  recipe: {fileID: 0}
-  sprite: {fileID: 0}
-  description: 
-  prefab: {fileID: 0}
+  name: Smelter
+  recipe: {fileID: 11400000, guid: ec57801bb22af204fa807259307c0828, type: 2}
+  sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
+  description: A high power industrial smelter capable of turning raw ore into compact
+    metal ingots
   entity: {fileID: 8361632907144066225, guid: 8382f4a74ab778640b8e7fd535307a85, type: 3}

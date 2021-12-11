@@ -18,7 +18,9 @@ namespace ProcessControl.Industry
         // public bool sleeping;
         // public int ticks;
         // public int sleepThreshold = 256;
-        
+
+        public Recipe recipe => schematic.recipe;
+
         [Header("Conveyor")]
         public int itemsPerMinute = 8;
 
@@ -67,7 +69,7 @@ namespace ProcessControl.Industry
         virtual public IO Output => output;
 
 
-        public Task DeliverItems(List<Stack> itemAmounts)
+        public Task Deliver(Stack itemAmounts)
         {
             return Task.CompletedTask;
         }
@@ -148,7 +150,7 @@ namespace ProcessControl.Industry
         //> FIXED CALCULATION INTERVAL
         protected void FixedUpdate()
         {
-            // if (!enabled) return;
+            if (!enabled) return;
             
             //> EVERY INTERVAL PULL FROM INPUT IF CAPABLE
             if (++ticks > (TicksPerMinute / (itemsPerMinute * 2)))

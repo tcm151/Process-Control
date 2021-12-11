@@ -15,5 +15,5 @@ MonoBehaviour:
   name: Assembler
   recipe: {fileID: 11400000, guid: 412ed49a973ea8b4b9b5872197d7dfbf, type: 2}
   sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
-  description: Assembler components together to form more complex machinery.
+  description: Assemble components together to form more complex machinery.
   entity: {fileID: 4131297871508864436, guid: 54e387d2f55054b45837075bf791f229, type: 3}

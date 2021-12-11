@@ -46,6 +46,9 @@ namespace ProcessControl.Procedural
         [SerializeField] internal Data grid;
 
         private bool Initialized => grid.chunks is { };
+
+        public static event Action onFinishWorldGeneration;
+        public static event Action onStartWorldGeneration;
         
         private Camera camera;
         private readonly System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
@@ -56,9 +59,10 @@ namespace ProcessControl.Procedural
         public static Func<Vector2Int, Cell> GetCellAtCoordinates;
         
         //> INITIALIZATION
-        public async void Awake()
+        public async void Start()
         {
             // Debug.Log("Awake!");
+            onStartWorldGeneration?.Invoke();
             
             // initialize
             timer.Start();
@@ -78,6 +82,7 @@ namespace ProcessControl.Procedural
             Debug.Log($"Generated: {init} | {chunkGen} |= {init+chunkGen} ms");
 
             CellSpawner.CalculateSpawnLocation();
+            onFinishWorldGeneration?.Invoke();
         }
         
         //> CACHE LAST TOUCHED CELL

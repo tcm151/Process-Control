@@ -99,7 +99,7 @@ MonoBehaviour:
   sleeping: 0
   ticks: 0
   sleepThreshold: 2048
-  schematic: {fileID: 0}
+  schematic: {fileID: 11400000, guid: 793e2355369763743bcb38b75ff958f5, type: 2}
   currentRecipe: {fileID: 0}
   recipes: []
   inventorySize: 64

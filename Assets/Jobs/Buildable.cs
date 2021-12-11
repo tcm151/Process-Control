@@ -8,9 +8,9 @@ namespace ProcessControl.Jobs
 {
     public interface Buildable
     {
-        // public event Action onAllItemsDelivered;
+        public Recipe recipe {get;}
         
-        public Task DeliverItems(List<Stack> itemAmounts);
+        public Task Deliver(Stack stack);
         public Task Build(float buildTime);
         public Task Disassemble(float deconstructionTime);
     }

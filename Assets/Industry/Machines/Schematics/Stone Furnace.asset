@@ -15,6 +15,5 @@ MonoBehaviour:
   name: Stone Furnace
   recipe: {fileID: 11400000, guid: bb53ae7d376365c439c15d691c5fd8c1, type: 2}
   sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
-  description: A rudimentary stone furnace.
-  prefab: {fileID: 5191652356891986751, guid: 9c68a450060455f4a938328e759b3bdf, type: 3}
+  description: A rudimentary furnace capable of turning ore into ingots
   entity: {fileID: 9042333485107648786, guid: 9c68a450060455f4a938328e759b3bdf, type: 3}

@@ -15,6 +15,5 @@ MonoBehaviour:
   name: Storage Container
   recipe: {fileID: 11400000, guid: 8fc5c7314fcd9c44da48fbba627d680f, type: 2}
   sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
-  description: An industrial storage container to hold lots of intems
-  prefab: {fileID: 0}
+  description: An industrial storage container which can hold many items
   entity: {fileID: 3637440383875739520, guid: cc4fa420b09871c4787337e4723a395e, type: 3}

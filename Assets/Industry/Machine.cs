@@ -11,8 +11,10 @@ using ProcessControl.Graphs;
 namespace ProcessControl.Industry
 {
     [SelectionBase]
-    public class Machine : Node, IO, Buildable, Jobs.HasInventory
+    public class Machine : Node, IO, Buildable, IInventory
     {
+        public Recipe recipe => schematic.recipe;
+
         // public int ticks;
         // public bool sleeping;
         // public int sleepThreshold = 256;
@@ -21,7 +23,7 @@ namespace ProcessControl.Industry
         public Recipe currentRecipe;
         public List<Recipe> recipes;
 
-        [Header("HasInventory")]
+        [Header("IInventory")]
         public int inventorySize = 16;
         public Inventory inputInventory;
         public Inventory outputInventory;
@@ -45,7 +47,7 @@ namespace ProcessControl.Industry
         public readonly List<IO> outputs = new List<IO>();
 
         
-        public Task DeliverItems(List<Stack> itemAmounts)
+        public Task Deliver(Stack itemAmounts)
         {
             return Task.CompletedTask;
         }

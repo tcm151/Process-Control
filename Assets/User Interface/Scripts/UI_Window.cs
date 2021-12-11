@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -28,6 +29,11 @@ namespace ProcessControl.UI
             group.alpha = 0;
             group.interactable = false;
             raycaster.enabled = false;
+        }
+
+        private void OnValidate()
+        {
+            if (!initialized) Initialize();
         }
 
         virtual public void GoBack() => Hide();

@@ -84,7 +84,7 @@ namespace ProcessControl.Controls
         }
 
         //> MOVE THE CAMERA
-        private void FixedUpdate()
+        private void LateUpdate()
         {
             //> USING MOUSE DRAGGING
             if (dragging)

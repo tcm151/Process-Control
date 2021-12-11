@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
   m_Name: Merger
   m_EditorClassIdentifier: 
-  name: 
+  name: Merger
   recipe: {fileID: 11400000, guid: f6d4836ef98576145bec96fcbce802d8, type: 2}
-  sprite: {fileID: 8216710035026873855, guid: ae24ff13f179fc04c8c104e8f5b50308, type: 3}
-  description: 
+  sprite: {fileID: 8073556761677482203, guid: ae24ff13f179fc04c8c104e8f5b50308, type: 3}
+  description: Mergers separate conveyors into a single conveyor
   entity: {fileID: 308910016581926823, guid: 7a36556df2e1d0445aaac4b314153e4b, type: 3}

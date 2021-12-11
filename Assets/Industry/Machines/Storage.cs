@@ -8,12 +8,14 @@ using ProcessControl.Industry;
 
 #pragma warning disable 108,114
 
-public class Storage : Node, IO, Buildable, HasInventory
+public class Storage : Node, IO, Buildable, IInventory
 {
+    public Recipe recipe => schematic.recipe;
+
     private Conveyor input;
     private Conveyor output;
 
-    [SerializeField] private ProcessControl.Industry.Inventory inventory = new ProcessControl.Industry.Inventory(16, 16 * 64);
+    [SerializeField] private Inventory inventory = new Inventory(16, 16 * 64);
 
     virtual public IO Input => input;
     virtual public IO Output => output;
@@ -24,7 +26,7 @@ public class Storage : Node, IO, Buildable, HasInventory
     //     renderer.color = disabledColor;
     // }
 
-    public Task DeliverItems(List<Stack> itemAmounts)
+    public Task Deliver(Stack itemAmounts)
     {
         return Task.CompletedTask;
     }
@@ -79,7 +81,7 @@ public class Storage : Node, IO, Buildable, HasInventory
     virtual public Container Withdraw()
     {
         var resource = inventory.Withdraw();
-        if (resource is null) Debug.Log("HasInventory empty.");
+        if (resource is null) Debug.Log("IInventory empty.");
         var container = ItemFactory.SpawnContainer(resource, position);
         return container;
     }

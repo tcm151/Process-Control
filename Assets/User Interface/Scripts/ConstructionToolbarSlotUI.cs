@@ -1,15 +1,18 @@
-﻿using UnityEngine;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.UI;
 using ProcessControl.Graphs;
 using ProcessControl.Industry;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 
 
 namespace ProcessControl.UI
 {
-    public class ConstructionToolbarSlotUI : MonoBehaviour
+    public class ConstructionToolbarSlotUI : Tooltip
     {
-        [FormerlySerializedAs("part")] public Schematic schematic;
+        public Schematic schematic;
         public bool isEdge;
         public bool isNode => !isEdge;
         
@@ -18,6 +21,14 @@ namespace ProcessControl.UI
 
         private void Awake() => Initialize();
         private void OnValidate() => Initialize();
+
+        override public async void OnPointerEnter(PointerEventData eventData)
+        {
+            cancelShow = false;
+            await Task.Delay(500);
+            if (cancelShow) return;
+            TooltipWindow.ShowTooltip(schematic.name, schematic.description);
+        }
 
         private void Initialize()
         {

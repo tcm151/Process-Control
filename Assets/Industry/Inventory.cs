@@ -27,28 +27,35 @@ namespace ProcessControl.Industry
 
         private readonly int slots;
         private readonly int stackSize;
-        [FormerlySerializedAs("items")][SerializeField] private List<Stack> inventory = new List<Stack>();
+        [SerializeField] private List<Stack> inventory = new List<Stack>();
         
         public int Count => inventory.Sum(i => i.amount);
         public bool Full => Count >= slots * stackSize;
         public bool Empty => inventory.Count == 0;
         
-        public void Clear() => inventory.Clear();
-        public bool Contains(Item match, int amount = 1) => inventory.FirstOrDefault(s => s.item == match && s.amount >= amount) is {};
-        public bool Contains(Stack stack) => Contains(stack.item, stack.amount);
-        public IReadOnlyList<Stack> GetItems() => inventory.AsReadOnly();
+        public void Clear()
+            => inventory.Clear();
+        
+        public bool Contains(Item match, int amount = 1)
+            => inventory.FirstOrDefault(s => s.item == match && s.amount >= amount) is {};
+        
+        public bool Contains(Stack stack)
+            => Contains(stack.item, stack.amount);
+        
+        public IReadOnlyList<Stack> GetItems()
+            => inventory.AsReadOnly();
         
         public bool CanDeposit(Item item)
         {
             if (inventory.Count < slots) return true;
-            if (inventory.FirstOrDefault(s => s.item == item && s.amount < stackSize) is {}) return true;
+            if (inventory.Any(s => s.item == item && s.amount < stackSize)) return true;
             return false;
         }
 
         public bool CanDeposit(Stack stack)
         {
             if (inventory.Count < slots) return true;
-            if (inventory.FirstOrDefault(s => s.item == stack.item && s.amount + stack.amount <= stackSize) is { }) return true;
+            if (inventory.Any(s => s.item == stack.item && s.amount + stack.amount <= stackSize)) return true;
             return false;
         }
         
@@ -56,7 +63,7 @@ namespace ProcessControl.Industry
         {
             if (Contains(newItem))
             {
-                // Debug.Log("HasInventory has item match");
+                // Debug.Log("IInventory has item match");
                 var item = inventory.FirstOrDefault(s => s.item == newItem && s.amount < stackSize);
                 if (item is { })
                 {

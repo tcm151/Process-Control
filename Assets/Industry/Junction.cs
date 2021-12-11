@@ -11,6 +11,8 @@ namespace ProcessControl.Industry
 {
     public class Junction : Node, IO, Buildable
     {
+        public Recipe recipe => schematic.recipe;
+
         [Header("IO")]
         //- input
         public bool inputEnabled = true;
@@ -25,12 +27,13 @@ namespace ProcessControl.Industry
         //- inventory
         public Container inventory;
         
-        public Task DeliverItems(List<Stack> itemAmounts)
+        public Task Deliver(Stack itemAmounts)
         {
-            if (schematic.recipe.inputItems.TrueForAll(itemAmounts.Contains)) return Task.CompletedTask;
+            return Task.CompletedTask;
+            // if (schematic.recipe.inputItems.TrueForAll(itemAmounts.Contains)) return Task.CompletedTask;
             
-            Debug.Log($"Failed delivery to {schematic.name}", this);
-            return Task.FromException(new Exception($"Failed delivery to {schematic.name}"));
+            // Debug.Log($"Failed delivery to {schematic.name}", this);
+            // return Task.FromException(new Exception($"Failed delivery to {schematic.name}"));
         }
         
         public async Task Build(float buildTime)

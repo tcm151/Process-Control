@@ -15,6 +15,5 @@ MonoBehaviour:
   name: Extractor
   recipe: {fileID: 11400000, guid: ec3bc90d7e0e8204fb5b1987541e1756, type: 2}
   sprite: {fileID: -8214661901767815302, guid: f3c9a8b8f1dd5f9418e0481e4e6742d1, type: 3}
-  description: Pulls resources from the ground.
-  prefab: {fileID: 4533327719062287326, guid: 87ecd7ab5b9e7164b9702cdcf7e60e73, type: 3}
+  description: Extracts resources from the ground.
   entity: {fileID: 4533327719062287313, guid: 87ecd7ab5b9e7164b9702cdcf7e60e73, type: 3}

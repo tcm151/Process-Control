@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c56ab5ba2c794d7087e7e8b8001174a5, type: 3}
   m_Name: Splitter
   m_EditorClassIdentifier: 
-  name: 
+  name: Splitter
   recipe: {fileID: 11400000, guid: 1cac75c4b165c3e47ae5707ba1a44002, type: 2}
-  sprite: {fileID: 8199771426994200264, guid: ae24ff13f179fc04c8c104e8f5b50308, type: 3}
-  description: 
+  sprite: {fileID: -6756607066556995429, guid: ae24ff13f179fc04c8c104e8f5b50308, type: 3}
+  description: Splits a single conveyor into multiple conveyors
   entity: {fileID: 8606701852718631066, guid: 17d7d72e94b6bff43a29ee3057bd6891, type: 3}
