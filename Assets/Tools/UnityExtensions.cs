@@ -316,5 +316,8 @@ namespace ProcessControl.Tools
         public static float Sqrt(this ref float value)
             => value = Mathf.Sqrt(value);
         //------------------------------------------------------------------------------------------
+        public static float Lerp(this float value, float final, float delta)
+            => value = Mathf.Lerp(value, final, delta);
+        //------------------------------------------------------------------------------------------
     }
 }

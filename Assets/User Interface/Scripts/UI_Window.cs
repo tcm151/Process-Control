@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
+
 #pragma warning disable 108,114
 
 namespace ProcessControl.UI
@@ -53,27 +53,12 @@ namespace ProcessControl.UI
 
         private void Initialize()
         {
-            group     = GetComponent<CanvasGroup>();
-            layout    = GetComponent<LayoutElement>();
-            renderer  = GetComponent<CanvasRenderer>();
-            transform = GetComponent<RectTransform>();
-            raycaster = GetComponent<GraphicRaycaster>();
+            group     ??= GetComponent<CanvasGroup>();
+            layout    ??= GetComponent<LayoutElement>();
+            renderer  ??= GetComponent<CanvasRenderer>();
+            transform ??= GetComponent<RectTransform>();
+            raycaster ??= GetComponent<GraphicRaycaster>();
             initialized = true;
         }
-    }
-
-    [RequireComponent(typeof(Canvas))]
-    abstract public class UI_DraggableWindow : UI_Window, IDragHandler, IPointerDownHandler
-    {
-        private Canvas canvas;
-
-        override protected void Awake()
-        {
-            base.Awake();
-            canvas = GetComponentInParent<Canvas>();
-        }
-
-        public void OnDrag(PointerEventData eventData) => transform.anchoredPosition += eventData.delta / canvas.scaleFactor;
-        public void OnPointerDown(PointerEventData eventData) => transform.SetAsLastSibling();
     }
 }

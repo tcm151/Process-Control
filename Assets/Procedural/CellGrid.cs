@@ -57,14 +57,24 @@ namespace ProcessControl.Procedural
         public static Func<Cell> GetCellUnderMouse;
         public static Func<Vector3, Cell> GetCellAtPosition;
         public static Func<Vector2Int, Cell> GetCellAtCoordinates;
-        
+
+        //> CACHE DATA AND REGISTER EVENTS
+        private void Awake()
+        {
+            camera = Camera.main;
+
+            //- register events
+            GetCellAtCoordinates += GetCellFromCoords;
+            GetCellUnderMouse += () => GetCellFromCoords(camera.MousePosition2D().FloorToInt());
+            GetCellAtPosition += (position) => GetCellFromCoords(position.ToVector2().FloorToInt());
+        }
+
         //> INITIALIZATION
         public async void Start()
         {
+            onStartWorldGeneration?.Invoke();
             await Task.Yield();
             
-            // Debug.Log("Awake!");
-            onStartWorldGeneration?.Invoke();
             
             // initialize
             timer.Start();
@@ -117,13 +127,6 @@ namespace ProcessControl.Procedural
         //> INITIALIZE THE GRID
         public void CreateGrid()
         {
-            camera = Camera.main;
-
-            //- register events
-            GetCellAtCoordinates += GetCellFromCoords;
-            GetCellUnderMouse += () => GetCellFromCoords(camera.MousePosition2D().FloorToInt());
-            GetCellAtPosition += (position) => GetCellFromCoords(position.ToVector2().FloorToInt());
-
             //- random seed noise layers
             if (grid.seed != "") Random.InitState(grid.seed.GetHashCode());
             grid.biomeNoise.ForEach(b => b.offset = Random.insideUnitSphere * (Random.value * 5));
@@ -133,7 +136,6 @@ namespace ProcessControl.Procedural
             //- gather and clear tilemaps
             grid.tilemaps = GetComponentsInChildren<Tilemap>().ToList();
             ClearAllTiles();
-
             
             //- create chunk array
             grid.chunks = new Chunk[grid.size, grid.size];

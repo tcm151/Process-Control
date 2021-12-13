@@ -25,7 +25,7 @@ namespace ProcessControl.UI
 
         private void UpdateVisible(bool truth) => renderer.enabled = truth;
 
-        private void Update()
+        private void LateUpdate()
         {
             var coords = camera.MousePosition2D().FloorToInt();
             if (coords == currentCoords) return;

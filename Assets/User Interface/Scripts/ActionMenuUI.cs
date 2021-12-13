@@ -1,13 +1,21 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using ProcessControl.UI;
-using UnityEngine;
+using ProcessControl.Controls;
 
-namespace ProcessControl
+
+namespace ProcessControl.UI
 {
     public class ActionMenuUI : UI_Window
     {
-        
+        override protected void Awake()
+        {
+            base.Awake();
+
+            ObjectSelector.onCloseActionMenu += Hide;
+            ObjectSelector.onOpenActionMenu += (position) =>
+            {
+                transform.position = position;
+                Show();
+            };
+        }
     }
 }
