@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6626792416615185005}
   - component: {fileID: 6626792416615185006}
+  - component: {fileID: -1813480284880984581}
   - component: {fileID: 8606701852718631066}
   m_Layer: 0
   m_Name: Splitter
@@ -83,6 +84,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!58 &-1813480284880984581
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6626792416615185000}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.25
 --- !u!114 &8606701852718631066
 MonoBehaviour:
   m_ObjectHideFlags: 0

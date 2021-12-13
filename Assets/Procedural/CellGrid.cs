@@ -61,6 +61,8 @@ namespace ProcessControl.Procedural
         //> INITIALIZATION
         public async void Start()
         {
+            await Task.Yield();
+            
             // Debug.Log("Awake!");
             onStartWorldGeneration?.Invoke();
             
