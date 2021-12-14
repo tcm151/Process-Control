@@ -32,6 +32,7 @@ namespace ProcessControl.Industry
         public List<Container> inventory = new List<Container>();
         public readonly List<Cell> tilesCovered = new List<Cell>();
 
+        
         public void SetLength(float size) => renderer.size = new Vector2(size, 1);
 
         // public Vector3 position
@@ -69,6 +70,8 @@ namespace ProcessControl.Industry
         virtual public IO Output => output;
 
 
+        // public event Action onAllItemsDelivered;
+        
         public Task Deliver(Stack itemAmounts)
         {
             return Task.CompletedTask;
@@ -76,8 +79,10 @@ namespace ProcessControl.Industry
         
         public async Task Build(float buildTime)
         {
-            var time = 0f;
-            while ((time += Time.deltaTime) < buildTime) await Task.Yield();
+            // var time = 0f;
+            // while ((time += Time.deltaTime) < buildTime) await Task.Yield();
+            await Alerp.Delay(buildTime);
+            
             var enabledColor = renderer.color;
             enabledColor.a = EnabledAlpha / 255f;
             renderer.color = enabledColor;
@@ -86,8 +91,9 @@ namespace ProcessControl.Industry
         
         public async Task Disassemble(float deconstructionTime)
         {
-            var time = 0f;
-            while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
+            // var time = 0f;
+            // while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
+            await Alerp.Delay(deconstructionTime);
             Destroy(this);
         }
 

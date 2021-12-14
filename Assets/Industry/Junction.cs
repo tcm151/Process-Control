@@ -26,6 +26,8 @@ namespace ProcessControl.Industry
         private readonly List<IO> outputs = new List<IO>();
         //- inventory
         public Container inventory;
+
+        // public event Action onAllItemsDelivered;
         
         public Task Deliver(Stack itemAmounts)
         {

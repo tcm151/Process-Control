@@ -3,10 +3,8 @@
 
 namespace ProcessControl.UI
 {
-    public class ConstructionPanel : UI_Window
+    public class ConstructionPanel : UI_Panel
     {
-        override public void GoBack() => Hide();
-
         override protected void Awake()
         {
             base.Awake();

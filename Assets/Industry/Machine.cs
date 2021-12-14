@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,6 @@ namespace ProcessControl.Industry
         // public List<Conveyor> outputs = new List<Conveyor>();
         public readonly List<IO> outputs = new List<IO>();
 
-        
         public Task Deliver(Stack itemAmounts)
         {
             return Task.CompletedTask;

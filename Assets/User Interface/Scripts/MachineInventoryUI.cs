@@ -9,10 +9,8 @@ using ProcessControl.Procedural;
 
 namespace ProcessControl.UI
 {
-    public class MachineInventoryUI : UI_DraggableWindow
+    public class MachineInventoryUI : UI_DraggablePanel
     {
-        override public void GoBack() => Hide();
-
         [SerializeField] private TextMeshProUGUI title;
         [SerializeField] private Machine selectedMachine;
         [SerializeField] private Node selectedNode;

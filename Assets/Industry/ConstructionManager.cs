@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,7 +7,6 @@ using ProcessControl.Tools;
 using ProcessControl.Graphs;
 using ProcessControl.Procedural;
 using ProcessControl.Pathfinding;
-using UnityEngine.Serialization;
 
 #pragma warning disable 108,114
 

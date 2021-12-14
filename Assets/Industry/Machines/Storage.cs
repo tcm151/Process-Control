@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using ProcessControl.Jobs;
@@ -26,6 +27,8 @@ public class Storage : Node, IO, Buildable, IInventory
     //     renderer.color = disabledColor;
     // }
 
+    // public event Action onAllItemsDelivered;
+    
     public Task Deliver(Stack itemAmounts)
     {
         return Task.CompletedTask;

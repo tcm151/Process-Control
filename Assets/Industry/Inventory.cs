@@ -41,6 +41,9 @@ namespace ProcessControl.Industry
         
         public bool Contains(Stack stack)
             => Contains(stack.item, stack.amount);
+
+        public bool Contains(List<Stack> stacks)
+            => stacks.TrueForAll(stack => inventory.Contains(stack));
         
         public IReadOnlyList<Stack> GetItems()
             => inventory.AsReadOnly();

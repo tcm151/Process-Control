@@ -1,16 +1,14 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Threading.Tasks;
 using ProcessControl.Graphs;
-using ProcessControl.Industry;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
+using ProcessControl.Industry;
+using UnityEngine;
 
 
 namespace ProcessControl.UI
 {
-    public class ConstructionToolbarSlotUI : Tooltip
+    public class ConstructionToolbarSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         public Schematic schematic;
         public bool isEdge;
@@ -19,32 +17,39 @@ namespace ProcessControl.UI
         private Button button;
         private Image[] images;
 
+        private bool cancelShow;
+
         private void Awake() => Initialize();
         private void OnValidate() => Initialize();
 
-        override public async void OnPointerEnter(PointerEventData eventData)
+        public async void OnPointerEnter(PointerEventData eventData)
         {
             cancelShow = false;
             await Task.Delay(500);
             if (cancelShow) return;
-            TooltipWindow.ShowTooltip(schematic.name, schematic.description);
+            TooltipPanel.ShowTooltip(schematic.name, schematic.description);
+        }
+        
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            cancelShow = true;
+            TooltipPanel.HideTooltip(0.33f);
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (schematic is null) return;
+            ConstructionManager.SetPart(schematic);
+            ConstructionManager.SetEdgeMode(isEdge);
         }
 
         private void Initialize()
         {
             if (schematic is null) return;
-
-            button = GetComponent<Button>();
-            button.onClick.AddListener(() =>
-            {
-                ConstructionManager.SetPart(schematic);
-                ConstructionManager.SetEdgeMode(isEdge);
-            });
-
-            // if (part.entity is Node) return;
+            // if (schematic.entity is Node) return;
             images = GetComponentsInChildren<Image>();
             images[1].sprite = schematic.sprite;
         }
-        
+
     }
 }

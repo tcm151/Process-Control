@@ -28,6 +28,19 @@ namespace ProcessControl.Audio
             PlaySFX += OnPlaySFX;
             PlayTrack += OnPlayTrack;
             FindAndPlayTrack += OnPlayTrack;
+
+            sources = GetComponents<AudioSource>();
+        }
+
+        private void Start()
+        {
+            var musicPlaylist = new List<SFX>
+            {
+                soundEffects.First(s => s.name == "Lonely_Machines_Intro"),
+                soundEffects.First(s => s.name == "Lonely_Machines"),
+            };
+            
+            StartPlaylist(musicPlaylist, 0, loop: true);
         }
 
         //> PLAY A PLAYLIST OF MUSIC
@@ -42,6 +55,8 @@ namespace ProcessControl.Audio
                 // yield return new WaitForSeconds(track.clip.length);
                 await Task.Delay((int)(track.clip.length * 1000f));
             }
+            
+            // if (loop) StartPlaylist(tracks, channel, shuffle, loop);
         }
 
         //> PLAY ONE SHOT SOUND CLIP

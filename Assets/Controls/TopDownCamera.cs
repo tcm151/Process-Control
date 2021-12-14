@@ -105,15 +105,15 @@ namespace ProcessControl.Controls
                 // calculate acceleration based on movement input
                 float acceleration = (movementInput) switch
                 {
-                    { x: 0f, y: 0f } => maxDeceleration,
-                    _ => maxAcceleration,
+                    { x: 0f, y: 0f } => maxDeceleration * camera.orthographicSize,
+                    _ => maxAcceleration * camera.orthographicSize,
                 };
 
                 // if moving away from current velocity use maximum acceleration
-                if (Vector2.Dot(movementInput, currentVelocity) < 0)
-                {
-                    acceleration = maxAcceleration;
-                }
+                // if (Vector2.Dot(movementInput, currentVelocity) < 0)
+                // {
+                //     acceleration = maxAcceleration;
+                // }
 
                 // apply the maths
                 currentVelocity.MoveTowardsR(desiredVelocity, acceleration * Time.deltaTime);

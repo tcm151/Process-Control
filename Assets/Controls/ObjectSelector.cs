@@ -13,14 +13,20 @@ public class ObjectSelector : MonoBehaviour
 
     public static event Action<Vector3> onOpenActionMenu;
     public static event Action onCloseActionMenu;
+
+    private bool buildMode;
     
     private void Awake()
     {
         camera = Camera.main;
+
+        ConstructionManager.OnBuildModeChanged += (truth) => buildMode = truth;
     }
 
     private void Update()
     {
+        if (buildMode) return;
+        
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
             onOpenActionMenu?.Invoke(camera.MousePosition2D());
@@ -36,16 +42,12 @@ public class ObjectSelector : MonoBehaviour
         {
             secondPosition = camera.MousePosition2D();
 
-            // var colliders = Physics2D.OverlapAreaAll(firstPosition, secondPosition);
             var transforms = BoxSelection<Transform>(firstPosition, secondPosition);
-            var containers = BoxSelection<Container>(firstPosition, secondPosition);
-
             Debug.Log(transforms.Count);
-            Debug.Log(containers.Count);
         }
     }
 
-    private List<T> BoxSelection<T>(Vector2 firstCorner, Vector2 secondCorner)
+    private static List<T> BoxSelection<T>(Vector2 firstCorner, Vector2 secondCorner)
     {
         var colliders = Physics2D.OverlapAreaAll(firstCorner, secondCorner);
         var matches = new List<T>();

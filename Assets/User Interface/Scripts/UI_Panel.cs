@@ -19,7 +19,7 @@ namespace ProcessControl.UI
             group.blocksRaycasts = true;
             group.interactable = true;
             
-            await Alerp.Interval(duration, (elapsedTime) =>
+            await Alerp.ContinualAction(duration, (elapsedTime) =>
             {
                 group.alpha = Mathf.Lerp(group.alpha, 1, elapsedTime / duration);
             });
@@ -32,7 +32,7 @@ namespace ProcessControl.UI
             group.blocksRaycasts = false;
             group.interactable = false;
             
-            await Alerp.Interval(duration,(elapsedTime) =>
+            await Alerp.ContinualAction(duration,(elapsedTime) =>
             {
                 group.alpha = Mathf.Lerp(group.alpha, 0, elapsedTime / duration);
             });
