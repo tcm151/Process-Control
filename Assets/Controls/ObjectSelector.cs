@@ -34,8 +34,9 @@ public class ObjectSelector : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            onCloseActionMenu?.Invoke();
             firstPosition = camera.MousePosition2D();
+            Alerp.DelayedAction(0.1f, () => onCloseActionMenu?.Invoke());
+            // onCloseActionMenu?.Invoke();
         }
 
         if (Input.GetKeyUp(KeyCode.Mouse0))

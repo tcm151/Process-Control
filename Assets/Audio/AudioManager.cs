@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using ProcessControl.Tools;
+using UnityEditor;
+
 
 namespace ProcessControl.Audio
 {
@@ -20,9 +22,12 @@ namespace ProcessControl.Audio
         public static Action<SFX, int, bool> PlayTrack;
         public static Action<string, int, bool> FindAndPlayTrack;
 
+        private bool cancelPlaylist;
+
         //> INITIALIZATION
         private void Awake()
         {
+            
             AudioListener.volume = PlayerPrefs.GetFloat("GlobalVolume", 1f);
 
             PlaySFX += OnPlaySFX;
@@ -30,6 +35,16 @@ namespace ProcessControl.Audio
             FindAndPlayTrack += OnPlayTrack;
 
             sources = GetComponents<AudioSource>();
+
+            EditorApplication.playModeStateChanged += (state) =>
+            {
+                cancelPlaylist = state switch
+                {
+                    PlayModeStateChange.EnteredPlayMode => false,
+                    PlayModeStateChange.ExitingPlayMode => true,
+                    _ => true,
+                };
+            };
         }
 
         private void Start()
@@ -51,9 +66,12 @@ namespace ProcessControl.Audio
             
             foreach (var track in tracks)
             {
+                if (cancelPlaylist) return;
+                
                 OnPlayTrack(track, channel);
                 // yield return new WaitForSeconds(track.clip.length);
-                await Task.Delay((int)(track.clip.length * 1000f));
+                await Alerp.ConditionalDelay(track.clip.length, !cancelPlaylist);
+                // await Task.Delay((int)(track.clip.length * 1000f));
             }
             
             // if (loop) StartPlaylist(tracks, channel, shuffle, loop);
@@ -97,5 +115,6 @@ namespace ProcessControl.Audio
             AudioListener.volume = volume;
             PlayerPrefs.SetFloat("GlobalVolume", volume);
         }
+
     }
 }

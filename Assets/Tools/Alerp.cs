@@ -36,5 +36,14 @@ namespace ProcessControl.Tools
             while ((elapsedTime += Time.deltaTime) < delay)
                 await Task.Yield();
         }
+
+        public static async void DelayedAction(float delay, Action action)
+        {
+            float elapsedTime = 0f;
+            while ((elapsedTime += Time.deltaTime) < delay)
+                await Task.Yield();
+            
+            action.Invoke();
+        }
     }
 }

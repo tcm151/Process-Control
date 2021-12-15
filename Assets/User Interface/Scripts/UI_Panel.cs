@@ -14,7 +14,7 @@ namespace ProcessControl.UI
         [SerializeField, HideInInspector] protected CanvasGroup group;
         [SerializeField, HideInInspector] protected RectTransform transform;
         
-        public async void Show(float duration = 0.33f)
+        public async void Show(float duration = 0.5f)
         {
             group.blocksRaycasts = true;
             group.interactable = true;
@@ -27,12 +27,12 @@ namespace ProcessControl.UI
             group.alpha = 1;
         }
 
-        public async void Hide(float duration = 0.33f)
+        public async void Hide(float duration = 0.5f)
         {
             group.blocksRaycasts = false;
             group.interactable = false;
             
-            await Alerp.ContinualAction(duration,(elapsedTime) =>
+            await Alerp.ContinualAction(duration, (elapsedTime) =>
             {
                 group.alpha = Mathf.Lerp(group.alpha, 0, elapsedTime / duration);
             });

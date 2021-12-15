@@ -43,12 +43,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a181776ee55d2474ca681ffc54e4d742, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panelMask:
-    serializedVersion: 2
-    m_Bits: 64
-  selectedNode: {fileID: 0}
-  selectedEdge: {fileID: 0}
+  queueJobGlobal: 1
   buildMode: 0
   conveyorMode: 0
+  selectedRecipe: {fileID: 0}
+  selectedSchematic: {fileID: 0}
   firstNode: {fileID: 0}
   secondNode: {fileID: 0}
+  defaultJunction: {fileID: 8663364071117963412, guid: d378e936cf1730a40877dde68bce6d7a, type: 3}
+  defaultJunctionRecipe: {fileID: 11400000, guid: 28c199b1a8642bf4fae80a9aa284fc22, type: 2}
