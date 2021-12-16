@@ -7,9 +7,10 @@ namespace ProcessControl.Tools
 {
     public static class Alerp
     {
-        public static async Task ContinualAction(float duration, Action<float> action)
+        //> EXECUTE AND ACTION OVER AN INTERVAL OF TIME
+        public static async Task ContinuousAction(float duration, Action<float> action)
         {
-            float elapsedTime = 0f;
+            float elapsedTime = -Time.deltaTime;
             while ((elapsedTime += Time.deltaTime) < duration)
             {
                 action(elapsedTime);
@@ -17,30 +18,19 @@ namespace ProcessControl.Tools
             }
         }
 
-        // public static async Task Interval(float interval, bool condition)
-        // {
-        //     
-        // }
-
-        /// 
-        public static async Task ConditionalDelay(float duration, bool condition)
+        //> WAIT FOR DURATION IN SECONDS
+        public static async Task Delay(float duration)
         {
-            float elapsedTime = 0f;
-            while ((elapsedTime += Time.deltaTime) < duration || !condition)
+            float elapsedTime = -Time.deltaTime;
+            while ((elapsedTime += Time.deltaTime) < duration)
                 await Task.Yield();
         }
 
-        public static async Task Delay(float delay)
+        //> EXECUTE AN ACTION AFTER DURATION SECONDS
+        public static async void DelayedAction(float duration, Action action)
         {
-            float elapsedTime = 0f;
-            while ((elapsedTime += Time.deltaTime) < delay)
-                await Task.Yield();
-        }
-
-        public static async void DelayedAction(float delay, Action action)
-        {
-            float elapsedTime = 0f;
-            while ((elapsedTime += Time.deltaTime) < delay)
+            float elapsedTime = -Time.deltaTime;
+            while ((elapsedTime += Time.deltaTime) < duration)
                 await Task.Yield();
             
             action.Invoke();

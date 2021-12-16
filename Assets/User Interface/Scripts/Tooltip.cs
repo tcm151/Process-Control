@@ -24,8 +24,7 @@ namespace ProcessControl.UI
         virtual public async void OnPointerEnter(PointerEventData eventData)
         {
             cancelShow = false;
-            await Alerp.ConditionalDelay(0.5f, !cancelShow);
-            // await Task.Delay(500);
+            await Alerp.Delay(0.5f);
             if (cancelShow) return;
             TooltipPanel.ShowTooltip(null, null);
         }

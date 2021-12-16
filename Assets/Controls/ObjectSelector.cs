@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProcessControl.Tools;
 using ProcessControl.Industry;
+using UnityEngine.EventSystems;
 
 #pragma warning disable 108,114
 
@@ -15,6 +16,7 @@ public class ObjectSelector : MonoBehaviour
     public static event Action onCloseActionMenu;
 
     private bool buildMode;
+    private bool overUI;
     
     private void Awake()
     {
@@ -27,22 +29,24 @@ public class ObjectSelector : MonoBehaviour
     {
         if (buildMode) return;
         
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        if (Input.GetMouseButtonDown(1))
         {
             onOpenActionMenu?.Invoke(camera.MousePosition2D());
         }
         
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetMouseButtonDown(0))
         {
-            firstPosition = camera.MousePosition2D();
             Alerp.DelayedAction(0.1f, () => onCloseActionMenu?.Invoke());
-            // onCloseActionMenu?.Invoke();
+            
+            firstPosition = camera.MousePosition2D();
+            overUI = EventSystem.current.IsPointerOverGameObject();
         }
 
-        if (Input.GetKeyUp(KeyCode.Mouse0))
+        if (Input.GetMouseButtonUp(0))
         {
-            secondPosition = camera.MousePosition2D();
+            if (overUI) return;
 
+            secondPosition = camera.MousePosition2D();
             var transforms = BoxSelection<Transform>(firstPosition, secondPosition);
             Debug.Log(transforms.Count);
         }

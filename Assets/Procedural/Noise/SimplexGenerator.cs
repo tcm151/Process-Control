@@ -3,7 +3,7 @@
 
 namespace ProcessControl.Procedural
 {
-    public class SimplexNoise
+    public class SimplexGenerator
     {
         private static readonly int[] Source =
         {
@@ -70,12 +70,12 @@ namespace ProcessControl.Procedural
             new[] { 0, 1, -1 }, new[] { 0, -1, -1 },
         };
 
-        public SimplexNoise()
+        public SimplexGenerator()
         {
             Randomize(0);
         }
 
-        public SimplexNoise(int seed)
+        public SimplexGenerator(int seed)
         {
             Randomize(seed);
         }

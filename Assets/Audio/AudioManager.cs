@@ -70,7 +70,7 @@ namespace ProcessControl.Audio
                 
                 OnPlayTrack(track, channel);
                 // yield return new WaitForSeconds(track.clip.length);
-                await Alerp.ConditionalDelay(track.clip.length, !cancelPlaylist);
+                await Alerp.Delay(track.clip.length);
                 // await Task.Delay((int)(track.clip.length * 1000f));
             }
             
