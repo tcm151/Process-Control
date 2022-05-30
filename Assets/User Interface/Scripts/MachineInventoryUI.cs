@@ -12,27 +12,19 @@ namespace ProcessControl.UI
     public class MachineInventoryUI : UI_DraggablePanel
     {
         [SerializeField] private TextMeshProUGUI title;
-        [SerializeField] private Machine selectedMachine;
-        [SerializeField] private Node selectedNode;
-        
-        // [SerializeField] private TextMeshProUGUI inputCount;
-        // [SerializeField] private Image inputIcon;
-        // [SerializeField] private TextMeshProUGUI outputCount;
-        // [SerializeField] private Image outputIcon;
-
-        public Transform inputSlotsContainer;
-        public Transform outputSlotsContainer;
-        
-        // [SerializeField] private InventorySlotUI inventorySlotPrefab;
-
         [SerializeField] private TMP_Dropdown recipeDropdown;
+        
+        [SerializeReference] private Node selectedNode;
+        [SerializeReference] private Machine selectedMachine;
+        [SerializeReference] public Transform inputSlotsContainer;
+        [SerializeReference] public Transform outputSlotsContainer;
 
         private bool buildMode;
-        private InventorySlotUI[] inputSlots;
-        private InventorySlotUI[] outputSlots;
+        private InventorySlotUI[] ioInputSlots;
+        private InventorySlotUI[] ioOutputSlots;
+        // private InventorySlotUI[] inventorySlots;
         
-        
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             ConstructionManager.OnBuildModeChanged += (isEnabled) => buildMode = isEnabled;
@@ -40,25 +32,10 @@ namespace ProcessControl.UI
 
             recipeDropdown.onValueChanged.AddListener(value => selectedMachine.currentRecipe = selectedMachine.recipes[value]);
 
-            inputSlots = inputSlotsContainer.GetComponentsInChildren<InventorySlotUI>();
-            outputSlots = outputSlotsContainer.GetComponentsInChildren<InventorySlotUI>();
+            ioInputSlots = inputSlotsContainer.GetComponentsInChildren<InventorySlotUI>();
+            ioOutputSlots = outputSlotsContainer.GetComponentsInChildren<InventorySlotUI>();
         }
         
-        private void UpdateInventory()
-        {
-            var inputItems = selectedMachine.inputInventory.GetItems();
-            for (int i = 0; i < inputSlots.Length; i++)
-            {
-                inputSlots[i].Set((i < inputItems.Count) ? inputItems[i] : null);
-            }
-
-            var outputItems = selectedMachine.outputInventory.GetItems();
-            for (int i = 0; i < outputSlots.Length; i++)
-            {
-                outputSlots[i].Set((i < outputItems.Count) ? outputItems[i] : null);
-            }
-        }
-
         private void Update()
         {
             if (buildMode) return;
@@ -79,7 +56,6 @@ namespace ProcessControl.UI
                     recipeDropdown.AddOptions(dropdownOptions);
                     
                     recipeDropdown.transform.parent.gameObject.SetActive(selectedMachine.recipes.Count >= 1);
-
                     recipeDropdown.value = selectedMachine.recipes.IndexOf(selectedMachine.currentRecipe);
                     
                     UpdateInventory();
@@ -87,5 +63,25 @@ namespace ProcessControl.UI
                 }
             }
         }
+        
+        private void UpdateInventory()
+        {
+            //- update IO
+            var inputItems = selectedMachine.inputInventory.GetItems();
+            for (int i = 0; i < ioInputSlots.Length; i++)
+            {
+                ioInputSlots[i].Set((i < inputItems.Count) ? inputItems[i] : null);
+            }
+
+            var outputItems = selectedMachine.outputInventory.GetItems();
+            for (int i = 0; i < ioOutputSlots.Length; i++)
+            {
+                ioOutputSlots[i].Set((i < outputItems.Count) ? outputItems[i] : null);
+            }
+            
+            //- update containers
+            
+        }
+
     }
 }

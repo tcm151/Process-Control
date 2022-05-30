@@ -9,9 +9,12 @@ namespace ProcessControl.Industry
     {
         public Vector3 position {get;}
         
-        public IO Input {get;}
-        public IO Output {get;}
+        public IO Input {get; set;}
+        public IO Output {get; set;}
 
+        public Inventory InputInventory {get;}
+        public Inventory OutputInventory {get;}
+        
         public bool ConnectInput(IO newInput);
         public bool DisconnectInput(IO newInput);
         public bool ConnectOutput(IO newOutput);
@@ -23,22 +26,23 @@ namespace ProcessControl.Industry
         public bool CanDeposit(Item item);
         public void Deposit(Container container);
     }
-    
-    public interface IInput
-    {
-        public bool ConnectOutput(IOutput newOutput);
-        public bool DisconnectOutput(IOutput oldOutput);
 
-        public bool CanDeposit(Container container);
-        public void Deposit(Container container);
-    }
-    
-    public interface IOutput
+    public static class IoExtensions
     {
-        public bool ConnectInput(IInput newInput);
-        public bool DisconnectInput(IInput oldInput);
-
-        public bool CanWithdraw();
-        public Container Withdraw();
+        // public static bool ConnectInput(this IO source, IO destination)
+        // {
+        //     if (source.Output == destination) return false;
+        //     source.Input = destination;
+        //     // source.UpdateConnections();
+        //     return true;
+        // }
+        //
+        // public static bool ConnectOutput(this IO source, IO destination)
+        // {
+        //     if (output != oldOutput) return false;
+        //     output = null;
+        //     UpdateConnections();
+        //     return true;
+        // }
     }
 }

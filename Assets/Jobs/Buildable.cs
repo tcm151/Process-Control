@@ -10,7 +10,7 @@ namespace ProcessControl.Jobs
     {
         public Recipe recipe {get;}
         
-        public Task Deliver(Stack stack);
+        public Task Deliver(Stack stack, float deliveryTime);
         public Task Build(float buildTime);
         public Task Disassemble(float deconstructionTime);
     }

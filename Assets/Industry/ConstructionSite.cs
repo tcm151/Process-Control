@@ -7,13 +7,15 @@ using UnityEngine;
 
 public class ConstructionSite : MonoBehaviour, Buildable
 {
+    public bool Assembled => this.enabled;
+    
     [SerializeField] private Recipe constructionRecipe;
 
     public Recipe recipe => constructionRecipe;
 
-    public Task Deliver(Stack stack)
+    public async Task Deliver(Stack stack, float deliveryTime)
     {
-        return Task.CompletedTask;
+        await Alerp.Delay(deliveryTime);
     }
 
     public async Task Build(float buildTime)

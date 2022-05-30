@@ -36,13 +36,13 @@ namespace ProcessControl.Industry
 
             Exists += (itemAmount) =>
             {
-                var matchingContainers = spawnedContainers.Where(c => c.item == itemAmount.item);
+                var matchingContainers = spawnedContainers.Where(c => c.stack == itemAmount);
                 return (matchingContainers.Count() >= itemAmount.amount);
             };
 
             FindItemsByClosest += (position, itemAmount) =>
             {
-                var matchingContainers = spawnedContainers.Where(c => c.item == itemAmount.item)
+                var matchingContainers = spawnedContainers.Where(c => c.stack == itemAmount)
                                         .OrderBy(c => Vector3.Distance(c.position, position))
                                         .ToList();
                     
@@ -51,7 +51,7 @@ namespace ProcessControl.Industry
 
             FindItemByClosest += (position, itemAmount) =>
             {
-                var matchingContainer = spawnedContainers.Where(c => c.item == itemAmount.item)
+                var matchingContainer = spawnedContainers.Where(c => c.stack == itemAmount)
                                                          .OrderBy(c => Vector3.Distance(c.position, position))
                                                          .FirstOrDefault();
                 return matchingContainer;
@@ -60,7 +60,7 @@ namespace ProcessControl.Industry
             SpawnContainer += (item, position) =>
             {
                 var instance = Spawn(sceneName, containerPrefab, position);
-                instance.SetItem(item);
+                instance.SetItem(new Stack{item = item, amount = 1});
                 spawnedContainers.Add(instance);
                 return instance;
             };

@@ -9,7 +9,7 @@ namespace ProcessControl.Tools
     public static class UnityExtensions
     {
         //> LISTS ==================================================================================
-        //- Remove and return the item at the index position
+        //- Remove and return the stack at the index position
         public static T TakeAndRemove<T>(this List<T> list, int index)
         {
             var item = list[index];
@@ -24,7 +24,7 @@ namespace ProcessControl.Tools
             return items;
         }
         //------------------------------------------------------------------------------------------
-        //- Remove and return the first item in the list
+        //- Remove and return the first stack in the list
         public static T TakeAndRemoveFirst<T>(this List<T> list)
         {
             if (list.Count == 0) return default;
@@ -33,7 +33,7 @@ namespace ProcessControl.Tools
             return item;
         }
         //------------------------------------------------------------------------------------------
-        //- Remove and return the last item in the list
+        //- Remove and return the last stack in the list
         public static T TakeAndRemoveLast<T>(this List<T> list)
         {
             if (list.Count == 0) return default;
@@ -42,7 +42,7 @@ namespace ProcessControl.Tools
             return item;
         }
         //------------------------------------------------------------------------------------------
-        //- Return the item after the item given, returns first item if last item is given
+        //- Return the stack after the stack given, returns first stack if last stack is given
         public static T ItemAfter<T>(this List<T> list, T item)
         {
             var index = list.IndexOf(item);
@@ -95,13 +95,13 @@ namespace ProcessControl.Tools
             return list;
         }
         //------------------------------------------------------------------------------------------
-        //- Modify every item in an array by the given action
+        //- Modify every stack in an array by the given action
         public static void ForEach<T>(this T[] array, Action<T> action)
         {
             for (int i = 0; i < array.Length; i++) action(array[i]);
         }
         //------------------------------------------------------------------------------------------
-        //- Modify every item in a 2d array by the given action
+        //- Modify every stack in a 2d array by the given action
         public static void ForEach<T>(this T[,] array2d, Action<T> action)
         {
             for (int i = 0; i < array2d.GetLength(0); i++) {

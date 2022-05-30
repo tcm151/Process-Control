@@ -20,25 +20,25 @@ namespace ProcessControl.Industry.Power
             if (burningFuel) return;
             
 
-            if (acceptedFuels.Any(fuel => inputInventory.Contains(fuel)))
+            if (acceptedFuels.Any(fuel => inputInventory.Contains(new Stack{item = fuel})))
             {
-                var match = acceptedFuels.FirstOrDefault(f => inputInventory.Contains(f));
+                var match = acceptedFuels.FirstOrDefault(f => inputInventory.Contains(new Stack{item = f}));
                 
                 if (match is null) return;
                 if (energy > maxEnergy - match.energy) return;
                 // Debug.Log("Can Burn Fuel");
 
-                var fuel = inputInventory.Withdraw(match);
-                BurnFuel(fuel as Resource);
+                var fuel = inputInventory.Withdraw(new Stack{item = match, amount = 1});
+                BurnFuel(fuel.item as Resource, fuel.amount);
             }
         }
         
-        private async void BurnFuel(Resource fuel)
+        private async void BurnFuel(Resource fuel, int amount)
         {
             // Debug.Log("Burning Fuel");
             burningFuel = true;
 
-            while (ticks++ < fuel.burnTime)
+            while (ticks++ < fuel.burnTime * amount)
             {
                 energy += fuel.energyPerTick;
                 await Task.Yield();

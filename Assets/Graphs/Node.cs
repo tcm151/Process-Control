@@ -20,7 +20,7 @@ namespace ProcessControl.Graphs
         // abstract public bool ConnectOutput(IO output);
         // abstract public bool DisconnectOutput(IO output);
         //
-        // abstract public bool CanDeposit(Item item);
+        // abstract public bool CanDeposit(Item stack);
         // abstract public void Deposit(Container container);
         //
         // abstract public bool CanWithdraw();

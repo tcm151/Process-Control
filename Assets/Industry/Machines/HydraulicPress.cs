@@ -18,10 +18,10 @@
 
         private void EngagePress()
         {
-            if (currentRecipe.inputItems.TrueForAll(recipeItem => inputInventory.Contains(recipeItem.item, recipeItem.amount)))
+            if (currentRecipe.inputItems.TrueForAll(recipeItem => inputInventory.Contains(recipeItem)))
             {
-                currentRecipe.inputItems.ForEach(i => inputInventory.Withdraw(i.item, i.amount));
-                currentRecipe.outputItems.ForEach(r => outputInventory.Deposit(r.item, r.amount));
+                currentRecipe.inputItems.ForEach(i => inputInventory.Withdraw(i));
+                currentRecipe.outputItems.ForEach(i => outputInventory.Deposit(i));
             }
         }
     }

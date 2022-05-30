@@ -6,7 +6,7 @@ namespace ProcessControl.Industry.Power
 {
     public class Powerline : Edge
     {
-        override public float Length => 0f;
-        override public Vector3 Center => transform.position;
+        public override float Length => 0f;
+        public override Vector3 Center => transform.position;
     }
 }

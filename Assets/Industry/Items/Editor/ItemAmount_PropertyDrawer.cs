@@ -9,7 +9,7 @@ namespace ProcessControl.Industry.Items.Editor
     {
         private SerializedProperty item, amount;
         
-        override public void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
+        public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
         {
             item = property.FindPropertyRelative("item");
             amount = property.FindPropertyRelative("amount");
@@ -31,7 +31,7 @@ namespace ProcessControl.Industry.Items.Editor
             EditorGUI.EndProperty();
         }
 
-        override public float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return base.GetPropertyHeight(property, label);
         }

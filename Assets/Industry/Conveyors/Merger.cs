@@ -4,7 +4,7 @@ namespace ProcessControl.Industry.Conveyors
 {
     public class Merger : Junction
     {
-        override public void Deposit(Container container)
+        public override void Deposit(Container container)
         {
             base.Deposit(container);
             NextInput();

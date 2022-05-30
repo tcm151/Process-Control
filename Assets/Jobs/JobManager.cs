@@ -77,12 +77,12 @@ namespace ProcessControl.Jobs
             takenJobs.Add(closestJob);
         }
 
-        public static void QueueEdgeConstruction(Cell firstCell, Cell secondCell, Recipe recipe, Buildable buildable, List<IInventory> inventories)
+        public static void QueueEdgeConstruction(Cell firstCell, Cell secondCell, Recipe recipe, Buildable buildable, List<Inventory> inventories)
         {
             bool cannotBuild = false;
             // var matchingEntities = new List<Entity>();
             // var requiredContainers = new List<Container>();
-            var matchingInventories = new List<(IInventory inventory, Stack itemAmount)>();
+            var matchingInventories = new List<(Inventory inventory, Stack itemAmount)>();
             recipe.inputItems.ForEach(itemAmount =>
             {
                 // var matchingContainers = ItemFactory.FindItemsByClosest(selectedNode.position, i);
@@ -99,7 +99,7 @@ namespace ProcessControl.Jobs
                 // Debug.Log($"Matching machines length: {matchingMachines.Count}");
 
                 var bestMatch = inventories.Where(inv => inv.Contains(itemAmount))
-                                           .OrderBy(inv => Vector3.Distance((firstCell.position + secondCell.position) / 2f, inv.position))
+                                           .OrderBy(inv => Vector3.Distance((firstCell.position + secondCell.position) / 2f, inv.parent.position))
                                            .FirstOrDefault();
 
                 if (bestMatch is null) cannotBuild = true;
@@ -123,7 +123,7 @@ namespace ProcessControl.Jobs
                 collectionJob.orders.Add(new Order
                 {
                     description = $"gather {match.itemAmount.amount} {match.itemAmount.item}(s) for {recipe.name}",
-                    location = match.inventory.position,
+                    location = match.inventory.parent.position,
                     action = () =>
                     {
                         match.inventory.Withdraw(match.itemAmount);
@@ -171,7 +171,7 @@ namespace ProcessControl.Jobs
                     action = () =>
                     {
                         deliveryJob.activeWorker.Withdraw(stack);
-                        buildable.Deliver(stack);
+                        buildable.Deliver(stack, 0.25f);
                         return Task.CompletedTask;
                     },
                 });
@@ -195,29 +195,14 @@ namespace ProcessControl.Jobs
             });
         }
 
-        public static void QueueNodeConstruction(Cell cell, Recipe recipe, Buildable buildable, List<IInventory> inventories)
+        public static void QueueNodeConstruction(Cell cell, Recipe recipe, Buildable buildable, List<Inventory> inventories)
         {
             bool cannotBuild = false;
-            // var matchingEntities = new List<Entity>();
-            // var requiredContainers = new List<Container>();
-            var matchingInventories = new List<(IInventory inventory, Stack stack)>();
+            var matchingInventories = new List<(Inventory inventory, Stack stack)>();
             recipe.inputItems.ForEach(itemAmount =>
             {
-                // var matchingContainers = ItemFactory.FindItemsByClosest(selectedNode.position, i);
-                // if (matchingContainers.Count < i.amount)
-                // {
-                // Debug.Log("NOT ENOUGH FOR RECIPE ITEMS...");
-                // cannotBuild = true;
-                // return;
-                // }
-
-                // matchingContainers.ForEach(c => requiredContainers.Add(c));
-                // var matchingMachines = builtMachines.Where(m => m.inputInventory.Contains(i) || m.outputInventory.Contains(i)).ToList();
-                // matchingMachines.ForEach(m => matchingInventories.Add(m));
-                // Debug.Log($"Matching machines length: {matchingMachines.Count}");
-
                 var bestMatch = inventories.Where(inv => inv.Contains(itemAmount))
-                                           .OrderBy(inv => Vector3.Distance(cell.position, inv.position))
+                                           .OrderBy(inv => Vector3.Distance(cell.position, inv.parent.position))
                                            .FirstOrDefault();
 
                 if (bestMatch is null) cannotBuild = true;
@@ -235,64 +220,28 @@ namespace ProcessControl.Jobs
             {
                 description = $"Gather resources for {recipe.name}",
             };
-
             matchingInventories.ForEach(match =>
             {
+                (Inventory inventory, Stack stack) = match;
                 collectionJob.orders.Add(new Order
                 {
-                    description = $"gather {match.stack.amount} {match.stack.item.name}(s) for {recipe.name}",
-                    location = match.inventory.position,
+                    description = $"gather {stack.amount} {stack.item.name}(s) for {recipe.name}",
+                    location = inventory.parent.position,
                     action = () =>
                     {
-                        match.inventory.Withdraw(match.stack);
-                        collectionJob.activeWorker.Deposit(match.stack);
+                        inventory.Withdraw(stack);
+                        collectionJob.activeWorker.Deposit(stack);
                         return Task.CompletedTask;
                     },
                 });
             });
-
-            // requiredContainers.ForEach(
-            //     c =>
-            //     {
-            //         // if (e is Container c)
-            //         {
-            //             collectJob.orders.Add(new Order
-            //             {
-            //                 description = $"gather {c.item.name} for {nodeRecipe.name}",
-            //                 location = c.position,
-            //                 action = () =>
-            //                 {
-            //                     collectJob.activeWorker.Deposit(new Stack{item = c.item, amount = 1});
-            //                     ItemFactory.DisposeContainer(c);
-            //                     return Task.CompletedTask;
-            //                 },
-            //             });
-            //         }
-            //         // if (e is Machine m)
-            //         // {
-            //         //     collectJob.orders.Add(new Order
-            //         //     {
-            //         //         description = $"gather {"temp"} for {nodeRecipe.name}",
-            //         //         location = m.position,
-            //         //         action = () =>
-            //         //         {
-            //         //             collectJob.activeWorker.Deposit(new Stack{item = c.item, amount = 1});
-            //         //             ItemFactory.DisposeContainer(c);
-            //         //             return Task.CompletedTask;
-            //         //         },
-            //         //     });
-            //         // }
-            //     });
-
             QueueJob(collectionJob);
-
 
             var deliveryJob = new Job
             {
                 description = $"deliver items to {recipe.name}",
                 prerequisite = collectionJob,
             };
-
             recipe.inputItems.ForEach(stack =>
             {
                 deliveryJob.orders.Add(new Order
@@ -302,12 +251,11 @@ namespace ProcessControl.Jobs
                     action = () =>
                     {
                         deliveryJob.activeWorker.Withdraw(stack);
-                        buildable.Deliver(stack);
+                        buildable.Deliver(stack, 0.25f);
                         return Task.CompletedTask;
                     },
                 });
             });
-            
             QueueJob(deliveryJob);
 
             var constructionJob = new Job

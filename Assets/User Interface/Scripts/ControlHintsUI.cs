@@ -10,7 +10,7 @@ namespace ProcessControl
     {
         private bool showing;
 
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             showing = true;

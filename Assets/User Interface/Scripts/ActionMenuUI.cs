@@ -6,7 +6,7 @@ namespace ProcessControl.UI
 {
     public class ActionMenuUI : UI_Panel
     {
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
 

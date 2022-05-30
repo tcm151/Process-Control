@@ -11,7 +11,7 @@ namespace ProcessControl.UI
         [SerializeField] private ConstructionManager cm;
         private bool showing;
         
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             showing = !cm.queueJobGlobal;

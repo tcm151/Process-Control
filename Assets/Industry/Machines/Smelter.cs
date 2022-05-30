@@ -19,9 +19,9 @@ namespace ProcessControl.Industry.Machines
                 ticks = 0;
                 if (inputInventory.Count == 0) return;
 
-                if (acceptedFuels.Any(f => inputInventory.Contains(f)))
+                if (acceptedFuels.Any(f => inputInventory.Contains(new Stack{item = f})))
                 {
-                    var match = acceptedFuels.FirstOrDefault(f => inputInventory.Contains(f));
+                    var match = acceptedFuels.FirstOrDefault(f => inputInventory.Contains(new Stack{item = f}));
                     if (match is null)
                     {
                         // Debug.Log("NO FUEL!");
@@ -34,7 +34,7 @@ namespace ProcessControl.Industry.Machines
                         return;
                     }
                     
-                    var fuel = inputInventory.Withdraw(match);
+                    var fuel = inputInventory.Withdraw(new Stack{item = match, amount = 1});
                     // Debug.Log("Withdrawing fuel..");
                     
                     energy += match.energy;
@@ -48,10 +48,10 @@ namespace ProcessControl.Industry.Machines
 
         private void Smelt()
         {
-            if (currentRecipe.inputItems.TrueForAll(recipeItem => inputInventory.Contains(recipeItem.item, recipeItem.amount)))
+            if (currentRecipe.inputItems.TrueForAll(recipeItem => inputInventory.Contains(recipeItem)))
             {
-                currentRecipe.inputItems.ForEach(i => inputInventory.Withdraw(i.item, i.amount));
-                currentRecipe.outputItems.ForEach(r => outputInventory.Deposit(r.item, r.amount));
+                currentRecipe.inputItems.ForEach(i => inputInventory.Withdraw(i));
+                currentRecipe.outputItems.ForEach(i => outputInventory.Deposit(i));
                 energy -= currentRecipe.energyCost;
             }
         }

@@ -25,7 +25,7 @@ namespace ProcessControl.UI
 
         public bool NudgeLastItemsOver;
 
-        override public void CalculateLayoutInputVertical()
+        public override void CalculateLayoutInputVertical()
         {
             base.CalculateLayoutInputHorizontal();
 
@@ -175,8 +175,8 @@ namespace ProcessControl.UI
             }
         }
 
-        override public void SetLayoutHorizontal() { }
+        public override void SetLayoutHorizontal() { }
 
-        override public void SetLayoutVertical() { }
+        public override void SetLayoutVertical() { }
     }
 }

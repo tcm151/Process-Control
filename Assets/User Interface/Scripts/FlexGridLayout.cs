@@ -24,7 +24,7 @@ namespace ProcessControl.UI
 
         private Rect rect;
 
-        override public void CalculateLayoutInputHorizontal()
+        public override void CalculateLayoutInputHorizontal()
         {
             base.CalculateLayoutInputHorizontal();
             
@@ -120,10 +120,10 @@ namespace ProcessControl.UI
             }
         }
 
-        override public void CalculateLayoutInputVertical() { }
+        public override void CalculateLayoutInputVertical() { }
 
-        override public void SetLayoutHorizontal() { }
+        public override void SetLayoutHorizontal() { }
 
-        override public void SetLayoutVertical() { }
+        public override void SetLayoutVertical() { }
     }
 }

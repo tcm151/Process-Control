@@ -8,7 +8,7 @@ namespace ProcessControl.UI
     {
         private Canvas parentCanvas;
 
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             

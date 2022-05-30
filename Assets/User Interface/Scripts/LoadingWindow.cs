@@ -6,7 +6,7 @@ namespace ProcessControl.User_Interface.Scripts
 {
     public class LoadingWindow : UI_Window
     {
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             

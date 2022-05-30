@@ -41,7 +41,7 @@ namespace ProcessControl.Industry.Machines
             parentCell.resourceDeposits[0].quantity--;
             var resourceDeposit = parentCell.resourceDeposits[0];
             // Debug.Log($"Depositing {resourceDeposit.resource}");
-            outputInventory.Deposit(resourceDeposit.resource);
+            outputInventory.Deposit(new Stack{item = resourceDeposit.resource, amount = 1});
         }
     }
 }

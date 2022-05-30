@@ -24,18 +24,25 @@ namespace ProcessControl.Industry
         public int maxOutputs = 1;
         private IO currentOutput;
         private readonly List<IO> outputs = new List<IO>();
-        //- inventory
-        public Container inventory;
+        //- containers
+        public Container container;
 
+        private Inventory inventory;
+        public Inventory InputInventory => inventory;
+        public Inventory OutputInventory => inventory;
         // public event Action onAllItemsDelivered;
-        
-        public Task Deliver(Stack itemAmounts)
+
+        protected override void Awake()
         {
-            return Task.CompletedTask;
-            // if (schematic.recipe.inputItems.TrueForAll(itemAmounts.Contains)) return Task.CompletedTask;
-            
-            // Debug.Log($"Failed delivery to {schematic.name}", this);
-            // return Task.FromException(new Exception($"Failed delivery to {schematic.name}"));
+            base.Awake();
+
+            inventory = new Inventory(1, 1, this.transform);
+        }
+
+        public async Task Deliver(Stack itemAmounts, float deliveryTime)
+        {
+            await Alerp.Delay(deliveryTime);
+            // return Task.CompletedTask;
         }
         
         public async Task Build(float buildTime)
@@ -54,10 +61,19 @@ namespace ProcessControl.Industry
             while ((time += Time.deltaTime) < deconstructionTime) await Task.Yield();
             Destroy(this);
         }
-        
-        
-        virtual public IO Input => currentInput;
-        virtual public IO Output => currentOutput;
+
+
+        public IO Input
+        {
+            get => currentInput;
+            set => currentInput = value;
+        }
+
+        public IO Output
+        {
+            get => currentOutput;
+            set => currentOutput = value;
+        }
 
         //> CONNECT INPUT
         virtual public bool ConnectInput(IO input)
@@ -107,11 +123,12 @@ namespace ProcessControl.Industry
 
 
         //> DEPOSIT RESOURCES
-        virtual public bool CanDeposit(Item item) => inventory is null;
-        virtual public void Deposit(Container container)
+        virtual public bool CanDeposit(Item item) => !inventory.Full;
+        virtual public void Deposit(Container newContainer)
         {
-            container.position = position;
-            inventory = container;
+            newContainer.position = this.position;
+            container = newContainer;
+            inventory.Deposit(newContainer.stack);
         }
 
 
@@ -119,25 +136,28 @@ namespace ProcessControl.Industry
         virtual public bool CanWithdraw() => inventory is { };
         virtual public Container Withdraw()
         {
-            var resource = inventory;
-            inventory = null;
-            return resource;
+            inventory.Withdraw();
+            var withdrawnContainer = container;
+            container = null;
+            return withdrawnContainer;
         }
 
         private void FixedUpdate()
         {
+            if (!enabled) return;
+            
             if (++ticks % (TicksPerSecond / 16) == 0)
             {
                 if (Input is {} && !CanWithdraw()) NextInput();
-                if (Output is {} && inventory is {} && !CanDeposit(inventory.item)) NextOutput();
+                if (Output is {} && inventory is {} && container is {} && !CanDeposit(container.stack.item)) NextOutput();
             }
         }
 
-        override public void OnDestroy()
+        public override void OnDestroy()
         {
             inputs.ForEach(i => Destroy(i as Entity));
             outputs.ForEach(o => Destroy(o as Entity));
-            Destroy(inventory);
+            Destroy(container);
             base.OnDestroy();
         }
     }

@@ -19,7 +19,7 @@ namespace ProcessControl.UI
 
         private Camera camera;
         
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             ShowTooltip += OnShow;

@@ -14,7 +14,7 @@ namespace ProcessControl.UI
         private void OnEnable() => window = target as UI_Panel;
 
         //> INSPECTOR GUI
-        override public void OnInspectorGUI()
+        public override void OnInspectorGUI()
         {
             // EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Show")) window.Show();

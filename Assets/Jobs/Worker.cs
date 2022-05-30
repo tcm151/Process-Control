@@ -8,9 +8,9 @@ using ProcessControl.Pathfinding;
 
 namespace ProcessControl.Jobs
 {
-    public class Worker : Agent, IWorker, IInventory
+    public class Worker : Agent, IWorker // HasInventory
     {
-        [Header("IInventory")]
+        [Header("HasInventory")]
         public int stackSize = 16;
         public int inventorySlots = 4;
         [SerializeField] internal Inventory inventory;
@@ -20,7 +20,7 @@ namespace ProcessControl.Jobs
         [SerializeField] internal Order currentOrder;
 
         //> PROPERTIES
-        override protected bool Idle => (currentJob is null) || (currentJob.complete);
+        protected override bool Idle => (currentJob is null) || (currentJob.complete);
         
         //> EVENTS
         public event Action onJobCompleted;
@@ -28,21 +28,21 @@ namespace ProcessControl.Jobs
         
         //> INVENTORY
         public bool Contains(Stack stack) => inventory.Contains(stack);
-        public void Deposit(Stack stack) => inventory.Deposit(stack.item, stack.amount);
-        public Stack Withdraw(Stack stack) => inventory.Withdraw(stack.item, stack.amount);
+        public void Deposit(Stack stack) => inventory.Deposit(stack);
+        public Stack Withdraw(Stack stack) => inventory.Withdraw(stack);
 
         // private Action currentAction;
         // public void DoAction() => currentAction.Invoke();
         
         //> INITIALIZATION
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             
             currentJob = new Job { complete = true };
             currentOrder = new Order { complete = true };
             
-            inventory = new Inventory(inventorySlots, stackSize);
+            inventory = new Inventory(inventorySlots, stackSize, this.transform);
             
             onOrderCompleted += DoJob;
             onReachedDestination += DoOrder;

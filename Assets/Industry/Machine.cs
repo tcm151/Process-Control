@@ -12,44 +12,39 @@ using ProcessControl.Graphs;
 namespace ProcessControl.Industry
 {
     [SelectionBase]
-    public class Machine : Node, IO, Buildable, IInventory
+    public class Machine : Node, IO, Buildable // HasInventory
     {
         public Recipe recipe => schematic.recipe;
-
-        // public int ticks;
-        // public bool sleeping;
-        // public int sleepThreshold = 256;
 
         [Header("Recipes")]
         public Recipe currentRecipe;
         public List<Recipe> recipes;
 
-        [Header("IInventory")]
+        [Header("HasInventory")]
         public int inventorySize = 16;
         public Inventory inputInventory;
+        public Inventory InputInventory => inputInventory;
         public Inventory outputInventory;
+        public Inventory OutputInventory => outputInventory;
         
         [Header("Input")]
         public bool inputEnabled = true;
         public int maxInputs = 1;
-        // public Conveyor currentInput;
-        private IO currentInput;
-        virtual public IO Input => currentInput;
-        // public List<Conveyor> inputs = new List<Conveyor>();
+        public IO Input {get; set;}
+
         public readonly List<IO> inputs = new List<IO>();
+
 
         [Header("Output")]
         public bool outputEnabled = true;
         public int maxOutputs = 1;
-        // public Conveyor currentOutput;
-        private IO currentOutput;
-        virtual public IO Output => currentOutput;
-        // public List<Conveyor> outputs = new List<Conveyor>();
-        public readonly List<IO> outputs = new List<IO>();
+        public IO Output {get; set;}
 
-        public Task Deliver(Stack itemAmounts)
+        private readonly List<IO> outputs = new List<IO>();
+
+        public async Task Deliver(Stack itemAmounts, float deliveryTime)
         {
-            return Task.CompletedTask;
+            await Alerp.Delay(deliveryTime);
         }
         
         public async Task Build(float buildTime)
@@ -69,12 +64,12 @@ namespace ProcessControl.Industry
             Destroy(this);
         }
 
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             
-            inputInventory = new Inventory(maxInputs, inventorySize);
-            outputInventory = new Inventory(maxOutputs, inventorySize);
+            inputInventory = new Inventory(maxInputs, inventorySize, this.transform);
+            outputInventory = new Inventory(maxOutputs, inventorySize, this.transform);
             if (recipes.Count >= 1) currentRecipe = recipes[0];
         }
 
@@ -85,7 +80,7 @@ namespace ProcessControl.Industry
             if (inputs.Count >= maxInputs) return false;
             if (inputs.Contains(input)) return false;
             inputs.Add(input);
-            currentInput = inputs[0];
+            Input = inputs[0];
             return true;
         }
         
@@ -94,15 +89,15 @@ namespace ProcessControl.Industry
         {
             if (!inputs.Contains(input)) return false;
             inputs.Remove(input);
-            currentInput = (inputs.Count >= 1) ? inputs[0] : null;
+            Input = (inputs.Count >= 1) ? inputs[0] : null;
             return true;
         }
 
         //> SWITCH TO NEXT VALID INPUT
         protected void NextInput()
         {
-            if (!inputEnabled || currentInput is null || maxInputs == 1) return;
-            currentInput = inputs.ItemAfter(currentInput);
+            if (!inputEnabled || Input is null || maxInputs == 1) return;
+            Input = inputs.ItemAfter(Input);
         }
         
         //> CONNECT OUTPUT
@@ -111,7 +106,7 @@ namespace ProcessControl.Industry
             if (outputs.Count >= maxOutputs) return false;
             if (outputs.Contains(output)) return false;
             outputs.Add(output);
-            currentOutput = outputs[0];
+            Output = outputs[0];
             return true;
         }
         
@@ -120,25 +115,25 @@ namespace ProcessControl.Industry
         {
             if (!outputs.Contains(output)) return false;
             outputs.Remove(output);
-            currentOutput = (outputs.Count >= 1) ? outputs[0] : null;
+            Output = (outputs.Count >= 1) ? outputs[0] : null;
             return true;
         }
 
         //> SWITCH TO NEXT VALID OUTPUT
         protected void NextOutput()
         {
-            if (!outputEnabled || currentOutput is null || maxOutputs == 1) return;
-            currentOutput = outputs.ItemAfter(currentOutput);
+            if (!outputEnabled || Output is null || maxOutputs == 1) return;
+            Output = outputs.ItemAfter(Output);
         }
 
 
         //> DEPOSIT RESOURCES
-        virtual public bool CanDeposit(Item item) => inputInventory.CanDeposit(item);
+        virtual public bool CanDeposit(Item item) => inputInventory.CanDeposit(new Stack{item = item, amount = 1});
         virtual public void Deposit(Container container)
         {
             container.position = this.position;
             container.SetVisible(false);
-            inputInventory.Deposit(container.item);
+            inputInventory.Deposit(container.stack);
             ItemFactory.DisposeContainer(container);
             NextInput();
         }
@@ -148,8 +143,8 @@ namespace ProcessControl.Industry
         virtual public bool CanWithdraw() => outputInventory.Count >= 1;
         virtual public Container Withdraw()
         {
-            var item = outputInventory.Withdraw();
-            var container = ItemFactory.SpawnContainer(item, position);
+            var stack = outputInventory.Withdraw();
+            var container = ItemFactory.SpawnContainer(stack.item, position);
             container.SetVisible(true);
             NextOutput();
             return container;
@@ -168,7 +163,7 @@ namespace ProcessControl.Industry
         // }
         
         //> DESTROY AND CLEANUP MACHINE
-        override public void OnDestroy()
+        public override void OnDestroy()
         {
             // inputs.ForEach(Destroy);
             // outputs.ForEach(Destroy);

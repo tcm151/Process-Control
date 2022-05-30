@@ -32,7 +32,7 @@ namespace ProcessControl.Industry
         public Node firstNode, secondNode;
         public Cell firstCell, secondCell;
         // [SerializeField] private List<Machine> builtMachines = new List<Machine>();
-        [SerializeField] private List<IInventory> inventories = new List<IInventory>();
+        [SerializeField] private List<Inventory> inventories = new List<Inventory>();
 
         public Junction defaultJunction;
         public Recipe defaultJunctionRecipe;
@@ -101,8 +101,9 @@ namespace ProcessControl.Industry
                     var node = PlaceNode(schematic.entity as Node, schematic.recipe, cell, false);
                     if (node is Buildable buildable) buildable.Build(0);
 
-                    if (node is IInventory inventory)
+                    if (node is IO io)
                     {
+                        var inventory = io.InputInventory;
                         inventories.Add(inventory);
                         
                         inventory.Deposit(new Stack
@@ -413,7 +414,7 @@ namespace ProcessControl.Industry
                 // {
                 //     for (int i = 0; i < stack.amount; i++)
                 //     {
-                //         ItemFactory.SpawnContainer(stack.item, cell.position);
+                //         ItemFactory.SpawnContainer(stack.stack, cell.position);
                 //     }
                 // });
                 buildable.Disassemble(0);

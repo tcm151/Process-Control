@@ -10,7 +10,7 @@ namespace ProcessControl.Tools.Editor
     {
         private SerializedProperty min, max;
         
-        override public void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
+        public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
         {
             min = property.FindPropertyRelative("min");
             max = property.FindPropertyRelative("max");
@@ -28,7 +28,7 @@ namespace ProcessControl.Tools.Editor
             EditorGUI.EndProperty();
         }
 
-        override public float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return base.GetPropertyHeight(property, label);
         }

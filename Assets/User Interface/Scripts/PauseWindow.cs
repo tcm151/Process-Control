@@ -7,11 +7,11 @@ namespace ProcessControl.UI
 {
     class PauseWindow : UI_Window
     {
-        override public void GoBack() => Resume();
+        public override void GoBack() => Resume();
 
         public static bool IsPaused => Mathf.Approximately(Time.timeScale, 0f);
 
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             Hide();

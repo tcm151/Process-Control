@@ -5,7 +5,7 @@ namespace ProcessControl.UI
 {
     public class ConstructionPanel : UI_Panel
     {
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             ConstructionManager.OnBuildModeChanged += TogglePanel;

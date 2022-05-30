@@ -21,7 +21,7 @@ namespace ProcessControl.Tools.Editor
             grid = target as CellGrid;
         }
 
-        override public void OnInspectorGUI()
+        public override void OnInspectorGUI()
         {
             using var check = new EditorGUI.ChangeCheckScope();
 
