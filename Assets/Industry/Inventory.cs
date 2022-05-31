@@ -8,6 +8,18 @@ namespace ProcessControl.Industry
 {
     [Serializable] public class Inventory
     {
+
+        public Transform parent;
+        public event Action onModified;
+
+        private readonly int slots;
+        private readonly int stackSize;
+        [SerializeField] private List<Stack> inventory = new List<Stack>();
+        
+        public int Count => inventory.Sum(i => i.amount);
+        public bool Full => Count >= slots * stackSize;
+        public bool Empty => inventory.Count == 0;
+        
         //> CONSTRUCTOR
         public Inventory(int slots, int stackSize, Transform parent)
         {
@@ -21,17 +33,6 @@ namespace ProcessControl.Industry
                 empties.ForEach(e => inventory.Remove(e));
             };
         }
-
-        public Transform parent;
-        public event Action onModified;
-
-        private readonly int slots;
-        private readonly int stackSize;
-        [SerializeField] private List<Stack> inventory = new List<Stack>();
-        
-        public int Count => inventory.Sum(i => i.amount);
-        public bool Full => Count >= slots * stackSize;
-        public bool Empty => inventory.Count == 0;
         
         public void Clear()
             => inventory.Clear();
@@ -48,6 +49,7 @@ namespace ProcessControl.Industry
         public bool CanDeposit(Stack stack)
             => inventory.Count < slots || inventory.Any(s => s.item == stack.item && s.amount + stack.amount <= stackSize);
 
+        //> DEPOSIT A STACK OF ITEMS INTO THE INVENTORY
         public void Deposit(Stack stack)
         {
             if (Contains(stack))
@@ -68,6 +70,7 @@ namespace ProcessControl.Industry
             }
         }
 
+        //> WITHDRAW THE FIRST AVAILABLE ITEM
         public Stack Withdraw()
         {
             var stack = inventory.FirstOrDefault(s => s.amount >= 1);
@@ -77,6 +80,7 @@ namespace ProcessControl.Industry
             return new Stack { item = stack.item, amount = 1};
         }
 
+        //> WITHDRAW A STACK OF MATCHING ITEMS
         public Stack Withdraw(Stack match)
         {
             // if (!containers.Any(i => i.amount >= amount)) return default;

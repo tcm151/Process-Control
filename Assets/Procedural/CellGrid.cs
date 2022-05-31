@@ -68,15 +68,18 @@ namespace ProcessControl.Procedural
             GetCellUnderMouse += () => GetCellFromCoords(camera.MousePosition2D().FloorToInt());
             GetCellAtPosition += (position) => GetCellFromCoords(position.ToVector2().FloorToInt());
         }
-
+        
         //> INITIALIZATION
         public async void Start()
         {
             onStartWorldGeneration?.Invoke();
             await Task.Yield();
             
-            
-            // initialize
+            Initialize();   
+        }
+
+        public async void Initialize()
+        {
             timer.Start();
             if (!Initialized) CreateGrid();
             float init = timer.ElapsedMilliseconds;
@@ -93,7 +96,7 @@ namespace ProcessControl.Procedural
             
             Debug.Log($"Generated: {init} | {chunkGen} |= {init+chunkGen} ms");
 
-            CellSpawner.CalculateSpawnLocation();
+            if (Application.isPlaying) CellSpawner.FindSpawnLocation();
             onFinishWorldGeneration?.Invoke();
         }
         

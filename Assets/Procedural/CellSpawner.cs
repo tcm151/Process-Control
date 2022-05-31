@@ -14,7 +14,7 @@ namespace ProcessControl.Procedural
     {
         public static event Action<Vector2> onStartLocationDetermined;
 
-        public static void CalculateSpawnLocation()
+        public static void FindSpawnLocation()
         {
             var timer = new Stopwatch();
             timer.Start();

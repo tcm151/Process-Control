@@ -31,17 +31,24 @@ namespace ProcessControl.Industry
 
         //> LENGTH ON THE CONVEYOR BASED ON CONNECTIONS
         public override float Length =>
-            (Input is null || Output is null) ?
-                0 : Vector3.Distance(Input.position, Output.position);
+            (Input is null || Output is null) ? 0 : Vector3.Distance(Input.position, Output.position);
 
         //> CENTER OF CONVEYOR BASED ON CONNECTIONS
         public override Vector3 Center =>
-            (Input is null || Output is null) ?
-                default : (Input.position + Output.position) / 2f;
+            (Input is null || Output is null) ? default : (Input.position + Output.position) / 2f;
+        
+        //> INITIALIZATION
+        protected override void Awake()
+        {
+            base.Awake();
+            inventory = new Inventory(InventorySize, 1, this.transform);
+        }
 
         //> DEPOSIT RESOURCES
-        public bool CanDeposit(Item item)
-            => containers.Count == 0 || containers.Count < InventorySize && containers.Count >= 1 && containers.Last().ticks >= 2 * TicksPerSecond / itemsPerMinute;
+        public bool CanDeposit(Item item) =>
+            containers.Count == 0 ||
+            containers.Count < InventorySize && containers.Count >= 1 &&
+            containers.Last().ticks >= 2 * TicksPerSecond / itemsPerMinute;
         public void Deposit(Container container)
         {
             containers.Add(container);
@@ -58,11 +65,13 @@ namespace ProcessControl.Industry
             return firstContainer;
         }
 
+        //> DELIVER ITEMS TO CONSTRUCTION JOB
         public async Task Deliver(Stack itemAmounts, float deliveryTime)
         {
             await Alerp.Delay(deliveryTime);
         }
 
+        //> BUILD INTO FINAL CONSTRUCTION
         public async Task Build(float buildTime)
         {
             await Alerp.Delay(buildTime);
@@ -72,6 +81,7 @@ namespace ProcessControl.Industry
             enabled = true;
         }
 
+        //> DISASSEMBLE INTO PARTS
         public async Task Disassemble(float deconstructionTime)
         {
             await Alerp.Delay(deconstructionTime);
@@ -87,6 +97,7 @@ namespace ProcessControl.Industry
             return true;
         }
 
+        //> DISCONNECT INPUT
         public bool DisconnectInput(IO oldInput)
         {
             if (Input != oldInput) return false;
@@ -104,6 +115,7 @@ namespace ProcessControl.Industry
             return true;
         }
 
+        //> DISCONNECT OUTPUT
         public bool DisconnectOutput(IO oldOutput)
         {
             if (Output != oldOutput) return false;
@@ -112,15 +124,8 @@ namespace ProcessControl.Industry
             return true;
         }
 
-        //> INITIALIZATION
-        protected override void Awake()
-        {
-            base.Awake();
-            inventory = new Inventory(InventorySize, 1, this.transform);
-        }
-
         //> MODIFY PROPERTIES ON CONNECTION
-        private void UpdateConnections()
+        internal void UpdateConnections()
         {
             renderer.size = new Vector2(Length, 1);
             if (Input is null || Output is null) return;
@@ -134,7 +139,7 @@ namespace ProcessControl.Industry
         {
             if (!enabled) return;
 
-            //> EVERY INTERVAL PULL FROM INPUT IF CAPABLE
+            //- every interval pull from input if capable
             if (++ticks > (TicksPerMinute / (itemsPerMinute * 2)))
             {
                 // if (containers.Count <= 0) return;
@@ -146,7 +151,7 @@ namespace ProcessControl.Industry
                 }
             }
 
-            //> MOVE RESOURCES ALONG CONVEYOR PATH
+            //- move resources along conveyor path
             for (int i = 0; i < containers.Count; i++)
             {
                 var resource = containers[i];
@@ -157,7 +162,7 @@ namespace ProcessControl.Industry
             }
 
 
-            //> DEPOSIT FIRST ITEM IN OUTPUT
+            //- deposit first item in output
             if (!CanWithdraw() || !Output.CanDeposit(containers[0].stack.item)) return;
             {
                 if (Output is Junction && Output.Input as Conveyor != this) return;

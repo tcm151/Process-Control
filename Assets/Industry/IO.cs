@@ -31,12 +31,34 @@ namespace ProcessControl.Industry
     {
         // public static bool ConnectInput(this IO source, IO destination)
         // {
-        //     if (source.Output == destination) return false;
-        //     source.Input = destination;
-        //     // source.UpdateConnections();
-        //     return true;
-        // }
+        //     if (source is Conveyor conveyorSource)
+        //     {
+        //         if (conveyorSource.Output == destination) return false;
+        //         conveyorSource.Input = destination;
+        //         conveyorSource.UpdateConnections();
+        //         return true;
+        //     }
         //
+        //     if (source is Machine machineSource)
+        //     {
+        //         if (machineSource.inputs.Count >= machineSource.maxInputs) return false;
+        //         if (machineSource.inputs.Contains(destination)) return false;
+        //         machineSource.inputs.Add(destination);
+        //         machineSource.Input = machineSource.inputs[0];
+        //         return true;
+        //     }
+        //
+        //     if (source is Junction junctionSource)
+        //     {
+        //         if (junctionSource.inputs.Contains(destination)) return false;
+        //         inputs.Add(input);
+        //         currentInput = inputs[0];
+        //         return true;
+        //     }
+        //
+        //     return false;
+        // }
+        
         // public static bool ConnectOutput(this IO source, IO destination)
         // {
         //     if (output != oldOutput) return false;

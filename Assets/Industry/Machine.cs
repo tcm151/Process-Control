@@ -31,7 +31,6 @@ namespace ProcessControl.Industry
         public bool inputEnabled = true;
         public int maxInputs = 1;
         public IO Input {get; set;}
-
         public readonly List<IO> inputs = new List<IO>();
 
 
@@ -39,7 +38,6 @@ namespace ProcessControl.Industry
         public bool outputEnabled = true;
         public int maxOutputs = 1;
         public IO Output {get; set;}
-
         private readonly List<IO> outputs = new List<IO>();
 
         public async Task Deliver(Stack itemAmounts, float deliveryTime)
