@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ProcessControl.Industry;
+using ProcessControl.Tools;
+using UnityEditor.Scripting;
 using UnityEngine;
 
 namespace ProcessControl.UI
@@ -11,10 +13,14 @@ namespace ProcessControl.UI
         [SerializeField] private ConstructionManager cm;
         private bool showing;
         
-        protected override void Awake()
+        private void Start()
         {
-            base.Awake();
-            showing = !cm.queueJobGlobal;
+            var constructionManager = ServiceManager.Current.RequestService<ConstructionManager>();
+            if (!constructionManager)
+            {
+                Debug.Log("CONSTRUCTION MANAGER! Nope.");
+            }
+            showing = constructionManager.godModEnabled;
             
             if (showing) Show();
             else Hide();

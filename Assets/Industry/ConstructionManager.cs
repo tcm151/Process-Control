@@ -13,7 +13,7 @@ using ProcessControl.Pathfinding;
 
 namespace ProcessControl.Industry
 {
-    public class ConstructionManager : MonoBehaviour
+    public class ConstructionManager : Service
     {
         //> EVENT TRIGGERS
         public static Action<Schematic> SetPart;
@@ -22,7 +22,7 @@ namespace ProcessControl.Industry
         //> EVENT SUBSCRIPTIONS
         public static Action<bool> OnBuildModeChanged;
 
-        public bool queueJobGlobal = true;
+        public bool godModEnabled = true;
         [SerializeField] private bool buildMode;
         [SerializeField] private bool conveyorMode;
         [SerializeField] private Recipe selectedRecipe;
@@ -34,17 +34,17 @@ namespace ProcessControl.Industry
         // [SerializeField] private List<Machine> builtMachines = new List<Machine>();
         [SerializeField] private List<Inventory> inventories = new List<Inventory>();
 
-        public Junction defaultJunction;
+        public Schematic defaultJunction;
         public Recipe defaultJunctionRecipe;
 
         //> INITIALIZATION
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             camera = Camera.main;
-
             SetPart += (part) => selectedSchematic = part;
             SetEdgeMode += (edgeMode) => conveyorMode = edgeMode;
-
             CellSpawner.onStartLocationDetermined += GenerateSpawnArea;
         }
         
@@ -98,13 +98,25 @@ namespace ProcessControl.Industry
                 for (int i = 0; i < 1; i++)
                 {
                     var cell = CellGrid.GetCellAtPosition(CellSpawner.GenerateRandomSpawn(c => c.buildable, startPosition.FloorToInt(), 25));
-                    var node = PlaceNode(schematic.entity as Node, schematic.recipe, cell, false);
+                    var node = PlaceNode(schematic, cell, false);
                     if (node is Buildable buildable) buildable.Build(0);
 
                     if (node is IO io)
                     {
                         var inventory = io.InputInventory;
                         inventories.Add(inventory);
+                        
+                        inventory.Deposit(new Stack
+                        {
+                            item = ItemFactory.GetItem("Machine Frame"),
+                            amount = 128,
+                        });
+                        
+                        inventory.Deposit(new Stack
+                        {
+                            item = ItemFactory.GetItem("Stone Furnace"),
+                            amount = 128,
+                        });
                         
                         inventory.Deposit(new Stack
                         {
@@ -160,7 +172,7 @@ namespace ProcessControl.Industry
         }
 
         //> BUILD EDGE BETWEEN TWO NODES
-        private void PlaceEdge(Recipe recipe, Node firstNode, Node secondNode)
+        public void PlaceEdge(Recipe recipe, Node firstNode, Node secondNode, bool queueJob = true)
         {
             if (!(selectedSchematic.entity is Edge selectedEdge)) return;
             
@@ -199,7 +211,7 @@ namespace ProcessControl.Industry
             
             if (conveyor is Buildable buildable)
             {
-                if (queueJobGlobal)
+                if (queueJob && !godModEnabled)
                 {
                     JobManager.QueueEdgeConstruction(firstCell, secondCell, recipe, buildable, inventories);
                 }
@@ -207,13 +219,13 @@ namespace ProcessControl.Industry
             }
         }
 
-        private Node PlaceNode(Node selectedNode, Recipe recipe, Cell cell, bool queueJob = true)
+        public Node PlaceNode(Schematic schematic , Cell cell, bool queueJob = true)
         {
-            Node node = (selectedNode) switch
+            Node node = (schematic.entity) switch
             {
-                Junction _ => Factory.Spawn("Junctions", selectedNode, cell.position),
-                Machine _ => Factory.Spawn("Machines", selectedNode, cell.position), 
-                _ => Factory.Spawn("Junctions", selectedNode, cell.position),
+                Junction junction => Factory.Spawn("Junctions", junction, cell.position),
+                Machine machine  => Factory.Spawn("Machines", machine, cell.position), 
+                _               => Factory.Spawn("Nodes", schematic.entity as Node, cell.position),
             };
 
             cell.node = node;
@@ -221,9 +233,9 @@ namespace ProcessControl.Industry
 
             if (node is Buildable buildable)
             {
-                if (queueJob && queueJobGlobal)
+                if (queueJob && !godModEnabled)
                 {
-                    JobManager.QueueNodeConstruction(cell, recipe, buildable, inventories);
+                    JobManager.QueueNodeConstruction(cell, schematic.recipe, buildable, inventories);
                 }
                 else buildable.Build(0);
             }
@@ -238,7 +250,7 @@ namespace ProcessControl.Industry
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                queueJobGlobal = !queueJobGlobal;
+                godModEnabled = !godModEnabled;
             }
             
             //- toggle build mode
@@ -269,7 +281,7 @@ namespace ProcessControl.Industry
                         Debug.Log("Invalid parentCell!");
                         return;
                     }
-                    firstNode = (firstCell.occupied) ? firstCell.node : PlaceNode(defaultJunction, defaultJunctionRecipe, firstCell);
+                    firstNode = (firstCell.occupied) ? firstCell.node : PlaceNode(defaultJunction, firstCell);
                     if (firstNode is null) return;
                     
                      
@@ -277,7 +289,7 @@ namespace ProcessControl.Industry
                     if (firstCell is null || secondCell is null || !secondCell.buildable) Debug.Log("Invalid parentCell!");
                     else
                     {
-                        secondNode = (secondCell.occupied) ? secondCell.node : PlaceNode(defaultJunction, defaultJunctionRecipe, secondCell);
+                        secondNode = (secondCell.occupied) ? secondCell.node : PlaceNode(defaultJunction, secondCell);
 
                         //- if conveyor end points not parallel
                         if ((firstCell.coords.x == secondCell.coords.x) == (firstCell.coords.y == secondCell.coords.y))
@@ -299,7 +311,7 @@ namespace ProcessControl.Industry
                                 return;
                             }
 
-                            var junction = PlaceNode(defaultJunction, defaultJunctionRecipe, bestCell);
+                            var junction = PlaceNode(defaultJunction, bestCell);
                             
                             PlaceEdge(selectedSchematic.recipe, firstNode, junction);
                             PlaceEdge(selectedSchematic.recipe, junction, secondNode);
@@ -353,7 +365,7 @@ namespace ProcessControl.Industry
 
                 }
 
-                if (!cell.occupied) PlaceNode(selectedSchematic.entity as Node, selectedSchematic.recipe, cell);
+                if (!cell.occupied) PlaceNode(selectedSchematic, cell);
             }
             
             //- right click delete
@@ -384,9 +396,9 @@ namespace ProcessControl.Industry
             }
         }
 
-        private void RemoveEntity(Cell cell, Buildable buildable)
+        private void RemoveEntity(Cell cell, Buildable buildable, bool queueJob = true)
         {
-            if (queueJobGlobal)
+            if (queueJob)
             {
                 JobManager.QueueJob(new Job
                 {

@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 namespace ProcessControl.Tools
 {
-    abstract public class Factory : MonoBehaviour
+    abstract public class Factory : Service
     {
         //> CREATE AND INSTANCE ON PREFAB
         public static T Spawn<T>(string sceneName, T prefab, Vector3 position) where T : MonoBehaviour

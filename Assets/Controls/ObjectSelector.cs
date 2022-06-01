@@ -52,7 +52,7 @@ public class ObjectSelector : MonoBehaviour
         }
     }
 
-    private static List<T> BoxSelection<T>(Vector2 firstCorner, Vector2 secondCorner)
+    public static List<T> BoxSelection<T>(Vector2 firstCorner, Vector2 secondCorner)
     {
         var colliders = Physics2D.OverlapAreaAll(firstCorner, secondCorner);
         var matches = new List<T>();

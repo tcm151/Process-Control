@@ -1,13 +1,12 @@
+using ProcessControl.Tools;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 
 
 namespace ProcessControl
 {
-    public class DayNight : MonoBehaviour
+    public class DayNight : Service
     {
-        
-        
         [Header("Lighting")]
         public Light2D sun;
         public AnimationCurve sunCurve;
@@ -22,8 +21,12 @@ namespace ProcessControl
         private void SetSunIntensity() => sun.intensity = sunCurve.Evaluate(ticks);
 
         //> INITIALIZE
-        private void Awake() => ticks = morning;
-        
+        protected override void Awake()
+        {
+            base.Awake();
+            ticks = morning;
+        }
+
         //> UPDATE ON CHANGED IN INSPECTOR
         private void OnValidate() => SetSunIntensity();
 

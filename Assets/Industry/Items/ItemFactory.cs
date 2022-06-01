@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using ProcessControl.Graphs;
 using UnityEngine;
 using UnityEngine.Serialization;
 using ProcessControl.Tools;
@@ -17,18 +18,30 @@ namespace ProcessControl.Industry
 
         //> EVENT HOOKS
         public static Func<string, Item> GetItem;
+        public static Func<string, Schematic> GetSchematic;
         public static Func<Stack, bool> Exists;
         public static Func<Vector3, Stack, Container> FindItemByClosest;
         public static Func<Vector3, Stack, List<Container>> FindItemsByClosest;
         public static Func<Item, Vector3, Container> SpawnContainer;
         public static Action<Container> DisposeContainer;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             GetItem += (name) =>
             {
                 var item = itemPrefabs.FirstOrDefault(i => i.name == name);
                 if (item is {}) return item;
+            
+                Debug.Log($"Item \"{name}\" was not found.");
+                return default;
+            };
+            
+            GetSchematic += (name) =>
+            {
+                var item = itemPrefabs.FirstOrDefault(i => i.name == name);
+                if (item is Schematic schematic) return schematic;
             
                 Debug.Log($"Item \"{name}\" was not found.");
                 return default;

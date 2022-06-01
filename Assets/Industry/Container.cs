@@ -14,17 +14,17 @@ namespace ProcessControl.Industry
         
         public void SetVisible(bool isVisible) => renderer.enabled = isVisible;
 
-        private void OnValidate()
-        {
-            if (stack is null) return;
-            
-            Awake();
-            SetItem(stack);
-        }
+        // private void OnValidate()
+        // {
+        //     if (stack is null) return;
+        //     
+        //     Awake();
+        //     SetItem(stack);
+        // }
 
         protected override void Awake()
         {
-            renderer = GetComponent<SpriteRenderer>();
+            base.Awake();
             var enabledColor = renderer.color;
             enabledColor.a = EnabledAlpha;
             renderer.color = enabledColor;

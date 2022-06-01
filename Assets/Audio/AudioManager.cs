@@ -11,7 +11,7 @@ using UnityEditor;
 namespace ProcessControl.Audio
 {
     
-    public class AudioManager : MonoBehaviour
+    public class AudioManager : Service
     {
         //- LOCAL VARIABLES
         [SerializeField] private SFX[] soundEffects;
@@ -25,9 +25,9 @@ namespace ProcessControl.Audio
         private bool cancelPlaylist;
 
         //> INITIALIZATION
-        private void Awake()
+        protected override void Awake()
         {
-            
+            base.Awake();
             AudioListener.volume = PlayerPrefs.GetFloat("GlobalVolume", 1f);
 
             PlaySFX += OnPlaySFX;
@@ -47,7 +47,7 @@ namespace ProcessControl.Audio
             };
         }
 
-        private void Start()
+        public void Start()
         {
             var musicPlaylist = new List<SFX>
             {
@@ -69,9 +69,7 @@ namespace ProcessControl.Audio
                 if (cancelPlaylist) return;
                 
                 OnPlayTrack(track, channel);
-                // yield return new WaitForSeconds(track.clip.length);
                 await Alerp.Delay(track.clip.length);
-                // await Task.Delay((int)(track.clip.length * 1000f));
             }
             
             // if (loop) StartPlaylist(tracks, channel, shuffle, loop);

@@ -11,7 +11,7 @@ using Stack = ProcessControl.Industry.Stack;
 
 namespace ProcessControl.Jobs
 {
-    public class JobManager : MonoBehaviour
+    public class JobManager : Service
     {
         public static Action<Job> QueueJob;
         // public static Action<List<Job>> QueueJobs;
@@ -26,8 +26,10 @@ namespace ProcessControl.Jobs
         [SerializeField] private List<Worker> busyWorkers = new List<Worker>();
 
         //> INITIALIZATION
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             // program events
             QueueJob += (job) => openJobs.Add(job);
             // QueueJobs += (jobList) => jobList.ForEach(j => openJobs.Add(j));
