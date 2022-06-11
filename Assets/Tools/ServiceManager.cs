@@ -6,43 +6,40 @@ using UnityEngine;
 
 namespace ProcessControl.Tools
 {
-    public class ServiceManager : MonoBehaviour
-    {
-        public static ServiceManager Current {get; private set;}
+	public class ServiceManager : MonoBehaviour
+	{
+		public static ServiceManager Current { get; private set; }
 
-        [SerializeReference] private readonly List<Service> services = new List<Service>();
-        
-        public static Action<Service> RegisterService;
-        public static Action<Service> RemoveService;
+		[SerializeReference] private readonly List<Service> services = new List<Service>();
 
-        public T RequestService<T>()
-        where T : Service
-        {
-            if (!services.Any(s => s is T))
-            {
-                Debug.Log($"Service '{typeof(T).Name}' does not exist.");
-                return default;
-            }
-            return services.Find(s => s is T) as T;
-        }
+		public static Action<Service> RegisterService;
+		public static Action<Service> RemoveService;
 
-        private void Awake()
-        {
-            Current = this;
+		public T RequestService<T>() where T : Service
+		{
+			if (services.Any(s => s is T)) return services.Find(s => s is T) as T;
+			Debug.Log($"Service '{typeof(T).Name}' does not exist.");
+			return default;
 
-            RegisterService += (newService) =>
-            {
-                services.Add(newService);
-                Debug.Log($"Service {newService} successfully registered.");
-            };
-            RemoveService += (oldService) => services.Remove(oldService);
+		}
 
-            //- check for dupes
-            var duplicates = FindObjectsOfType<ServiceManager>();
-            if (duplicates.Length > 1)
-            {
-                Debug.Log("More than 1 ServiceManager present.");
-            }
-        }
-    }
+		private void Awake()
+		{
+			Current = this;
+
+			RegisterService += (newService) =>
+			{
+				services.Add(newService);
+				Debug.Log($"Service {newService} successfully registered.");
+			};
+			RemoveService += (oldService) => services.Remove(oldService);
+
+			//- check for dupes
+			var duplicates = FindObjectsOfType<ServiceManager>();
+			if (duplicates.Length > 1)
+			{
+				Debug.Log("More than 1 ServiceManager present.");
+			}
+		}
+	}
 }

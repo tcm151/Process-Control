@@ -185,7 +185,7 @@ namespace ProcessControl.Industry
                 return;
             }
 
-            var conveyor = Factory.Spawn("Conveyors", selectedEdge, (firstNode.position + secondNode.position) / 2f);
+            var conveyor = Factory.Spawn(selectedEdge, (firstNode.position + secondNode.position) / 2f, "Conveyors");
             conveyor.enabled = false;
 
             if (firstNode is IO firstIO && secondNode is IO secondIO && conveyor is IO conveyorIO)
@@ -223,9 +223,9 @@ namespace ProcessControl.Industry
         {
             Node node = (schematic.entity) switch
             {
-                Junction junction => Factory.Spawn("Junctions", junction, cell.position),
-                Machine machine  => Factory.Spawn("Machines", machine, cell.position), 
-                _               => Factory.Spawn("Nodes", schematic.entity as Node, cell.position),
+                Junction junction => Factory.Spawn(junction, cell.position, "Junctions"),
+                Machine machine   => Factory.Spawn(machine, cell.position, "Machines"), 
+                _                 => Factory.Spawn(schematic.entity as Node, cell.position, "Nodes"),
             };
 
             cell.node = node;
