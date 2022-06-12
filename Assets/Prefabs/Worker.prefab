@@ -129,6 +129,7 @@ MonoBehaviour:
   stackSize: 16
   inventorySlots: 4
   inventory:
+    parent: {fileID: 0}
     inventory: []
   currentJob:
     description: no job.

@@ -9,7 +9,7 @@ namespace ProcessControl.Tools.Editor
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(CellGrid))]
-    public class TileGrid_Inspector : UnityEditor.Editor
+    public class CellGrid_Inspector : UnityEditor.Editor
     {
         private CellGrid grid;
         private bool autoUpdateChunks;
@@ -37,12 +37,11 @@ namespace ProcessControl.Tools.Editor
                 // if (autoUpdateResources) grid.GenerateAllResources();
             }
 
-            if (GUILayout.Button("Generate Grid"))
-            {
-                grid.Start();
-            }
-
+            if (GUILayout.Button("Generate Grid")) grid.Start();
             if (GUILayout.Button("Clear Grid")) grid.ClearAllTiles();
+
+            if (GUILayout.Button("Save Data")) grid.gridData.Serialize();
+            if (GUILayout.Button("Load Data")) grid.gridData.Deserialize();
         }
     }
 }

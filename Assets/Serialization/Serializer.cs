@@ -11,7 +11,8 @@ namespace ProcessControl
 {
     public interface Serializeable
     {
-        
+        public void Serialize();
+        public void Deserialize();
     }
     
     public class Serializer : Service
@@ -20,7 +21,7 @@ namespace ProcessControl
         
         private readonly List<Serializeable> thingsToSerialize = new List<Serializeable>();
 
-        private void Awake()
+        private void Start()
         {
             constructionManager = ServiceManager.Current.RequestService<ConstructionManager>();
         }

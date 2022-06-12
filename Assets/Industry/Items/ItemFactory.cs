@@ -25,6 +25,15 @@ namespace ProcessControl.Industry
 		public static Func<Item, Vector3, Container> SpawnContainer;
 		public static Action<Container> DisposeContainer;
 
+		public T Get<T>(string name) where T : Item
+		{
+			var item = itemPrefabs.FirstOrDefault(i => i.name == name);
+			if (item is { }) return item as T;
+
+			Debug.Log($"Item \"{name}\" was not found.");
+			return default;
+		}
+		
 		protected override void Awake()
 		{
 			base.Awake();
