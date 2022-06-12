@@ -16,6 +16,8 @@ namespace ProcessControl.Tools.Editor
         private bool autoUpdateTerrain;
         private bool autoUpdateResources;
 
+        private static string fileName;
+        
         private void OnEnable()
         {
             grid = target as CellGrid;
@@ -40,8 +42,9 @@ namespace ProcessControl.Tools.Editor
             if (GUILayout.Button("Generate Grid")) grid.Start();
             if (GUILayout.Button("Clear Grid")) grid.ClearAllTiles();
 
-            if (GUILayout.Button("Save Data")) grid.gridData.Serialize();
-            if (GUILayout.Button("Load Data")) grid.gridData.Deserialize();
+            fileName = EditorGUILayout.TextField("File Name", fileName);
+            if (GUILayout.Button("Save Data")) grid.data.Save(fileName);
+            if (GUILayout.Button("Load Data")) grid.data.Load(fileName);
         }
     }
 }

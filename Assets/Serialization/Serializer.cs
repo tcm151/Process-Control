@@ -7,14 +7,8 @@ using ProcessControl.Procedural;
 using ProcessControl.Tools;
 using UnityEngine;
 
-namespace ProcessControl
+namespace ProcessControl.Serialization
 {
-    public interface Serializeable
-    {
-        public void Serialize();
-        public void Deserialize();
-    }
-    
     public class Serializer : Service
     {
         private ConstructionManager constructionManager;
