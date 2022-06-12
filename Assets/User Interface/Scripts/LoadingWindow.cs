@@ -10,8 +10,8 @@ namespace ProcessControl.User_Interface.Scripts
         {
             base.Awake();
             
-            CellGrid.onStartWorldGeneration += Show;
-            CellGrid.onFinishWorldGeneration += Hide;
+            CellGrid.onWorldGenerationStarted += Show;
+            CellGrid.onWorldGenerationFinished += Hide;
         }
     }
 }

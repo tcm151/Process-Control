@@ -15,66 +15,58 @@ using Range = ProcessControl.Tools.Range;
 
 namespace ProcessControl.Procedural
 {
+    [Serializable]
+    public class CellGridData : Data<CellGrid>
+    {
+        [Header("Resolution")]
+        public int chunkSize = 64;
+        public int size = 4;
+        public int renderDistance = 128;
+            
+            
+        [Header("Generation")]
+        public string seed;
+        public Range noiseRange = new Range();
+        public Range rainRange = new Range();
+        public Range heatRange = new Range();
+        public List<Noise.Layer> terrainNoise;
+        public List<ResourceNoiseLayer> resourceNoise;
+        public List<Noise.Layer> biomeNoise;
+
+        [Header("Cells & Chunks")]
+        public Chunk[,] chunks;
+        public Cell lastCell;
+
+        [Space]
+        public bool showNeighbours;
+
+        public void Save()
+        {
+            FileManager.WriteFile($"{seed}.json", this);
+        }
+
+        public void Load()
+        {
+            var data = FileManager.ReadFile<CellGridData>($"{seed}.json");
+            chunkSize = data.chunkSize;
+            size = data.size;
+            renderDistance = data.renderDistance;
+            seed = data.seed;
+            terrainNoise = data.terrainNoise;
+            resourceNoise = data.resourceNoise;
+            biomeNoise = data.biomeNoise;
+        }
+    }
+    
     [RequireComponent(typeof(Grid))]
     public class CellGrid : MonoBehaviour
     {
-        [Serializable]
-        public class Data : Serializeable
-        {
-            [Header("Resolution")]
-            public int chunkSize = 64;
-            public int size = 4;
-            public int renderDistance = 128;
-            
-            
-            [Header("Generation")]
-            public string seed;
-            public Range noiseRange = new Range();
-            public Range rainRange = new Range();
-            public Range heatRange = new Range();
-            public List<Noise.Layer> terrainNoise;
-            public List<ResourceNoiseLayer> resourceNoise;
-            public List<Noise.Layer> biomeNoise;
-
-            [Header("Cells & Chunks")]
-            public Chunk[,] chunks;
-            public Cell lastCell;
-
-            [Space]
-            public bool showNeighbours;
-
-            public void Serialize()
-            {
-                FileManager.WriteFile($"{seed}.json", this);
-            }
-
-            public void Deserialize()
-            {
-                var data = FileManager.ReadFile<Data>($"{seed}.json");
-                chunkSize = data.chunkSize;
-                size = data.size;
-                renderDistance = data.renderDistance;
-                seed = data.seed;
-                terrainNoise = data.terrainNoise;
-                resourceNoise = data.resourceNoise;
-                biomeNoise = data.biomeNoise;
-                
-                
-            }
-        }
-        
-        
-        
-        [SerializeReference] public List<Tilemap> tilemaps;
         [SerializeReference] public List<TileBase> tiles;
-        // [SerializeReference] public Resource sandResource;
-        // [SerializeReference] public Resource stoneResource;
+        [SerializeReference] public List<Tilemap> tilemaps;
         
-        [FormerlySerializedAs("grid")][SerializeField] internal Data gridData;
+        [FormerlySerializedAs("gridData")][SerializeField] internal CellGridData gridCellGridData;
 
-        public void SetGridData(Data gridData) => this.gridData = gridData;
-
-        private bool Initialized => gridData.chunks is { };
+        private bool GridExists => gridCellGridData.chunks is { };
 
         public static event Action onFinishWorldGeneration;
         public static event Action onStartWorldGeneration;
@@ -110,11 +102,11 @@ namespace ProcessControl.Procedural
         public async void Initialize()
         {
             timer.Start();
-            if (!Initialized) CreateGrid();
+            if (!GridExists) CreateGrid();
             float init = timer.ElapsedMilliseconds;
             
             // get closest chunks to spawn
-            var closeChunks = gridData.chunks.Where(c => Vector3.Distance(Vector3.zero, c.chunkCenter) < gridData.renderDistance);
+            var closeChunks = gridCellGridData.chunks.Where(c => Vector3.Distance(Vector3.zero, c.chunkCenter) < gridCellGridData.renderDistance);
             
             // generate the terrain
             timer.Restart();
@@ -134,7 +126,7 @@ namespace ProcessControl.Procedural
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                gridData.lastCell = GetCellUnderMouse();
+                gridCellGridData.lastCell = GetCellUnderMouse();
             }
         }
 
@@ -149,10 +141,10 @@ namespace ProcessControl.Procedural
         private Chunk GetChunkFromCoords(Vector2Int coords)
         {
             var floatCoords = coords.ToVector2();
-            float bounds = (gridData.size * gridData.chunkSize) / 2f;
-            var x = floatCoords.x.Remap(-bounds, bounds - 1, 0, gridData.size - 0.0001f).FloorToInt();
-            var y = floatCoords.y.Remap(-bounds, bounds - 1, 0, gridData.size - 0.0001f).FloorToInt();
-            Chunk chunk = gridData.chunks?[x,y];
+            float bounds = (gridCellGridData.size * gridCellGridData.chunkSize) / 2f;
+            var x = floatCoords.x.Remap(-bounds, bounds - 1, 0, gridCellGridData.size - 0.0001f).FloorToInt();
+            var y = floatCoords.y.Remap(-bounds, bounds - 1, 0, gridCellGridData.size - 0.0001f).FloorToInt();
+            Chunk chunk = gridCellGridData.chunks?[x,y];
             return chunk;
         }
 
@@ -160,63 +152,63 @@ namespace ProcessControl.Procedural
         public void CreateGrid()
         {
             //- random seed noise layers
-            if (gridData.seed != "") Random.InitState(gridData.seed.GetHashCode());
-            gridData.biomeNoise.ForEach(b => b.offset = Random.insideUnitSphere * (Random.value * 5));
-            gridData.terrainNoise.ForEach(t => t.offset = Random.insideUnitSphere * (Random.value * 10));
-            gridData.resourceNoise.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
+            if (gridCellGridData.seed != "") Random.InitState(gridCellGridData.seed.GetHashCode());
+            gridCellGridData.biomeNoise.ForEach(b => b.offset = Random.insideUnitSphere * (Random.value * 5));
+            gridCellGridData.terrainNoise.ForEach(t => t.offset = Random.insideUnitSphere * (Random.value * 10));
+            gridCellGridData.resourceNoise.ForEach(r => r.offset = Random.insideUnitSphere * (Random.value * 2));
 
             //- gather and clear tilemaps
             tilemaps = GetComponentsInChildren<Tilemap>().ToList();
             ClearAllTiles();
             
             //- create chunk array
-            gridData.chunks = new Chunk[gridData.size, gridData.size];
-            for (int y = 0; y < gridData.size; y++) {
-                for (int x = 0; x < gridData.size; x++)
+            gridCellGridData.chunks = new Chunk[gridCellGridData.size, gridCellGridData.size];
+            for (int y = 0; y < gridCellGridData.size; y++) {
+                for (int x = 0; x < gridCellGridData.size; x++)
                 {
-                    float xOffset = (x - (gridData.size / 2f)) * gridData.chunkSize;
-                    float yOffset = (y - (gridData.size / 2f)) * gridData.chunkSize;
-                    gridData.chunks[x, y] = new Chunk
+                    float xOffset = (x - (gridCellGridData.size / 2f)) * gridCellGridData.chunkSize;
+                    float yOffset = (y - (gridCellGridData.size / 2f)) * gridCellGridData.chunkSize;
+                    gridCellGridData.chunks[x, y] = new Chunk
                     {
                         chunkCenter = new Vector3
                         {
-                            x = xOffset + gridData.chunkSize / 2f,
-                            y = yOffset + gridData.chunkSize / 2f,
+                            x = xOffset + gridCellGridData.chunkSize / 2f,
+                            y = yOffset + gridCellGridData.chunkSize / 2f,
                             z = 0f,
                         },
                         
                         chunkOffset = new Vector2Int(xOffset.FloorToInt(), yOffset.FloorToInt()),
                         neighbours = new Chunk[8],
-                        cells = new Cell[gridData.chunkSize, gridData.chunkSize],
+                        cells = new Cell[gridCellGridData.chunkSize, gridCellGridData.chunkSize],
                     };
                 }
             }
             
             //- assign chunk neighbours
-            for (int y = 0; y < gridData.size; y++) {
-                for (int x = 0; x < gridData.size; x++)
+            for (int y = 0; y < gridCellGridData.size; y++) {
+                for (int x = 0; x < gridCellGridData.size; x++)
                 {
                     //~ top left, top middle, top right
-                    if (x - 1 >= 0 && y + 1 < gridData.size)        gridData.chunks[x, y].neighbours[0] = gridData.chunks[x - 1, y + 1];
-                    if (y + 1 < gridData.size)                      gridData.chunks[x, y].neighbours[1] = gridData.chunks[  x  , y + 1];
-                    if (x + 1 < gridData.size && y + 1 < gridData.size) gridData.chunks[x, y].neighbours[2] = gridData.chunks[x + 1, y + 1];
+                    if (x - 1 >= 0 && y + 1 < gridCellGridData.size)        gridCellGridData.chunks[x, y].neighbours[0] = gridCellGridData.chunks[x - 1, y + 1];
+                    if (y + 1 < gridCellGridData.size)                      gridCellGridData.chunks[x, y].neighbours[1] = gridCellGridData.chunks[  x  , y + 1];
+                    if (x + 1 < gridCellGridData.size && y + 1 < gridCellGridData.size) gridCellGridData.chunks[x, y].neighbours[2] = gridCellGridData.chunks[x + 1, y + 1];
 
                     //~ left and right
-                    if (x - 1 >= 0)        gridData.chunks[x, y].neighbours[3] = gridData.chunks[x - 1, y];
-                    if (x + 1 < gridData.size) gridData.chunks[x, y].neighbours[4] = gridData.chunks[x + 1, y];
+                    if (x - 1 >= 0)        gridCellGridData.chunks[x, y].neighbours[3] = gridCellGridData.chunks[x - 1, y];
+                    if (x + 1 < gridCellGridData.size) gridCellGridData.chunks[x, y].neighbours[4] = gridCellGridData.chunks[x + 1, y];
 
                     //~ bottom left, bottom middle, bottomRight
-                    if (x - 1 >= 0 && y - 1 >= 0)        gridData.chunks[x, y].neighbours[5] = gridData.chunks[x - 1, y - 1];
-                    if (y - 1 >= 0)                      gridData.chunks[x, y].neighbours[6] = gridData.chunks[  x  , y - 1];
-                    if (x + 1 < gridData.size && y - 1 >= 0) gridData.chunks[x, y].neighbours[7] = gridData.chunks[x + 1, y - 1];
+                    if (x - 1 >= 0 && y - 1 >= 0)        gridCellGridData.chunks[x, y].neighbours[5] = gridCellGridData.chunks[x - 1, y - 1];
+                    if (y - 1 >= 0)                      gridCellGridData.chunks[x, y].neighbours[6] = gridCellGridData.chunks[  x  , y - 1];
+                    if (x + 1 < gridCellGridData.size && y - 1 >= 0) gridCellGridData.chunks[x, y].neighbours[7] = gridCellGridData.chunks[x + 1, y - 1];
                 }
             }
             
             //- create cell arrays
-            gridData.chunks.ForEach(chunk =>
+            gridCellGridData.chunks.ForEach(chunk =>
             {
-                for (int y = 0; y < gridData.chunkSize; y++) {
-                    for (int x = 0; x < gridData.chunkSize; x++)
+                for (int y = 0; y < gridCellGridData.chunkSize; y++) {
+                    for (int x = 0; x < gridCellGridData.chunkSize; x++)
                     {
                         chunk.cells[x, y] = new Cell
                         {
@@ -229,59 +221,59 @@ namespace ProcessControl.Procedural
             });
             
             //- assign cell neighbours
-            gridData.chunks.ForEach(chunk =>
+            gridCellGridData.chunks.ForEach(chunk =>
             {
                 // loop over every cell in said chunk
-                for (int y = 0; y < gridData.chunkSize; y++) {
-                    for (int x = 0; x < gridData.chunkSize; x++)
+                for (int y = 0; y < gridCellGridData.chunkSize; y++) {
+                    for (int x = 0; x < gridCellGridData.chunkSize; x++)
                     {
-                        if (x - 1 >= 0 && y + 1 < gridData.chunkSize) chunk.cells[x, y].neighbours[0] = chunk.cells[x - 1, y + 1];
-                        if (y + 1 < gridData.chunkSize) chunk.cells[x, y].neighbours[1] = chunk.cells[x, y + 1];
-                        if (x + 1 < gridData.chunkSize && y + 1 < gridData.chunkSize) chunk.cells[x, y].neighbours[2] = chunk.cells[x + 1, y + 1];
+                        if (x - 1 >= 0 && y + 1 < gridCellGridData.chunkSize) chunk.cells[x, y].neighbours[0] = chunk.cells[x - 1, y + 1];
+                        if (y + 1 < gridCellGridData.chunkSize) chunk.cells[x, y].neighbours[1] = chunk.cells[x, y + 1];
+                        if (x + 1 < gridCellGridData.chunkSize && y + 1 < gridCellGridData.chunkSize) chunk.cells[x, y].neighbours[2] = chunk.cells[x + 1, y + 1];
 
                         if (x - 1 >= 0) chunk.cells[x, y].neighbours[3] = chunk.cells[x - 1, y];
-                        if (x + 1 < gridData.chunkSize) chunk.cells[x, y].neighbours[4] = chunk.cells[x + 1, y];
+                        if (x + 1 < gridCellGridData.chunkSize) chunk.cells[x, y].neighbours[4] = chunk.cells[x + 1, y];
 
                         if (x - 1 >= 0 && y - 1 >= 0) chunk.cells[x, y].neighbours[5] = chunk.cells[x - 1, y - 1];
                         if (y - 1 >= 0) chunk.cells[x, y].neighbours[6] = chunk.cells[x, y - 1];
-                        if (x + 1 < gridData.chunkSize && y - 1 >= 0) chunk.cells[x, y].neighbours[7] = chunk.cells[x + 1, y - 1];
+                        if (x + 1 < gridCellGridData.chunkSize && y - 1 >= 0) chunk.cells[x, y].neighbours[7] = chunk.cells[x + 1, y - 1];
 
                         //$ corners
-                        if (chunk.neighbours[0] is { } && x - 1 == -1 && y + 1 == gridData.chunkSize) chunk.cells[x, y].neighbours[0] = chunk.neighbours[0].cells[gridData.chunkSize-1, 0];
-                        if (chunk.neighbours[2] is { } && x + 1 == gridData.chunkSize && y + 1 == gridData.chunkSize) chunk.cells[x, y].neighbours[2] = chunk.neighbours[2].cells[0, 0];
-                        if (chunk.neighbours[5] is { } && x - 1 == -1 && y - 1 == -1) chunk.cells[x, y].neighbours[5] = chunk.neighbours[5].cells[gridData.chunkSize - 1, gridData.chunkSize - 1];
-                        if (chunk.neighbours[7] is { } && x + 1 == gridData.chunkSize && y - 1 == -1) chunk.cells[x, y].neighbours[7] = chunk.neighbours[7].cells[0, gridData.chunkSize - 1];
+                        if (chunk.neighbours[0] is { } && x - 1 == -1 && y + 1 == gridCellGridData.chunkSize) chunk.cells[x, y].neighbours[0] = chunk.neighbours[0].cells[gridCellGridData.chunkSize-1, 0];
+                        if (chunk.neighbours[2] is { } && x + 1 == gridCellGridData.chunkSize && y + 1 == gridCellGridData.chunkSize) chunk.cells[x, y].neighbours[2] = chunk.neighbours[2].cells[0, 0];
+                        if (chunk.neighbours[5] is { } && x - 1 == -1 && y - 1 == -1) chunk.cells[x, y].neighbours[5] = chunk.neighbours[5].cells[gridCellGridData.chunkSize - 1, gridCellGridData.chunkSize - 1];
+                        if (chunk.neighbours[7] is { } && x + 1 == gridCellGridData.chunkSize && y - 1 == -1) chunk.cells[x, y].neighbours[7] = chunk.neighbours[7].cells[0, gridCellGridData.chunkSize - 1];
                         
                         //$ top
-                        if (chunk.neighbours[1] is { } && y + 1 == gridData.chunkSize)
+                        if (chunk.neighbours[1] is { } && y + 1 == gridCellGridData.chunkSize)
                         {
                             chunk.cells[x, y].neighbours[1] = chunk.neighbours[1].cells[x, 0];
                             if (x > 0) chunk.cells[x, y].neighbours[0] = chunk.neighbours[1].cells[x-1, 0];
-                            if (x < gridData.chunkSize-1) chunk.cells[x, y].neighbours[2] = chunk.neighbours[1].cells[x+1, 0];
+                            if (x < gridCellGridData.chunkSize-1) chunk.cells[x, y].neighbours[2] = chunk.neighbours[1].cells[x+1, 0];
                         }
 
                         //$ left
                         if (chunk.neighbours[3] is { } && x - 1 == -1)
                         {
-                            chunk.cells[x, y].neighbours[3] = chunk.neighbours[3].cells[gridData.chunkSize - 1, y];
-                            if (y > 0) chunk.cells[x, y].neighbours[5] = chunk.neighbours[3].cells[gridData.chunkSize-1, y-1];
-                            if (y < gridData.chunkSize-1) chunk.cells[x, y].neighbours[0] = chunk.neighbours[3].cells[gridData.chunkSize-1, y+1];
+                            chunk.cells[x, y].neighbours[3] = chunk.neighbours[3].cells[gridCellGridData.chunkSize - 1, y];
+                            if (y > 0) chunk.cells[x, y].neighbours[5] = chunk.neighbours[3].cells[gridCellGridData.chunkSize-1, y-1];
+                            if (y < gridCellGridData.chunkSize-1) chunk.cells[x, y].neighbours[0] = chunk.neighbours[3].cells[gridCellGridData.chunkSize-1, y+1];
                         }
                         
                         //$ right
-                        if (chunk.neighbours[4] is { } && x + 1 == gridData.chunkSize)
+                        if (chunk.neighbours[4] is { } && x + 1 == gridCellGridData.chunkSize)
                         {
                             chunk.cells[x, y].neighbours[4] = chunk.neighbours[4].cells[0, y];
                             if (y > 0) chunk.cells[x, y].neighbours[7] = chunk.neighbours[4].cells[0, y - 1];
-                            if (y < gridData.chunkSize - 1) chunk.cells[x, y].neighbours[2] = chunk.neighbours[4].cells[0, y+1];
+                            if (y < gridCellGridData.chunkSize - 1) chunk.cells[x, y].neighbours[2] = chunk.neighbours[4].cells[0, y+1];
                         }
                         
                         //$ bottom
                         if (chunk.neighbours[6] is { } && y - 1 == -1)
                         {
-                            chunk.cells[x, y].neighbours[6] = chunk.neighbours[6].cells[x, gridData.chunkSize - 1];
-                            if (x < gridData.chunkSize - 1) chunk.cells[x, y].neighbours[7] = chunk.neighbours[6].cells[x+1, gridData.chunkSize-1];
-                            if (x > 0) chunk.cells[x, y].neighbours[5] = chunk.neighbours[6].cells[x-1, gridData.chunkSize-1];
+                            chunk.cells[x, y].neighbours[6] = chunk.neighbours[6].cells[x, gridCellGridData.chunkSize - 1];
+                            if (x < gridCellGridData.chunkSize - 1) chunk.cells[x, y].neighbours[7] = chunk.neighbours[6].cells[x+1, gridCellGridData.chunkSize-1];
+                            if (x > 0) chunk.cells[x, y].neighbours[5] = chunk.neighbours[6].cells[x-1, gridCellGridData.chunkSize-1];
                         }
                     }
                 }
@@ -319,12 +311,12 @@ namespace ProcessControl.Procedural
             {
                 tasks.Add(Task.Run(() =>
                 {
-                    var noiseValue = Noise.GenerateValue(gridData.terrainNoise, cell.position);
-                    var rainValue = Noise.GenerateValue(gridData.biomeNoise[0], cell.position);
-                    var heatValue = Noise.GenerateValue(gridData.biomeNoise[1], cell.position);
-                    gridData.noiseRange.Add(noiseValue);
-                    gridData.rainRange.Add(rainValue);
-                    gridData.heatRange.Add(heatValue);
+                    var noiseValue = Noise.GenerateValue(gridCellGridData.terrainNoise, cell.position);
+                    var rainValue = Noise.GenerateValue(gridCellGridData.biomeNoise[0], cell.position);
+                    var heatValue = Noise.GenerateValue(gridCellGridData.biomeNoise[1], cell.position);
+                    gridCellGridData.noiseRange.Add(noiseValue);
+                    gridCellGridData.rainRange.Add(rainValue);
+                    gridCellGridData.heatRange.Add(heatValue);
                     cell.terrainValue = noiseValue;
 
 
@@ -335,7 +327,7 @@ namespace ProcessControl.Procedural
                     if (heatValue > 0.25f && rainValue > 0.25f && rainValue < 0.75f) cell.biome = Biome.Grass;
                     if (heatValue > 0.50f && rainValue > 0.25f) cell.biome = Biome.Forest;
 
-                    if (cell.terrainValue < gridData.terrainNoise[0].threshold)
+                    if (cell.terrainValue < gridCellGridData.terrainNoise[0].threshold)
                     {
                         cell.biome = Biome.Ocean;
                         cell.buildable = false;
@@ -385,7 +377,7 @@ namespace ProcessControl.Procedural
                 {
                     cell.resourceDeposits.Clear();
 
-                    gridData.resourceNoise.ForEach(resourceLayer =>
+                    gridCellGridData.resourceNoise.ForEach(resourceLayer =>
                     {
                         var noiseValue = Noise.GenerateValue(resourceLayer, cell.position);
                         if (noiseValue >= resourceLayer.threshold && cell.buildable)
@@ -471,32 +463,32 @@ namespace ProcessControl.Procedural
         private void OnDrawGizmos()
         {
             
-            if (!gridData.showNeighbours || gridData.lastCell is null) return;
+            if (!gridCellGridData.showNeighbours || gridCellGridData.lastCell is null) return;
          
-            gridData.chunks?.ForEach(
+            gridCellGridData.chunks?.ForEach(
                 c =>
                 {
                     if (c is null) return;
                     Gizmos.DrawSphere(c.chunkCenter, 1f);
                 });
             
-            for (int i = 0; i < gridData.lastCell.neighbours.Length; i++)
+            for (int i = 0; i < gridCellGridData.lastCell.neighbours.Length; i++)
             {
-                if (gridData.lastCell.neighbours[i] is null) continue;
+                if (gridCellGridData.lastCell.neighbours[i] is null) continue;
         
                 Gizmos.color = Color.Lerp(Color.red, Color.black, i / 7f);
-                Gizmos.DrawSphere(gridData.lastCell.neighbours[i].position, 0.25f);
+                Gizmos.DrawSphere(gridCellGridData.lastCell.neighbours[i].position, 0.25f);
             }
             
-            for (int i = 0; i < gridData.lastCell.parentChunk.neighbours.Length; i++)
+            for (int i = 0; i < gridCellGridData.lastCell.parentChunk.neighbours.Length; i++)
             {
-                if (gridData.lastCell.parentChunk.neighbours[i] is null) continue;
+                if (gridCellGridData.lastCell.parentChunk.neighbours[i] is null) continue;
                 
                 Gizmos.color = Color.Lerp(Color.green, Color.black, i / 7f);
-                var chunkOffset = gridData.lastCell.parentChunk.neighbours[i].chunkOffset.ToVector3();
-                chunkOffset.x += gridData.chunkSize / 2f;
-                chunkOffset.y += gridData.chunkSize / 2f;
-                Gizmos.DrawSphere(chunkOffset, gridData.chunkSize * 0.5f);
+                var chunkOffset = gridCellGridData.lastCell.parentChunk.neighbours[i].chunkOffset.ToVector3();
+                chunkOffset.x += gridCellGridData.chunkSize / 2f;
+                chunkOffset.y += gridCellGridData.chunkSize / 2f;
+                Gizmos.DrawSphere(chunkOffset, gridCellGridData.chunkSize * 0.5f);
             }
         }
     }
