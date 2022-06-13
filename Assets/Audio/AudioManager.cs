@@ -23,6 +23,13 @@ namespace ProcessControl.Audio
         public static Action<string, int, bool> FindAndPlayTrack;
 
         private bool cancelPlaylist;
+        
+        // TODO audio initialization
+        public override void Initialize()
+        {
+            var assets = AssetDatabase.LoadAllAssetsAtPath("Assets/Audio/Media");
+            // soundEffects = assets.Cast<SFX>().ToList();
+        }
 
         //> INITIALIZATION
         protected override void Awake()

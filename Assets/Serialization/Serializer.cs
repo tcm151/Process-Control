@@ -15,6 +15,11 @@ namespace ProcessControl.Serialization
         
         private readonly List<Serializeable> thingsToSerialize = new List<Serializeable>();
 
+        public override void Initialize()
+        {
+            // TODO    
+        }
+        
         private void Start()
         {
             constructionManager = ServiceManager.Current.RequestService<ConstructionManager>();
@@ -35,5 +40,6 @@ namespace ProcessControl.Serialization
             var smelter = ItemFactory.GetSchematic("Smelter");
             constructionManager.PlaceNode(smelter, CellGrid.GetCellAtCoordinates(Vector2Int.zero), false);
         }
+
     }
 }

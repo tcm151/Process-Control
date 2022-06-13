@@ -27,9 +27,9 @@ namespace ProcessControl.Procedural
         public Biome biome;
         
         public float terrainValue;
-        public readonly Cell[] neighbours = new Cell[8];
-        public readonly List<ResourceDeposit> resourceDeposits = new List<ResourceDeposit>();
+        public List<ResourceDeposit> resourceDeposits;
         
+        public readonly Cell[] neighbours = new Cell[8];
         public readonly PathInfo pathInfo = new PathInfo();
     }
 }

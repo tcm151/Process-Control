@@ -7,6 +7,14 @@ namespace ProcessControl.Tools
 {
     abstract public class Factory : Service
     {
+        abstract public T Get<T>(string name) where T : class;
+
+        
+        
+        
+        
+        
+        
         //> CREATE AND INSTANCE ON PREFAB
         public static T Spawn<T>(T prefab, Vector3 position, string sceneName = "Runtime") where T : Component
         {

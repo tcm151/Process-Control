@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 namespace ProcessControl.Tools
@@ -18,9 +19,25 @@ namespace ProcessControl.Tools
 		public T RequestService<T>() where T : Service
 		{
 			if (services.Any(s => s is T)) return services.Find(s => s is T) as T;
-			Debug.Log($"Service '{typeof(T).Name}' does not exist.");
-			return default;
+			
+			Debug.Log($"Service '{typeof(T)}' did not exist, creating new instance...");
+			return CreateService<T>();
+			// return default;
+		}
 
+		public T CreateService<T>() where T : Service
+		{
+			Debug.Log($"Creating service '{typeof(T).Name}'");
+			var service = new GameObject($"{nameof(T)}").AddComponent<T>();
+			service.transform.SetParent(transform);
+			service.Initialize();
+			// RegisterService(service);
+			return service;
+		}
+
+		public static ServiceManager Create()
+		{
+			return new GameObject("ServiceManager").AddComponent<ServiceManager>();
 		}
 
 		private void Awake()

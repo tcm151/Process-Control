@@ -26,6 +26,11 @@ namespace ProcessControl.Jobs
         [SerializeField] private List<Worker> busyWorkers = new List<Worker>();
 
         //> INITIALIZATION
+        public override void Initialize()
+        {
+            // TODO 
+        }
+
         protected override void Awake()
         {
             base.Awake();

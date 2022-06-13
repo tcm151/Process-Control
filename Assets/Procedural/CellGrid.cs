@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using ProcessControl.Art;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
@@ -10,6 +11,7 @@ using ProcessControl.Industry;
 using ProcessControl.Serialization;
 using UnityEngine.Serialization;
 using Range = ProcessControl.Tools.Range;
+using Tile = ProcessControl.Art.Tile;
 
 #pragma warning disable 108, 114
 
@@ -62,8 +64,8 @@ namespace ProcessControl.Procedural
     [RequireComponent(typeof(Grid))]
     public class CellGrid : MonoBehaviour
     {
-        [SerializeReference] public List<TileBase> tiles;
-        [SerializeReference] public List<Tilemap> tilemaps;
+        // [SerializeReference] public List<TileBase> tiles;
+        [SerializeReference] internal List<Tilemap> tilemaps;
         
         [SerializeField] internal CellGridData data;
 
@@ -89,21 +91,37 @@ namespace ProcessControl.Procedural
             GetCellAtCoordinates += GetCellFromCoords;
             GetCellUnderMouse += () => GetCellFromCoords(camera.MousePosition2D().FloorToInt());
             GetCellAtPosition += (position) => GetCellFromCoords(position.ToVector2().FloorToInt());
-        }
-        
-        //> INITIALIZATION
-        public async void Start()
-        {
-            onWorldGenerationStarted?.Invoke();
-            await Task.Yield();
-            
-            Initialize();   
+
+            if (tilemaps is { } && !tilemaps.Any())
+            {
+                tilemaps.AddRange(GetComponentsInChildren<Tilemap>());
+                if (tilemaps.Any()) return;
+            }
+
+            var terrainTileMap = new GameObject("Terrain");
+            terrainTileMap.transform.SetParent(transform);
+            terrainTileMap.AddComponent<Tilemap>();
+            terrainTileMap.AddComponent<TilemapRenderer>();
+                
+            var resourceTileMap = new GameObject("Resources");
+            resourceTileMap.transform.SetParent(transform);
+            resourceTileMap.AddComponent<Tilemap>();
+            resourceTileMap.AddComponent<TilemapRenderer>();
         }
 
-        public async void Initialize()
+        // //> BUILD ON PLAY
+        // private void Start()
+        // {
+        //     Build();
+        // }
+
+        //> BUILD THE GRID FROM SCRATCH
+        public void Build()
         {
+            // onWorldGenerationStarted?.Invoke();
+            
             timer.Start();
-            if (!GridExists) CreateGrid();
+            if (!GridExists) Initialize();
             float init = timer.ElapsedMilliseconds;
             
             // get closest chunks to spawn
@@ -111,15 +129,16 @@ namespace ProcessControl.Procedural
             
             // generate the terrain
             timer.Restart();
-            await GenerateChunks(closeChunks);
+            GenerateChunks(closeChunks);
             float chunkGen = timer.ElapsedMilliseconds;
             timer.Stop();
             timer.Reset();
             
             Debug.Log($"Generated: {init} | {chunkGen} |= {init+chunkGen} ms");
 
-            if (Application.isPlaying) CellSpawner.FindSpawnLocation();
-            onWorldGenerationFinished?.Invoke();
+            // TODO use event instead
+            // if (Application.isPlaying) CellSpawner.FindSpawnLocation();
+            // onWorldGenerationFinished?.Invoke();
         }
         
         //> CACHE LAST TOUCHED CELL
@@ -150,7 +169,7 @@ namespace ProcessControl.Procedural
         }
 
         //> INITIALIZE THE GRID
-        public void CreateGrid()
+        public void Initialize()
         {
             //- random seed noise layers
             if (data.seed != "") Random.InitState(data.seed.GetHashCode());
@@ -283,27 +302,20 @@ namespace ProcessControl.Procedural
         }
 
         //> GENERATE CHUNKS
-        // public async void GenerateAllChunks() => await GenerateChunks(grid.chunks.ToList());
-        private async Task GenerateChunks(List<Chunk> chunks)
+        internal void GenerateChunks(List<Chunk> chunks)
         {
             // multi-threaded chunk generation
-            var tasks = new List<Task>();
-            chunks.ForEach(chunk =>
+            Parallel.ForEach(chunks, chunk =>
             {
-                tasks.Add(Task.Run(() =>
-                {
-                    GenerateTerrain(chunk);
-                    GenerateResources(chunk);
-                }));
+                GenerateTerrain(chunk);
+                GenerateResources(chunk);
             });
-            await Task.WhenAll(tasks.ToArray());
             
             // update tile maps on main thread
             chunks.ForEach(UpdateTileMaps);
         }
 
         //> GENERATE TERRAIN
-        // public void GenerateAllTerrain() => grid.chunks.ForEach(GenerateTerrain);
         private async void GenerateTerrain(Chunk chunk)
         {
             // multi-threaded chunk generation
@@ -336,38 +348,9 @@ namespace ProcessControl.Procedural
                 }));
             });
             await Task.WhenAll(tasks.ToArray());
-            
-            // chunk.cells.ForEach
-            // (
-            //     cell =>
-            //     {
-            //         var noiseValue = Noise.GenerateValue(grid.terrainNoise, cell.position);
-            //         var rainValue = Noise.GenerateValue(grid.biomeNoise[0], cell.position);
-            //         var heatValue = Noise.GenerateValue(grid.biomeNoise[1], cell.position);
-            //         grid.noiseRange.Add(noiseValue);
-            //         grid.rainRange.Add(rainValue);
-            //         grid.heatRange.Add(heatValue);
-            //         cell.terrainValue = noiseValue;
-            //
-            //
-            //         if (heatValue < 0.25f && rainValue > 0.25f) cell.biome = Biome.Snow;
-            //         if (heatValue < 0.50f && rainValue < 0.50f) cell.biome = Biome.Stone;
-            //         if (heatValue > 0.60f && rainValue < 0.25f) cell.biome = Biome.Sand;
-            //         if (heatValue < 0.60f && heatValue > 0.25f && rainValue < 0.25f) cell.biome = Biome.Plains;
-            //         if (heatValue > 0.25f && rainValue > 0.25f && rainValue < 0.75f) cell.biome = Biome.Grass;
-            //         if (heatValue > 0.50f && rainValue > 0.25f) cell.biome = Biome.Forest;
-            //
-            //         if (cell.terrainValue < grid.terrainNoise[0].threshold)
-            //         {
-            //             cell.biome = Biome.Ocean;
-            //             cell.buildable = false;
-            //         }
-            //     }
-            // );
         }
 
         //> GENERATE RESOURCES
-        // public void GenerateAllResources() => grid.chunks.ForEach(GenerateResources);
         public async void GenerateResources(Chunk chunk)
         {
             // multi-threaded chunk generation
@@ -376,7 +359,7 @@ namespace ProcessControl.Procedural
             {
                 tasks.Add(Task.Run(() =>
                 {
-                    cell.resourceDeposits.Clear();
+                    cell.resourceDeposits = new List<ResourceDeposit>();
 
                     data.resourceNoise.ForEach(resourceLayer =>
                     {
@@ -431,30 +414,32 @@ namespace ProcessControl.Procedural
         public void ClearAllTiles() => tilemaps.ForEach(t => t.ClearAllTiles());
         public void UpdateTileMaps(Chunk chunk) => chunk.cells.ForEach(cell =>
         {
-            var tile = (cell.biome) switch
+            var tileFactory = ServiceManager.Current.RequestService<TileFactory>();
+            
+            TileBase tile = (cell.biome) switch
             {
-                Biome.Sand   => tiles[9],
-                Biome.Grass  => tiles[5],
-                Biome.Stone  => tiles[1],
-                Biome.Forest => tiles[10],
-                Biome.Snow   => tiles[11],
-                Biome.Plains => tiles[12],
-                Biome.Ocean  => tiles[0],
-                _            => tiles[3],
+                Biome.Sand   => tileFactory.Get<Tile>("Sand").tile,
+                Biome.Grass  => tileFactory.Get<Tile>("Grass").tile,
+                Biome.Stone  => tileFactory.Get<Tile>("Stone").tile,
+                Biome.Forest => tileFactory.Get<Tile>("Forest").tile,
+                Biome.Snow   => tileFactory.Get<Tile>("Snow").tile,
+                Biome.Plains => tileFactory.Get<Tile>("Plains").tile,
+                Biome.Ocean  => tileFactory.Get<Tile>("Ocean").tile,
+                _            => tileFactory.Get<Tile>("Default").tile,
             };
             tilemaps[0].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);
             
-            if (cell.resourceDeposits.Count == 0) tile = tiles[3];
+            if (cell.resourceDeposits.Count == 0) tile = tileFactory.Get<Tile>("Default").tile;
             else
             {
                 tile = (cell.resourceDeposits[0].resource.material) switch
                 {
-                    Resource.Material.Iron     => tiles[4],
-                    Resource.Material.Gold     => tiles[6],
-                    Resource.Material.Coal     => tiles[8],
-                    Resource.Material.Copper   => tiles[2],
-                    Resource.Material.Platinum => tiles[7],
-                    _                          => tiles[3],
+                    Resource.Material.Iron     => tileFactory.Get<Tile>("Iron").tile,
+                    Resource.Material.Gold     => tileFactory.Get<Tile>("Gold").tile,
+                    Resource.Material.Coal     => tileFactory.Get<Tile>("Coal").tile,
+                    Resource.Material.Copper   => tileFactory.Get<Tile>("Copper").tile,
+                    Resource.Material.Platinum => tileFactory.Get<Tile>("Platinum").tile,
+                    _                          => tileFactory.Get<Tile>("Default").tile,
                 };
             }
             tilemaps[1].SetTile(new Vector3Int(cell.coords.x, cell.coords.y, 0), tile);

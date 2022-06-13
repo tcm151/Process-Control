@@ -38,6 +38,11 @@ namespace ProcessControl.Industry
         public Recipe defaultJunctionRecipe;
 
         //> INITIALIZATION
+        public override void Initialize()
+        {
+            
+        }
+
         protected override void Awake()
         {
             base.Awake();

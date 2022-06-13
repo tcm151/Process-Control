@@ -39,12 +39,12 @@ namespace ProcessControl.Tools.Editor
                 // if (autoUpdateResources) grid.GenerateAllResources();
             }
 
-            if (GUILayout.Button("Generate Grid")) grid.Start();
-            if (GUILayout.Button("Clear Grid")) grid.ClearAllTiles();
+            if (GUILayout.Button("Build")) grid.Build();
+            if (GUILayout.Button("Clear")) grid.ClearAllTiles();
 
             fileName = EditorGUILayout.TextField("File Name", fileName);
-            if (GUILayout.Button("Save Data")) grid.data.Save(fileName);
-            if (GUILayout.Button("Load Data")) grid.data.Load(fileName);
+            if (GUILayout.Button("Save")) grid.data.Save(fileName);
+            if (GUILayout.Button("Load")) grid.data.Load(fileName);
         }
     }
 }

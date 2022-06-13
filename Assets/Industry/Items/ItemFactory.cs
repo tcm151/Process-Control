@@ -5,6 +5,7 @@ using ProcessControl.Graphs;
 using UnityEngine;
 using UnityEngine.Serialization;
 using ProcessControl.Tools;
+using UnityEditor;
 
 
 namespace ProcessControl.Industry
@@ -25,7 +26,7 @@ namespace ProcessControl.Industry
 		public static Func<Item, Vector3, Container> SpawnContainer;
 		public static Action<Container> DisposeContainer;
 
-		public T Get<T>(string name) where T : Item
+		public override T Get<T>(string name)
 		{
 			var item = itemPrefabs.FirstOrDefault(i => i.name == name);
 			if (item is { }) return item as T;
@@ -33,7 +34,21 @@ namespace ProcessControl.Industry
 			Debug.Log($"Item \"{name}\" was not found.");
 			return default;
 		}
-		
+
+		public override void Initialize()
+		{
+			itemPrefabs ??= new List<Item>();
+			var assets = Resources.LoadAll("Items/", typeof(Resource));
+			var resources = assets.Cast<Resource>().ToList();
+			itemPrefabs.AddRange(resources);
+			assets = Resources.LoadAll("Machines/", typeof(Schematic));
+			var machineSchematics = assets.Cast<Schematic>().ToList();
+			itemPrefabs.AddRange(machineSchematics);
+			assets = Resources.LoadAll("Conveyors/", typeof(Schematic));
+			var conveyorSchematics = assets.Cast<Schematic>().ToList();
+			itemPrefabs.AddRange(conveyorSchematics);
+		}
+
 		protected override void Awake()
 		{
 			base.Awake();

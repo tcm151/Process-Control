@@ -21,6 +21,11 @@ namespace ProcessControl
         private void SetSunIntensity() => sun.intensity = sunCurve.Evaluate(ticks);
 
         //> INITIALIZE
+        public override void Initialize()
+        {
+            // throw new System.NotImplementedException();
+        }
+
         protected override void Awake()
         {
             base.Awake();
