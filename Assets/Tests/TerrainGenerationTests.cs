@@ -13,7 +13,7 @@ using UnityEngine.TestTools;
 using UnityEngine.Tilemaps;
 
 
-namespace Tests.Procedural
+namespace Tests
 {
 	public class TerrainGenerationTests
 	{
@@ -25,7 +25,7 @@ namespace Tests.Procedural
 			serviceManager.CreateService<ItemFactory>();
 
 			var grid = new GameObject("cellGrid").AddComponent<CellGrid>();
-			var data = FileManager.ReadFile<CellGridData>("greenEggs.json");
+			var data = FileManager.ReadFile<CellGridData>("greenEggs");
 			grid.data = data;
 			Assert.True(grid.data == data);
 
